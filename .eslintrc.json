@@ -16,6 +16,13 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts",".tsx"]
+      }
+    }
+  },
   "rules": {
     "prettier/prettier": [
       "error",
@@ -48,6 +55,18 @@
       "files": ["*.ts", "*.tsx", "*.d.ts"],
       "parserOptions": {
         "project": "./tsconfig.json"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.*",
+        "**/setup-tests.*"
+      ],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
       }
     }
   ]
