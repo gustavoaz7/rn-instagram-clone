@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SearchScreen } from '../screens/SearchScreen';
@@ -12,11 +11,11 @@ import Shop from '../../assets/svg/shop.svg';
 import User from '../../assets/svg/user.svg';
 
 export enum BOTTOM_TAB_SCREENS {
-  HOME = 'Home',
-  SEARCH = 'Search',
-  REELS = 'Reels',
-  SHOP = 'Shop',
-  PROFILE = 'Profile',
+  HOME = '@Bottom/Home',
+  SEARCH = '@Bottom/Search',
+  REELS = '@Bottom/Reels',
+  SHOP = '@Bottom/Shop',
+  PROFILE = '@Bottom/Profile',
 }
 
 const SCREEN_COMPONENT_MAP = {
@@ -41,49 +40,50 @@ const Tab = createBottomTabNavigator();
 
 export function BottomTabNavigator(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Tab.Navigator tabBarOptions={{ showLabel: false }}>
-        <Tab.Screen
-          name={BOTTOM_TAB_SCREENS.HOME}
-          component={HomeScreen}
-          options={{
-            tabBarIcon: ({ focused }) =>
-              createTabBarIcon(BOTTOM_TAB_SCREENS.HOME, focused),
-          }}
-        />
-        <Tab.Screen
-          name={BOTTOM_TAB_SCREENS.SEARCH}
-          component={SearchScreen}
-          options={{
-            tabBarIcon: ({ focused }) =>
-              createTabBarIcon(BOTTOM_TAB_SCREENS.SEARCH, focused),
-          }}
-        />
-        <Tab.Screen
-          name={BOTTOM_TAB_SCREENS.REELS}
-          component={NotImplemented}
-          options={{
-            tabBarIcon: ({ focused }) =>
-              createTabBarIcon(BOTTOM_TAB_SCREENS.REELS, focused),
-          }}
-        />
-        <Tab.Screen
-          name={BOTTOM_TAB_SCREENS.SHOP}
-          component={NotImplemented}
-          options={{
-            tabBarIcon: ({ focused }) =>
-              createTabBarIcon(BOTTOM_TAB_SCREENS.SHOP, focused),
-          }}
-        />
-        <Tab.Screen
-          name={BOTTOM_TAB_SCREENS.PROFILE}
-          component={ProfileScreen}
-          options={{
-            tabBarIcon: ({ focused }) =>
-              createTabBarIcon(BOTTOM_TAB_SCREENS.PROFILE, focused),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      initialRouteName={BOTTOM_TAB_SCREENS.HOME}
+      tabBarOptions={{ showLabel: false }}
+    >
+      <Tab.Screen
+        name={BOTTOM_TAB_SCREENS.HOME}
+        component={HomeScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            createTabBarIcon(BOTTOM_TAB_SCREENS.HOME, focused),
+        }}
+      />
+      <Tab.Screen
+        name={BOTTOM_TAB_SCREENS.SEARCH}
+        component={SearchScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            createTabBarIcon(BOTTOM_TAB_SCREENS.SEARCH, focused),
+        }}
+      />
+      <Tab.Screen
+        name={BOTTOM_TAB_SCREENS.REELS}
+        component={NotImplemented}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            createTabBarIcon(BOTTOM_TAB_SCREENS.REELS, focused),
+        }}
+      />
+      <Tab.Screen
+        name={BOTTOM_TAB_SCREENS.SHOP}
+        component={NotImplemented}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            createTabBarIcon(BOTTOM_TAB_SCREENS.SHOP, focused),
+        }}
+      />
+      <Tab.Screen
+        name={BOTTOM_TAB_SCREENS.PROFILE}
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            createTabBarIcon(BOTTOM_TAB_SCREENS.PROFILE, focused),
+        }}
+      />
+    </Tab.Navigator>
   );
 }

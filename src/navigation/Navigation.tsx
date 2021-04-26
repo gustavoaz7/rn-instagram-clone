@@ -1,6 +1,11 @@
 import React from 'react';
-import { BottomTabNavigator } from './BottomTabNavigator';
+import { NavigationContainer } from '@react-navigation/native';
+import { HomeSwitchNavigator } from './HomeSwitchNavigator';
 
 export function Navigation(): JSX.Element {
-  return <BottomTabNavigator />;
+  return (
+    <NavigationContainer>
+      <HomeSwitchNavigator />
+    </NavigationContainer>
+  );
 }
