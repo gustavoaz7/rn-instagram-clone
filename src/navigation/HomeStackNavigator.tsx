@@ -1,14 +1,16 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import LogoText from '../../assets/svg/logo-text.svg';
 import PlusRound from '../../assets/svg/plus-round.svg';
 import Heart from '../../assets/svg/heart.svg';
 import Direct from '../../assets/svg/direct.svg';
+import { DIRECT_STACK_SCREENS } from './DirectStackNavigator';
 
-export enum STACK_SCREENS {
-  HOME = '@Stack/Home',
+export enum HOME_STACK_SCREENS {
+  HOME = '@Home-Stack/Home',
 }
 
 const styles = StyleSheet.create({
@@ -36,6 +38,8 @@ function HeaderLeft() {
 }
 
 function HeaderRight() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.rightContainer}>
       <PlusRound
@@ -45,12 +49,12 @@ function HeaderRight() {
         style={styles.rightElement}
       />
       <Heart width={24} height={24} color="black" style={styles.rightElement} />
-      <Direct
-        width={24}
-        height={24}
-        color="black"
+      <Pressable
+        onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.DIRECT)}
         style={styles.rightElement}
-      />
+      >
+        <Direct width={24} height={24} color="black" />
+      </Pressable>
     </View>
   );
 }
@@ -61,7 +65,7 @@ export function HomeStackNavigator(): JSX.Element {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name={STACK_SCREENS.HOME}
+        name={HOME_STACK_SCREENS.HOME}
         component={BottomTabNavigator}
         options={{
           headerTitle: nullFn,
