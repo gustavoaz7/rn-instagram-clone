@@ -13,4 +13,7 @@ module.exports = {
     '!**/node_modules/**',
     '!./App.tsx',
   ],
+  moduleNameMapper: {
+    '\\.svg': '<rootDir>/__mocks__/svgMock.js',
+  },
 };
