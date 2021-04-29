@@ -3,20 +3,26 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
+  StackNavigationProp,
 } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from '@react-navigation/native';
 import { DirectScreen } from '../screens/DirectScreen';
 import { NotImplemented } from '../screens/NotImplemented';
 import ArrowLeft from '../../assets/svg/arrow-left.svg';
 import Video from '../../assets/svg/video.svg';
 import Edit from '../../assets/svg/edit.svg';
+import { DIRECT_STACK_SCREENS } from './screens';
+import type { THomeSwitchParams } from './HomeSwipeNavigator';
 
-export enum DIRECT_STACK_SCREENS {
-  DIRECT = '@Direct-Stack/Direct',
-  VIDEO = '@Direct-Stack/Video',
-  MESSAGE = '@Direct-Stack/Message',
-  CHAT = '@Direct-Stack/Chat',
-}
+export type TDirectStackParams = Record<DIRECT_STACK_SCREENS, undefined>;
+
+export type TDirectStackNavigationProps = CompositeNavigationProp<
+  StackNavigationProp<TDirectStackParams>,
+  StackNavigationProp<THomeSwitchParams>
+>;
 
 const styles = StyleSheet.create({
   leftContainer: {
@@ -31,7 +37,7 @@ const styles = StyleSheet.create({
 });
 
 function HeaderLeft() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<TDirectStackNavigationProps>();
 
   return (
     <Pressable onPress={navigation.goBack} style={styles.leftContainer}>
@@ -41,7 +47,7 @@ function HeaderLeft() {
 }
 
 function HeaderRight() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<TDirectStackNavigationProps>();
 
   return (
     <View style={styles.rightContainer}>
@@ -61,7 +67,7 @@ function HeaderRight() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<TDirectStackParams>();
 
 export function DirectStackNavigator(): JSX.Element {
   return (

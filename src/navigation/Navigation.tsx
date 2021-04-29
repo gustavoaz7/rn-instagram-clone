@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { HomeSwitchNavigator } from './HomeSwitchNavigator';
+import { RootStackNavigator } from './RootStackNavigator';
+import { navigationRef } from './navigation-ref';
 
 export function Navigation(): JSX.Element {
   return (
-    <NavigationContainer>
-      <HomeSwitchNavigator />
+    <NavigationContainer ref={navigationRef}>
+      <RootStackNavigator />
     </NavigationContainer>
   );
 }
