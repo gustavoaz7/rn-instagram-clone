@@ -36,6 +36,7 @@
     "import/no-unresolved": "error",
     "import/extensions": ["error", "never"],
     "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [
       "warn",
       {
