@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  CardStyleInterpolators,
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
@@ -7,7 +8,7 @@ import {
   useNavigation,
   CompositeNavigationProp,
 } from '@react-navigation/native';
-import { View, StyleSheet, Pressable } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 import LogoText from '../../assets/svg/logo-text.svg';
 import PlusRound from '../../assets/svg/plus-round.svg';
 import Heart from '../../assets/svg/heart.svg';
@@ -20,9 +21,12 @@ import {
 import type { THomeSwitchParams } from './HomeSwipeNavigator';
 import { NotImplemented } from '../screens/NotImplemented';
 import { FeedScreen } from '../screens/FeedScreen';
+import { ActivityScreen } from '../screens/ActivityScreen';
+import { ArrowBack } from './ArrowBack';
 
 export type THomeStackParams = {
   [HOME_STACK_SCREENS.FEED]: undefined;
+  [HOME_STACK_SCREENS.ACTIVITY]: undefined;
   [HOME_STACK_SCREENS.PROFILE]: undefined;
 };
 
@@ -31,53 +35,44 @@ export type THomeStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<THomeSwitchParams>
 >;
 
-const styles = StyleSheet.create({
-  leftContainer: {
-    marginLeft: 20,
-  },
-  rightContainer: {
-    flexDirection: 'row',
-  },
-  rightElement: {
-    marginRight: 20,
-  },
-});
-
 function nullFn() {
   return null;
 }
 
 function HeaderLeft() {
+  const theme = useTheme();
+
   return (
-    <View style={styles.leftContainer}>
-      <LogoText width={106} height={30} color="black" />
-    </View>
+    <LogoContainer>
+      <LogoText color={theme.color.black} />
+    </LogoContainer>
   );
 }
 
 function HeaderRight() {
   const navigation = useNavigation<THomeStackNavigationProps>();
+  const theme = useTheme();
 
   return (
-    <View style={styles.rightContainer}>
-      <PlusRound
-        width={24}
-        height={24}
-        color="black"
-        style={styles.rightElement}
-      />
-      <Heart width={24} height={24} color="black" style={styles.rightElement} />
-      <Pressable
+    <HeaderRightContainer>
+      <IconContainer>
+        <PlusRound color={theme.color.black} />
+      </IconContainer>
+      <IconContainer
+        onPress={() => navigation.navigate(HOME_STACK_SCREENS.ACTIVITY)}
+      >
+        <Heart color={theme.color.black} />
+      </IconContainer>
+      <IconContainer
         onPress={() =>
           navigation.navigate(HOME_SWIPE_SCREENS.DIRECT, {
             screen: DIRECT_STACK_SCREENS.DIRECT,
           })
         }
-        style={styles.rightElement}
       >
-        <Direct width={24} height={24} color="black" />
-      </Pressable>
-    </View>
+        <Direct color={theme.color.black} />
+      </IconContainer>
+    </HeaderRightContainer>
   );
 }
 
@@ -85,7 +80,12 @@ const Stack = createStackNavigator<THomeStackParams>();
 
 export function HomeStackNavigator(): JSX.Element {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerLeft: ArrowBack,
+      }}
+    >
       <Stack.Screen
         name={HOME_STACK_SCREENS.FEED}
         component={FeedScreen}
@@ -96,9 +96,25 @@ export function HomeStackNavigator(): JSX.Element {
         }}
       />
       <Stack.Screen
+        name={HOME_STACK_SCREENS.ACTIVITY}
+        component={ActivityScreen}
+      />
+      <Stack.Screen
         name={HOME_STACK_SCREENS.PROFILE}
         component={NotImplemented}
       />
     </Stack.Navigator>
   );
 }
+
+const LogoContainer = styled.View`
+  margin-left: ${({ theme }) => theme.spacing.l};
+`;
+
+const HeaderRightContainer = styled.View`
+  flex-direction: row;
+`;
+
+const IconContainer = styled.Pressable`
+  margin-right: ${({ theme }) => theme.spacing.l};
+`;

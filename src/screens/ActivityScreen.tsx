@@ -2,10 +2,10 @@ import React from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components/native';
 
-export function FeedScreen(): JSX.Element {
+export function ActivityScreen(): JSX.Element {
   return (
     <Container>
-      <Text>FeedScreen</Text>
+      <Text>ActivityScreen</Text>
     </Container>
   );
 }

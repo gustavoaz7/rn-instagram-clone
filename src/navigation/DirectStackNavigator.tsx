@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -9,13 +8,14 @@ import {
   CompositeNavigationProp,
   useNavigation,
 } from '@react-navigation/native';
+import styled, { useTheme } from 'styled-components/native';
 import { DirectScreen } from '../screens/DirectScreen';
 import { NotImplemented } from '../screens/NotImplemented';
-import ArrowLeft from '../../assets/svg/arrow-left.svg';
 import Video from '../../assets/svg/video.svg';
 import Edit from '../../assets/svg/edit.svg';
 import { DIRECT_STACK_SCREENS } from './screens';
 import type { THomeSwitchParams } from './HomeSwipeNavigator';
+import { ArrowBack } from './ArrowBack';
 
 export type TDirectStackParams = Record<DIRECT_STACK_SCREENS, undefined>;
 
@@ -24,46 +24,23 @@ export type TDirectStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<THomeSwitchParams>
 >;
 
-const styles = StyleSheet.create({
-  leftContainer: {
-    marginLeft: 20,
-  },
-  rightContainer: {
-    flexDirection: 'row',
-  },
-  rightElement: {
-    marginRight: 20,
-  },
-});
-
-function HeaderLeft() {
-  const navigation = useNavigation<TDirectStackNavigationProps>();
-
-  return (
-    <Pressable onPress={navigation.goBack} style={styles.leftContainer}>
-      <ArrowLeft width={24} height={24} color="black" />
-    </Pressable>
-  );
-}
-
 function HeaderRight() {
   const navigation = useNavigation<TDirectStackNavigationProps>();
+  const theme = useTheme();
 
   return (
-    <View style={styles.rightContainer}>
-      <Pressable
+    <HeaderRightContainer>
+      <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.VIDEO)}
-        style={styles.rightElement}
       >
-        <Video width={24} height={24} color="black" />
-      </Pressable>
-      <Pressable
+        <Video color={theme.color.black} />
+      </RightIconContainer>
+      <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.MESSAGE)}
-        style={styles.rightElement}
       >
-        <Edit width={24} height={24} color="black" />
-      </Pressable>
-    </View>
+        <Edit color={theme.color.black} />
+      </RightIconContainer>
+    </HeaderRightContainer>
   );
 }
 
@@ -74,7 +51,7 @@ export function DirectStackNavigator(): JSX.Element {
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        headerLeft: HeaderLeft,
+        headerLeft: ArrowBack,
       }}
     >
       <Stack.Screen
@@ -100,3 +77,11 @@ export function DirectStackNavigator(): JSX.Element {
     </Stack.Navigator>
   );
 }
+
+const HeaderRightContainer = styled.View`
+  flex-direction: row;
+`;
+
+const RightIconContainer = styled.Pressable`
+  margin-right: ${({ theme }) => theme.spacing.l};
+`;
