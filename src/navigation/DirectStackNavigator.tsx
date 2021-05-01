@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -9,6 +8,7 @@ import {
   CompositeNavigationProp,
   useNavigation,
 } from '@react-navigation/native';
+import styled, { useTheme } from 'styled-components/native';
 import { DirectScreen } from '../screens/DirectScreen';
 import { NotImplemented } from '../screens/NotImplemented';
 import ArrowLeft from '../../assets/svg/arrow-left.svg';
@@ -24,46 +24,33 @@ export type TDirectStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<THomeSwitchParams>
 >;
 
-const styles = StyleSheet.create({
-  leftContainer: {
-    marginLeft: 20,
-  },
-  rightContainer: {
-    flexDirection: 'row',
-  },
-  rightElement: {
-    marginRight: 20,
-  },
-});
-
 function HeaderLeft() {
   const navigation = useNavigation<TDirectStackNavigationProps>();
 
   return (
-    <Pressable onPress={navigation.goBack} style={styles.leftContainer}>
-      <ArrowLeft width={24} height={24} color="black" />
-    </Pressable>
+    <ArrowContainer onPress={navigation.goBack}>
+      <ArrowLeft color="black" />
+    </ArrowContainer>
   );
 }
 
 function HeaderRight() {
   const navigation = useNavigation<TDirectStackNavigationProps>();
+  const theme = useTheme();
 
   return (
-    <View style={styles.rightContainer}>
-      <Pressable
+    <HeaderRightContainer>
+      <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.VIDEO)}
-        style={styles.rightElement}
       >
-        <Video width={24} height={24} color="black" />
-      </Pressable>
-      <Pressable
+        <Video color={theme.color.black} />
+      </RightIconContainer>
+      <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.MESSAGE)}
-        style={styles.rightElement}
       >
-        <Edit width={24} height={24} color="black" />
-      </Pressable>
-    </View>
+        <Edit color={theme.color.black} />
+      </RightIconContainer>
+    </HeaderRightContainer>
   );
 }
 
@@ -100,3 +87,15 @@ export function DirectStackNavigator(): JSX.Element {
     </Stack.Navigator>
   );
 }
+
+const ArrowContainer = styled.Pressable`
+  margin-left: ${({ theme }) => theme.spacing.l};
+`;
+
+const HeaderRightContainer = styled.View`
+  flex-direction: row;
+`;
+
+const RightIconContainer = styled.Pressable`
+  margin-right: ${({ theme }) => theme.spacing.l};
+`;

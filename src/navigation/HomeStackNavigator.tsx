@@ -7,7 +7,7 @@ import {
   useNavigation,
   CompositeNavigationProp,
 } from '@react-navigation/native';
-import { View, StyleSheet, Pressable } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 import LogoText from '../../assets/svg/logo-text.svg';
 import PlusRound from '../../assets/svg/plus-round.svg';
 import Heart from '../../assets/svg/heart.svg';
@@ -31,53 +31,42 @@ export type THomeStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<THomeSwitchParams>
 >;
 
-const styles = StyleSheet.create({
-  leftContainer: {
-    marginLeft: 20,
-  },
-  rightContainer: {
-    flexDirection: 'row',
-  },
-  rightElement: {
-    marginRight: 20,
-  },
-});
-
 function nullFn() {
   return null;
 }
 
 function HeaderLeft() {
+  const theme = useTheme();
+
   return (
-    <View style={styles.leftContainer}>
-      <LogoText width={106} height={30} color="black" />
-    </View>
+    <LogoContainer>
+      <LogoText color={theme.color.black} />
+    </LogoContainer>
   );
 }
 
 function HeaderRight() {
   const navigation = useNavigation<THomeStackNavigationProps>();
+  const theme = useTheme();
 
   return (
-    <View style={styles.rightContainer}>
-      <PlusRound
-        width={24}
-        height={24}
-        color="black"
-        style={styles.rightElement}
-      />
-      <Heart width={24} height={24} color="black" style={styles.rightElement} />
-      <Pressable
+    <HeaderRightContainer>
+      <IconContainer>
+        <PlusRound color={theme.color.black} />
+      </IconContainer>
+      <IconContainer>
+        <Heart color={theme.color.black} />
+      </IconContainer>
+      <IconContainer
         onPress={() =>
           navigation.navigate(HOME_SWIPE_SCREENS.DIRECT, {
             screen: DIRECT_STACK_SCREENS.DIRECT,
           })
         }
-        style={styles.rightElement}
       >
-        <Direct width={24} height={24} color="black" />
-      </Pressable>
-    </View>
+        <Direct color={theme.color.black} />
+      </IconContainer>
+    </HeaderRightContainer>
   );
 }
 
@@ -102,3 +91,15 @@ export function HomeStackNavigator(): JSX.Element {
     </Stack.Navigator>
   );
 }
+
+const LogoContainer = styled.View`
+  margin-left: ${({ theme }) => theme.spacing.l};
+`;
+
+const HeaderRightContainer = styled.View`
+  flex-direction: row;
+`;
+
+const IconContainer = styled.Pressable`
+  margin-right: ${({ theme }) => theme.spacing.l};
+`;

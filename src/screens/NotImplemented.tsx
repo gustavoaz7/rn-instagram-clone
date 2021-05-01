@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
+import styled from 'styled-components/native';
 
 export function NotImplemented(): JSX.Element {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Container>
       <Text>Not Implemented</Text>
-    </View>
+    </Container>
   );
 }
+
+const Container = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;

@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
+import styled from 'styled-components/native';
 
 export function FeedScreen(): JSX.Element {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Container>
       <Text>FeedScreen</Text>
-    </View>
+    </Container>
   );
 }
+
+const Container = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;

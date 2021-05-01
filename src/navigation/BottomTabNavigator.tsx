@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { SvgProps } from 'react-native-svg';
+import { DefaultTheme, useTheme } from 'styled-components/native';
 import { SearchScreen } from '../screens/SearchScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { NotImplemented } from '../screens/NotImplemented';
@@ -28,16 +29,17 @@ const SCREEN_COMPONENT_MAP: Record<BOTTOM_TAB_SCREENS, FC<SvgProps>> = {
 function createTabBarIcon(
   screen: BOTTOM_TAB_SCREENS,
   focused: boolean,
+  { color }: DefaultTheme,
 ): JSX.Element {
   const Component = SCREEN_COMPONENT_MAP[screen];
-  return (
-    <Component width={24} height={24} color={focused ? 'black' : 'gray'} />
-  );
+  return <Component color={focused ? color.black : color.gray} />;
 }
 
 const Tab = createBottomTabNavigator<TBottomTabParams>();
 
 export function BottomTabNavigator(): JSX.Element {
+  const theme = useTheme();
+
   return (
     <Tab.Navigator
       initialRouteName={BOTTOM_TAB_SCREENS.HOME}
@@ -48,7 +50,7 @@ export function BottomTabNavigator(): JSX.Element {
         component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ focused }) =>
-            createTabBarIcon(BOTTOM_TAB_SCREENS.HOME, focused),
+            createTabBarIcon(BOTTOM_TAB_SCREENS.HOME, focused, theme),
         }}
       />
       <Tab.Screen
@@ -56,7 +58,7 @@ export function BottomTabNavigator(): JSX.Element {
         component={SearchScreen}
         options={{
           tabBarIcon: ({ focused }) =>
-            createTabBarIcon(BOTTOM_TAB_SCREENS.SEARCH, focused),
+            createTabBarIcon(BOTTOM_TAB_SCREENS.SEARCH, focused, theme),
         }}
       />
       <Tab.Screen
@@ -64,7 +66,7 @@ export function BottomTabNavigator(): JSX.Element {
         component={NotImplemented}
         options={{
           tabBarIcon: ({ focused }) =>
-            createTabBarIcon(BOTTOM_TAB_SCREENS.REELS, focused),
+            createTabBarIcon(BOTTOM_TAB_SCREENS.REELS, focused, theme),
         }}
       />
       <Tab.Screen
@@ -72,7 +74,7 @@ export function BottomTabNavigator(): JSX.Element {
         component={NotImplemented}
         options={{
           tabBarIcon: ({ focused }) =>
-            createTabBarIcon(BOTTOM_TAB_SCREENS.SHOP, focused),
+            createTabBarIcon(BOTTOM_TAB_SCREENS.SHOP, focused, theme),
         }}
       />
       <Tab.Screen
@@ -80,7 +82,7 @@ export function BottomTabNavigator(): JSX.Element {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) =>
-            createTabBarIcon(BOTTOM_TAB_SCREENS.PROFILE, focused),
+            createTabBarIcon(BOTTOM_TAB_SCREENS.PROFILE, focused, theme),
         }}
       />
     </Tab.Navigator>
