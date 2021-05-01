@@ -11,11 +11,11 @@ import {
 import styled, { useTheme } from 'styled-components/native';
 import { DirectScreen } from '../screens/DirectScreen';
 import { NotImplemented } from '../screens/NotImplemented';
-import ArrowLeft from '../../assets/svg/arrow-left.svg';
 import Video from '../../assets/svg/video.svg';
 import Edit from '../../assets/svg/edit.svg';
 import { DIRECT_STACK_SCREENS } from './screens';
 import type { THomeSwitchParams } from './HomeSwipeNavigator';
+import { ArrowBack } from './ArrowBack';
 
 export type TDirectStackParams = Record<DIRECT_STACK_SCREENS, undefined>;
 
@@ -23,16 +23,6 @@ export type TDirectStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<TDirectStackParams>,
   StackNavigationProp<THomeSwitchParams>
 >;
-
-function HeaderLeft() {
-  const navigation = useNavigation<TDirectStackNavigationProps>();
-
-  return (
-    <ArrowContainer onPress={navigation.goBack}>
-      <ArrowLeft color="black" />
-    </ArrowContainer>
-  );
-}
 
 function HeaderRight() {
   const navigation = useNavigation<TDirectStackNavigationProps>();
@@ -61,7 +51,7 @@ export function DirectStackNavigator(): JSX.Element {
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        headerLeft: HeaderLeft,
+        headerLeft: ArrowBack,
       }}
     >
       <Stack.Screen
@@ -87,10 +77,6 @@ export function DirectStackNavigator(): JSX.Element {
     </Stack.Navigator>
   );
 }
-
-const ArrowContainer = styled.Pressable`
-  margin-left: ${({ theme }) => theme.spacing.l};
-`;
 
 const HeaderRightContainer = styled.View`
   flex-direction: row;

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  CardStyleInterpolators,
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
@@ -20,9 +21,12 @@ import {
 import type { THomeSwitchParams } from './HomeSwipeNavigator';
 import { NotImplemented } from '../screens/NotImplemented';
 import { FeedScreen } from '../screens/FeedScreen';
+import { ActivityScreen } from '../screens/ActivityScreen';
+import { ArrowBack } from './ArrowBack';
 
 export type THomeStackParams = {
   [HOME_STACK_SCREENS.FEED]: undefined;
+  [HOME_STACK_SCREENS.ACTIVITY]: undefined;
   [HOME_STACK_SCREENS.PROFILE]: undefined;
 };
 
@@ -54,7 +58,9 @@ function HeaderRight() {
       <IconContainer>
         <PlusRound color={theme.color.black} />
       </IconContainer>
-      <IconContainer>
+      <IconContainer
+        onPress={() => navigation.navigate(HOME_STACK_SCREENS.ACTIVITY)}
+      >
         <Heart color={theme.color.black} />
       </IconContainer>
       <IconContainer
@@ -74,7 +80,12 @@ const Stack = createStackNavigator<THomeStackParams>();
 
 export function HomeStackNavigator(): JSX.Element {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerLeft: ArrowBack,
+      }}
+    >
       <Stack.Screen
         name={HOME_STACK_SCREENS.FEED}
         component={FeedScreen}
@@ -83,6 +94,10 @@ export function HomeStackNavigator(): JSX.Element {
           headerLeft: HeaderLeft,
           headerRight: HeaderRight,
         }}
+      />
+      <Stack.Screen
+        name={HOME_STACK_SCREENS.ACTIVITY}
+        component={ActivityScreen}
       />
       <Stack.Screen
         name={HOME_STACK_SCREENS.PROFILE}

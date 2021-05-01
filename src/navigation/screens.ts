@@ -15,6 +15,7 @@ export enum DIRECT_STACK_SCREENS {
 
 export enum HOME_STACK_SCREENS {
   FEED = '@Home-Stack/Feed',
+  ACTIVITY = '@Home-Stack/Activity',
   PROFILE = '@Home-Stack/Profile',
 }
 
