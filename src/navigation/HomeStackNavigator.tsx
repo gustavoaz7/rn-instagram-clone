@@ -93,6 +93,10 @@ export function HomeStackNavigator(): JSX.Element {
           headerTitle: nullFn,
           headerLeft: HeaderLeft,
           headerRight: HeaderRight,
+          headerStyle: {
+            elevation: 0,
+            shadowOpacity: 0,
+          },
         }}
       />
       <Stack.Screen
