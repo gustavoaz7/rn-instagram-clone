@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { Text } from '../text';
 
 export function StoryPreviewItem(): JSX.Element {
+  const [isPressing, setIsPressing] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.timing(scale, {
+      toValue: isPressing ? 0.9 : 1,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
+  }, [isPressing, scale]);
+
   return (
-    <Container>
-      <RingContainer>
+    <Container
+      onPressIn={() => setIsPressing(true)}
+      onPressOut={() => setIsPressing(false)}
+    >
+      <RingContainer style={{ transform: [{ scale }] }}>
         <StatusRing>
           <AvatarContainer>
             <Avatar
@@ -22,12 +37,12 @@ export function StoryPreviewItem(): JSX.Element {
   );
 }
 
-const Container = styled.View`
+const Container = styled.Pressable`
   align-items: center;
   width: 76px;
 `;
 
-const RingContainer = styled.View`
+const RingContainer = styled(Animated.View)`
   position: relative;
   height: 74px;
   width: 74px;
