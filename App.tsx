@@ -1,12 +1,11 @@
 import React from 'react';
-import { ThemeProvider } from 'styled-components/native';
+import { Providers } from './src/Providers';
 import { Navigation } from './src/navigation/Navigation';
-import { theme } from './src/styles/theme';
 
 export default function App(): JSX.Element {
   return (
-    <ThemeProvider theme={theme}>
+    <Providers>
       <Navigation />
-    </ThemeProvider>
+    </Providers>
   );
 }

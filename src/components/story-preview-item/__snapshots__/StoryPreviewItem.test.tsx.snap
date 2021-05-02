@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - StoryPreviewItem matches snapshot 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "width": 76,
+      },
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "borderRadius": 74,
+        "height": 74,
+        "overflow": "hidden",
+        "position": "relative",
+        "transform": Array [
+          Object {
+            "scale": 1,
+          },
+        ],
+        "width": 74,
+      }
+    }
+  >
+    <ViewManagerAdapter_ExpoLinearGradient
+      proxiedProperties={
+        Object {
+          "colors": Array [
+            4292948076,
+            4294750021,
+          ],
+          "endPoint": Array [
+            0.3,
+            0.7,
+          ],
+          "locations": undefined,
+          "startPoint": Array [
+            0.7,
+            0.3,
+          ],
+        }
+      }
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 70,
+              "height": 70,
+              "left": 2,
+              "position": "absolute",
+              "top": 2,
+              "width": 70,
+            },
+          ]
+        }
+      >
+        <Image
+          source={
+            Object {
+              "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "borderRadius": 64,
+                "height": 64,
+                "left": 3,
+                "position": "absolute",
+                "top": 3,
+                "width": 64,
+              },
+            ]
+          }
+        />
+      </View>
+    </ViewManagerAdapter_ExpoLinearGradient>
+  </View>
+  <Text
+    numberOfLines={1}
+    style={
+      Array [
+        Object {
+          "color": "#262626",
+        },
+      ]
+    }
+  >
+    veryLongNameHere
+  </Text>
+</View>
+`;
