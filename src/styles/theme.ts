@@ -22,6 +22,11 @@ export const theme = {
     black: '#262626',
     gray: '#8e8e8e',
   },
+  font: {
+    size: {
+      s: '12px',
+    },
+  },
 };
 
 export type TTheme = typeof theme;

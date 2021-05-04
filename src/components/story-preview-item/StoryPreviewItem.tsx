@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 import { Text } from '../text';
 
+export const SCALE_DURATION = 150;
+
 export function StoryPreviewItem(): JSX.Element {
   const [isPressing, setIsPressing] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
@@ -11,7 +13,7 @@ export function StoryPreviewItem(): JSX.Element {
   useEffect(() => {
     Animated.timing(scale, {
       toValue: isPressing ? 0.9 : 1,
-      duration: 150,
+      duration: SCALE_DURATION,
       useNativeDriver: true,
     }).start();
   }, [isPressing, scale]);
