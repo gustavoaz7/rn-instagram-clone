@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - PostItem matches snapshot 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "width": "100%",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "paddingBottom": 5,
+          "paddingLeft": 15,
+          "paddingRight": 15,
+          "paddingTop": 5,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+          },
+        ]
+      }
+    >
+      <ViewManagerAdapter_ExpoLinearGradient
+        proxiedProperties={
+          Object {
+            "colors": Array [
+              4292948076,
+              4294750021,
+            ],
+            "endPoint": Array [
+              0.3,
+              0.7,
+            ],
+            "locations": undefined,
+            "startPoint": Array [
+              0.7,
+              0.3,
+            ],
+          }
+        }
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "borderRadius": 40,
+              "height": 40,
+              "justifyContent": "center",
+              "width": 40,
+            },
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderRadius": 37,
+                "height": 37,
+                "justifyContent": "center",
+                "width": 37,
+              },
+            ]
+          }
+        >
+          <Image
+            source={
+              Object {
+                "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+              }
+            }
+            style={
+              Array [
+                Object {
+                  "borderRadius": 33,
+                  "height": 33,
+                  "width": 33,
+                },
+              ]
+            }
+          />
+        </View>
+      </ViewManagerAdapter_ExpoLinearGradient>
+      <View
+        style={
+          Array [
+            Object {
+              "marginLeft": 10,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#262626",
+              },
+              Object {
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        >
+          Username
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#262626",
+              },
+              Object {
+                "fontSize": 12,
+                "lineHeight": 14,
+              },
+            ]
+          }
+        >
+          Location
+        </Text>
+      </View>
+    </View>
+    <SvgMock
+      color="black"
+    />
+  </View>
+  <Image
+    source={
+      Object {
+        "uri": "http://placeimg.com/640/480/abstract",
+      }
+    }
+    style={
+      Array [
+        Object {
+          "height": 750,
+          "width": 750,
+        },
+      ]
+    }
+  />
+  <View
+    style={
+      Array [
+        Object {
+          "paddingBottom": 0,
+          "paddingLeft": 15,
+          "paddingRight": 15,
+          "paddingTop": 0,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+            },
+          ]
+        }
+      >
+        <SvgMock
+          color="black"
+          style={
+            Array [
+              Object {
+                "marginRight": 20,
+              },
+            ]
+          }
+        />
+        <SvgMock
+          color="black"
+          style={
+            Array [
+              Object {
+                "marginRight": 20,
+              },
+            ]
+          }
+        />
+        <SvgMock
+          color="black"
+          style={
+            Array [
+              Object {
+                "marginRight": 20,
+              },
+            ]
+          }
+        />
+      </View>
+      <SvgMock
+        color="black"
+      />
+    </View>
+    <Text
+      style={
+        Array [
+          Object {
+            "color": "#262626",
+          },
+          Object {
+            "fontWeight": "bold",
+          },
+        ]
+      }
+    >
+      123 likes
+    </Text>
+    <Text
+      style={
+        Array [
+          Object {
+            "color": "#262626",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        Username 
+      </Text>
+      legend
+    </Text>
+    <Text
+      style={
+        Array [
+          Object {
+            "color": "#262626",
+          },
+          Object {
+            "color": "#8e8e8e",
+            "fontSize": 12,
+            "marginTop": 5,
+          },
+        ]
+      }
+    >
+      Formatted time
+    </Text>
+  </View>
+</View>
+`;
