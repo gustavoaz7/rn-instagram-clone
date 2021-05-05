@@ -11,9 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - name: yarn install
+      uses: borales/actions-yarn@v2.0.0
       with:
-        node-version: '14'
-    - run: npm ci
-    - run: npm lint
-    - run: npm test
+        cmd: install
+    - name: yarn lint
+      uses: borales/actions-yarn@v2.0.0
+      with:
+        cmd: lint
+    - name: yarn test
+      uses: borales/actions-yarn@v2.0.0
+      with:
+        cmd: test
