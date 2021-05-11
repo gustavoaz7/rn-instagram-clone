@@ -75,7 +75,9 @@
         "jest": true
       },
       "rules": {
-        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+        "react/display-name": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
       }
     },
     {

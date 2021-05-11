@@ -1,8 +1,4 @@
-const packagesToTranspile = [
-  'react-native',
-  'expo-linear-gradient',
-  '@unimodules',
-];
+const packagesToTranspile = ['react-native', 'expo-*', '@unimodules'];
 
 module.exports = {
   preset: 'jest-expo',
