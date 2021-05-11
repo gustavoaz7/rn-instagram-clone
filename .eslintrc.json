@@ -55,6 +55,7 @@
     "react-native/no-raw-text": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "react/display-name": "off",
     "react/require-default-props": "off",
     "react/prop-types": "off"
   },
@@ -76,7 +77,6 @@
       },
       "rules": {
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-        "react/display-name": "off",
         "@typescript-eslint/ban-ts-comment": "off"
       }
     },
