@@ -17,7 +17,7 @@ export const initialState: TUserState = {
   error: null,
 };
 
-const getUser = createAsyncThunk(SLICE_NAME, async (_, { rejectWithValue }) => {
+const login = createAsyncThunk(SLICE_NAME, async (_, { rejectWithValue }) => {
   try {
     const user = await fakeLogin();
     return user;
@@ -33,14 +33,14 @@ export const userSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(getUser.pending, state => {
+      .addCase(login.pending, state => {
         state.loading = true;
       })
-      .addCase(getUser.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.value = action.payload;
@@ -51,7 +51,7 @@ export const userSlice = createSlice({
 
 export const userReducer = userSlice.reducer;
 
-export const userActions = { ...userSlice.actions, getUser };
+export const userActions = { ...userSlice.actions, login };
 
 const useUserSelector = () => useAppSelector(state => state.user.value);
 const useLoadingSelector = () => useAppSelector(state => state.user.loading);

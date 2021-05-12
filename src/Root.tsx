@@ -7,19 +7,17 @@ import { userActions, userSelectors } from './redux/user';
 
 export const Root = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const login = useCallback(() => dispatch(userActions.getUser()), [dispatch]);
+  const login = useCallback(() => dispatch(userActions.login()), [dispatch]);
 
   useEffect(() => {
     login();
   }, [login]);
 
-  const user = userSelectors.useUserSelector();
-  const loading = userSelectors.useLoadingSelector();
   const error = userSelectors.useErrorSelector();
 
   if (error) {
     Alert.alert(
-      'Failed to login.',
+      'Failed to (fake)Login.',
       'Please make sure server is running and try again.',
       [
         {
@@ -30,6 +28,8 @@ export const Root = (): JSX.Element => {
     );
   }
 
+  const user = userSelectors.useUserSelector();
+  const loading = userSelectors.useLoadingSelector();
   const isAppReady = !loading && user;
 
   return isAppReady ? <Navigation /> : <AppLoading />;

@@ -76,8 +76,7 @@
         "jest": true
       },
       "rules": {
-        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-        "@typescript-eslint/ban-ts-comment": "off"
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
       }
     },
     {

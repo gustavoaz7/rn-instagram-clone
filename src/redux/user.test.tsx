@@ -9,7 +9,7 @@ jest.mock('../api');
 const fakeLoginMock = fakeLogin as jest.Mock;
 
 describe('redux - user', () => {
-  describe('getUser', () => {
+  describe('login', () => {
     beforeEach(() => {
       fakeLoginMock.mockClear();
     });
@@ -21,7 +21,7 @@ describe('redux - user', () => {
 
       expect(store.getState()).toEqual(initialState);
 
-      const action = store.dispatch(userActions.getUser());
+      const action = store.dispatch(userActions.login());
 
       expect(fakeLoginMock).toHaveBeenCalledTimes(1);
       expect(store.getState()).toEqual({
@@ -45,7 +45,7 @@ describe('redux - user', () => {
 
       expect(store.getState()).toEqual(initialState);
 
-      const action = store.dispatch(userActions.getUser());
+      const action = store.dispatch(userActions.login());
 
       expect(fakeLoginMock).toHaveBeenCalledTimes(1);
       expect(store.getState()).toEqual({
@@ -69,14 +69,13 @@ describe('redux - user', () => {
         reducer: combineReducers({ user: userReducer }),
       });
       const { result } = renderHook(() => userSelectors.useLoadingSelector(), {
-        // @ts-ignore
         wrapper: props => <Providers {...props} store={store} />,
       });
 
       expect(result.current).toBe(initialState.loading);
     });
 
-    // `user` and `error` are both initiall null. Hence an action to asert
+    // `user` and `error` are both initially null. Hence an action to asert
     // for different values.
     // This breaks the idea of *unit testing* but otherwise we could end up
     // with false-positives.
@@ -87,12 +86,11 @@ describe('redux - user', () => {
       const user = 'yo';
       fakeLoginMock.mockResolvedValueOnce(user);
       const { result } = renderHook(() => userSelectors.useUserSelector(), {
-        // @ts-ignore
         wrapper: props => <Providers {...props} store={store} />,
       });
 
       await act(async () => {
-        await store.dispatch(userActions.getUser());
+        await store.dispatch(userActions.login());
       });
 
       expect(result.current).toBe(user);
@@ -105,12 +103,11 @@ describe('redux - user', () => {
       const error = new Error('noo');
       fakeLoginMock.mockRejectedValueOnce(error);
       const { result } = renderHook(() => userSelectors.useErrorSelector(), {
-        // @ts-ignore
         wrapper: props => <Providers {...props} store={store} />,
       });
 
       await act(async () => {
-        await store.dispatch(userActions.getUser());
+        await store.dispatch(userActions.login());
       });
 
       expect(result.current).toBe(error.message);
