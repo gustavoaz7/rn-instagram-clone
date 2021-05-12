@@ -1,8 +1,4 @@
-const packagesToTranspile = [
-  'react-native',
-  'expo-linear-gradient',
-  '@unimodules',
-];
+const packagesToTranspile = ['react-native', 'expo-*', '@unimodules'];
 
 module.exports = {
   preset: 'jest-expo',
@@ -11,12 +7,7 @@ module.exports = {
     `/node_modules/(?!${packagesToTranspile.join('|')})`,
   ],
   collectCoverage: true,
-  collectCoverageFrom: [
-    '**/*.{ts,tsx}',
-    '!**/coverage/**',
-    '!**/node_modules/**',
-    '!./App.tsx',
-  ],
+  collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
   moduleNameMapper: {
     '\\.svg': '<rootDir>/__mocks__/svgMock.js',
   },
