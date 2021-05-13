@@ -136,7 +136,8 @@ export const generatePost = (user: TUser): TPost => {
     // 30% -> no captiopn
     ...(Math.random() < 0.7 && {
       // 50-50 caption long vs short
-      caption: Math.random() < 0.5 ? faker.lorem.text() : faker.lorem.words(5),
+      caption:
+        Math.random() < 0.5 ? faker.lorem.paragraph() : faker.lorem.words(5),
     }),
     likedBy: [...Array(faker.datatype.number(20))].map(() =>
       faker.internet.userName(),

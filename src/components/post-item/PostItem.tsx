@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -22,6 +23,17 @@ export const PostItem = memo(function PostItem({
   // comments,
   location,
 }: TPostItemProps): JSX.Element {
+  const [captionLines, setCaptionLines] = useState(0);
+  const [captionExpanded, setCaptionExpanded] = useState(false);
+  const handleCaptionLayout = useCallback(
+    (e: NativeSyntheticEvent<TextLayoutEventData>) => {
+      setCaptionLines(e.nativeEvent.lines.length);
+    },
+    [],
+  );
+  const handleCaptionExpand = useCallback(() => {
+    setCaptionExpanded(true);
+  }, []);
   const hasLikes = likedBy.length > 0;
   const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
 
@@ -61,10 +73,19 @@ export const PostItem = memo(function PostItem({
           </BoldText>
         ) : null}
         {caption ? (
-          <Text>
-            <BoldText>{owner.username} </BoldText>
-            {caption}
-          </Text>
+          <>
+            <Text
+              onTextLayout={handleCaptionLayout}
+              {...(!captionExpanded && { numberOfLines: 2 })}
+              testID="post-caption"
+            >
+              <BoldText>{owner.username} </BoldText>
+              {caption}
+            </Text>
+            {captionLines > 2 && !captionExpanded ? (
+              <ShowMoreText onPress={handleCaptionExpand}>more</ShowMoreText>
+            ) : null}
+          </>
         ) : null}
         {/* TODO: comments */}
         <Time>{dateToString(new Date(createdAt))}</Time>
@@ -160,6 +181,10 @@ const Comment = styled(CommentSvg)`
 
 const Direct = styled(DirectSvg)`
   ${actionsSvgStyle};
+`;
+
+const ShowMoreText = styled(Text)`
+  color: ${({ theme }) => theme.color.gray};
 `;
 
 const Time = styled(Text)`

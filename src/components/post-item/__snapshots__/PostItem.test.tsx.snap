@@ -245,6 +245,8 @@ exports[`components - PostItem matches snapshot 1`] = `
       likes
     </Text>
     <Text
+      numberOfLines={2}
+      onTextLayout={[Function]}
       style={
         Array [
           Object {
@@ -252,6 +254,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           },
         ]
       }
+      testID="post-caption"
     >
       <Text
         style={
