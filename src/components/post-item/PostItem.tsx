@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled, { css } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Text } from '../text';
@@ -8,8 +8,23 @@ import CommentSvg from '../../../assets/svg/comment.svg';
 import HeartSvg from '../../../assets/svg/heart.svg';
 import DirectSvg from '../../../assets/svg/direct.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
+import { TPost } from '../../types';
+import { dateToString } from '../../utils/date';
 
-export function PostItem(): JSX.Element {
+type TPostItemProps = TPost;
+
+export const PostItem = memo(function PostItem({
+  owner,
+  createdAt,
+  medias,
+  caption,
+  likedBy,
+  // comments,
+  location,
+}: TPostItemProps): JSX.Element {
+  const hasLikes = likedBy.length > 0;
+  const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
+
   return (
     <Container>
       <Header>
@@ -18,19 +33,19 @@ export function PostItem(): JSX.Element {
             <AvatarInnerRing>
               <Avatar
                 source={{
-                  uri: 'https://cdn.fakercloud.com/avatars/spbroma_128.jpg',
+                  uri: owner.profilePicUrl,
                 }}
               />
             </AvatarInnerRing>
           </StatusRing>
           <TitleContainer>
-            <BoldText>Username</BoldText>
-            <Subtitle>Location</Subtitle>
+            <BoldText>{owner.username}</BoldText>
+            {location ? <Subtitle>{location}</Subtitle> : null}
           </TitleContainer>
         </Row>
         <MenuVerticalSvg color="black" />
       </Header>
-      <PostImage source={{ uri: 'http://placeimg.com/640/480/abstract' }} />
+      <PostImage source={{ uri: medias[0].url }} />
       <Footer>
         <ActionsRow>
           <Row>
@@ -40,26 +55,34 @@ export function PostItem(): JSX.Element {
           </Row>
           <BookmarkSvg color="black" />
         </ActionsRow>
-        <BoldText>123 likes</BoldText>
-        <Text>
-          <BoldText>Username </BoldText>
-          legend
-        </Text>
+        {hasLikes ? (
+          <BoldText>
+            {likedBy.length} {likeText}
+          </BoldText>
+        ) : null}
+        {caption ? (
+          <Text>
+            <BoldText>{owner.username} </BoldText>
+            {caption}
+          </Text>
+        ) : null}
         {/* TODO: comments */}
-        <Time>Formatted time</Time>
+        <Time>{dateToString(new Date(createdAt))}</Time>
       </Footer>
     </Container>
   );
-}
+});
 
 const centerStyle = css`
   align-items: center;
   justify-content: center;
 `;
+
 const Row = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
 const Container = styled.View`
   width: 100%;
 `;

@@ -61,7 +61,7 @@ export const generateComment = (
   owner: generateOwner(),
   // Disclaimer: might cause a comment to be more recent than
   // the post itself.
-  createdAt: faker.date.recent(10),
+  createdAt: faker.date.recent(10).getTime(),
   text: faker.lorem.sentence(),
   likedBy: [...Array(faker.datatype.number(4))].map(() =>
     faker.internet.userName(),
@@ -126,7 +126,7 @@ export const generatePost = (user: TUser): TPost => {
   return {
     id: uuidv4(),
     owner,
-    createdAt: faker.date.recent(10),
+    createdAt: faker.date.recent(10).getTime(),
     // 70% -> single image item
     medias: [
       ...Array(
