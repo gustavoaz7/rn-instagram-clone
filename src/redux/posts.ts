@@ -6,13 +6,13 @@ import { useAppSelector } from './hooks';
 const SLICE_NAME = '@@POSTS';
 
 export type TPostsState = Readonly<{
-  value: TPost[];
+  posts: TPost[];
   loading: boolean;
   error: string | null;
 }>;
 
 export const initialState: TPostsState = {
-  value: [],
+  posts: [],
   loading: false,
   error: null,
 };
@@ -46,7 +46,7 @@ export const postsSlice = createSlice({
       .addCase(getPosts.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.value = action.payload;
+        state.posts = action.payload;
       });
   },
 });
@@ -56,12 +56,4 @@ export const postsReducer = postsSlice.reducer;
 
 export const postsActions = { ...postsSlice.actions, getPosts };
 
-const usePostsSelector = () => useAppSelector(state => state.posts.value);
-const useLoadingSelector = () => useAppSelector(state => state.posts.loading);
-const useErrorSelector = () => useAppSelector(state => state.posts.error);
-
-export const postsSelectors = {
-  usePostsSelector,
-  useLoadingSelector,
-  useErrorSelector,
-};
+export const usePostsSelector = () => useAppSelector(state => state.posts);

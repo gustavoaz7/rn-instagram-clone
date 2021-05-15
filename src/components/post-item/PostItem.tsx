@@ -38,7 +38,7 @@ export const PostItem = memo(function PostItem({
   const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
 
   return (
-    <Container>
+    <Container testID="PostItem">
       <Header>
         <Row>
           <StatusRing>
@@ -106,6 +106,7 @@ const Row = styled.View`
 
 const Container = styled.View`
   width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing.l};
 `;
 
 const Header = styled.View`

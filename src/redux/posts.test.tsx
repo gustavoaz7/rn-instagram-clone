@@ -7,7 +7,7 @@ import {
   initialState,
   postsActions,
   postsReducer,
-  postsSelectors,
+  usePostsSelector,
 } from './posts';
 
 jest.mock('../api');
@@ -39,7 +39,7 @@ describe('redux - posts', () => {
       expect(store.getState()).toEqual({
         loading: false,
         error: null,
-        value: posts,
+        posts,
       });
     });
 
@@ -63,43 +63,19 @@ describe('redux - posts', () => {
       expect(store.getState()).toEqual({
         loading: false,
         error: error.message,
-        value: [],
+        posts: [],
       });
     });
   });
 
-  describe('selectors', () => {
-    it('useLoadingSelector', () => {
-      const store = configureStore({
-        reducer: combineReducers({ posts: postsReducer }),
-      });
-      const { result } = renderHook(() => postsSelectors.useLoadingSelector(), {
-        wrapper: props => <Providers {...props} store={store} />,
-      });
-
-      expect(result.current).toBe(initialState.loading);
+  it('usePostsSelector returns correct state', () => {
+    const store = configureStore({
+      reducer: combineReducers({ posts: postsReducer }),
+    });
+    const { result } = renderHook(() => usePostsSelector(), {
+      wrapper: props => <Providers {...props} store={store} />,
     });
 
-    it('usePostsSelector', async () => {
-      const store = configureStore({
-        reducer: combineReducers({ posts: postsReducer }),
-      });
-      const { result } = renderHook(() => postsSelectors.usePostsSelector(), {
-        wrapper: props => <Providers {...props} store={store} />,
-      });
-
-      expect(result.current).toBe(initialState.value);
-    });
-
-    it('useErrorSelector', async () => {
-      const store = configureStore({
-        reducer: combineReducers({ posts: postsReducer }),
-      });
-      const { result } = renderHook(() => postsSelectors.useErrorSelector(), {
-        wrapper: props => <Providers {...props} store={store} />,
-      });
-
-      expect(result.current).toBe(initialState.error);
-    });
+    expect(result.current).toBe(initialState);
   });
 });
