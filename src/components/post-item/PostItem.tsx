@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -8,29 +9,55 @@ import CommentSvg from '../../../assets/svg/comment.svg';
 import HeartSvg from '../../../assets/svg/heart.svg';
 import DirectSvg from '../../../assets/svg/direct.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
+import { TPost } from '../../types';
+import { dateToString } from '../../utils/date';
 
-export function PostItem(): JSX.Element {
+type TPostItemProps = TPost;
+
+export const PostItem = memo(function PostItem({
+  owner,
+  createdAt,
+  medias,
+  caption,
+  likedBy,
+  // comments,
+  location,
+}: TPostItemProps): JSX.Element {
+  const [captionLines, setCaptionLines] = useState(0);
+  const [captionExpanded, setCaptionExpanded] = useState(false);
+  const handleCaptionLayout = useCallback(
+    (e: NativeSyntheticEvent<TextLayoutEventData>) => {
+      setCaptionLines(e.nativeEvent.lines.length);
+    },
+    [],
+  );
+  const handleCaptionExpand = useCallback(() => {
+    setCaptionExpanded(true);
+  }, []);
+  const hasLikes = likedBy.length > 0;
+  const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
+
   return (
-    <Container>
+    <Container testID="PostItem">
       <Header>
         <Row>
           <StatusRing>
             <AvatarInnerRing>
               <Avatar
                 source={{
-                  uri: 'https://cdn.fakercloud.com/avatars/spbroma_128.jpg',
+                  uri: owner.profilePicUrl,
                 }}
               />
             </AvatarInnerRing>
           </StatusRing>
           <TitleContainer>
-            <BoldText>Username</BoldText>
-            <Subtitle>Location</Subtitle>
+            <BoldText>{owner.username}</BoldText>
+            {location ? <Subtitle>{location}</Subtitle> : null}
           </TitleContainer>
         </Row>
         <MenuVerticalSvg color="black" />
       </Header>
-      <PostImage source={{ uri: 'http://placeimg.com/640/480/abstract' }} />
+      <PostImage source={{ uri: medias[0].url }} />
       <Footer>
         <ActionsRow>
           <Row>
@@ -40,28 +67,46 @@ export function PostItem(): JSX.Element {
           </Row>
           <BookmarkSvg color="black" />
         </ActionsRow>
-        <BoldText>123 likes</BoldText>
-        <Text>
-          <BoldText>Username </BoldText>
-          legend
-        </Text>
+        {hasLikes ? (
+          <BoldText>
+            {likedBy.length} {likeText}
+          </BoldText>
+        ) : null}
+        {caption ? (
+          <>
+            <Text
+              onTextLayout={handleCaptionLayout}
+              {...(!captionExpanded && { numberOfLines: 2 })}
+              testID="post-caption"
+            >
+              <BoldText>{owner.username} </BoldText>
+              {caption}
+            </Text>
+            {captionLines > 2 && !captionExpanded ? (
+              <ShowMoreText onPress={handleCaptionExpand}>more</ShowMoreText>
+            ) : null}
+          </>
+        ) : null}
         {/* TODO: comments */}
-        <Time>Formatted time</Time>
+        <Time>{dateToString(new Date(createdAt))}</Time>
       </Footer>
     </Container>
   );
-}
+});
 
 const centerStyle = css`
   align-items: center;
   justify-content: center;
 `;
+
 const Row = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
 const Container = styled.View`
   width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing.l};
 `;
 
 const Header = styled.View`
@@ -137,6 +182,10 @@ const Comment = styled(CommentSvg)`
 
 const Direct = styled(DirectSvg)`
   ${actionsSvgStyle};
+`;
+
+const ShowMoreText = styled(Text)`
+  color: ${({ theme }) => theme.color.gray};
 `;
 
 const Time = styled(Text)`

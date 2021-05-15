@@ -5,10 +5,12 @@ exports[`components - PostItem matches snapshot 1`] = `
   style={
     Array [
       Object {
+        "marginBottom": 20,
         "width": "100%",
       },
     ]
   }
+  testID="PostItem"
 >
   <View
     style={
@@ -82,7 +84,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           <Image
             source={
               Object {
-                "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+                "uri": "https://avatars.githubusercontent.com/u/28453820?v=4",
               }
             }
             style={
@@ -118,7 +120,7 @@ exports[`components - PostItem matches snapshot 1`] = `
             ]
           }
         >
-          Username
+          gustavoaz7
         </Text>
         <Text
           style={
@@ -133,7 +135,7 @@ exports[`components - PostItem matches snapshot 1`] = `
             ]
           }
         >
-          Location
+          Daronville
         </Text>
       </View>
     </View>
@@ -144,7 +146,7 @@ exports[`components - PostItem matches snapshot 1`] = `
   <Image
     source={
       Object {
-        "uri": "http://placeimg.com/640/480/abstract",
+        "uri": "http://placeimg.com/640/480/cats",
       }
     }
     style={
@@ -240,9 +242,13 @@ exports[`components - PostItem matches snapshot 1`] = `
         ]
       }
     >
-      123 likes
+      3
+       
+      likes
     </Text>
     <Text
+      numberOfLines={2}
+      onTextLayout={[Function]}
       style={
         Array [
           Object {
@@ -250,6 +256,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           },
         ]
       }
+      testID="post-caption"
     >
       <Text
         style={
@@ -263,9 +270,10 @@ exports[`components - PostItem matches snapshot 1`] = `
           ]
         }
       >
-        Username 
+        gustavoaz7
+         
       </Text>
-      legend
+      Tempora rerum minima dolor quibusdam blanditiis ea et. Earum iste iure expedita velit laudantium inventore quia qui. Distinctio consectetur accusamus voluptatum hic rem at quas. Incidunt ipsum sed illo molestiae vitae ullam sit consequatur autem. Ut voluptatem nisi. Velit ex dignissimos sed aut.
     </Text>
     <Text
       style={
@@ -281,7 +289,7 @@ exports[`components - PostItem matches snapshot 1`] = `
         ]
       }
     >
-      Formatted time
+      1 hour ago
     </Text>
   </View>
 </View>

@@ -24,7 +24,7 @@ export type TFeedItemMedia = {
 export type TComment = {
   id: string;
   owner: TOwner;
-  createdAt: Date;
+  createdAt: number;
   text: string;
   likedBy: string[];
 };
@@ -32,7 +32,7 @@ export type TComment = {
 export type TPost = {
   id: string;
   owner: TOwner;
-  createdAt: Date;
+  createdAt: number;
   medias: TFeedItemMedia[];
   caption?: string;
   likedBy: string[];

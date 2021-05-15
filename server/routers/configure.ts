@@ -36,6 +36,7 @@ configureRouter.post('/', (req, res) => {
   [currentUser, ...users].forEach(user => {
     database.posts.push(...[...Array(20)].map(() => generatePost(user)));
   });
+  database.posts.sort((a, b) => b.createdAt - a.createdAt);
 
   res.send(currentUser);
 });
