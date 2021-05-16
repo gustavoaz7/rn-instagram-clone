@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchPosts } from '../api';
+import { fetchPosts, TFetchPostsParams, TPostsResponse } from '../api';
 import { TPost } from '../types';
 import { useAppSelector } from './hooks';
 
@@ -7,21 +7,23 @@ const SLICE_NAME = '@@POSTS';
 
 export type TPostsState = Readonly<{
   posts: TPost[];
+  canFetchMorePosts: boolean;
   loading: boolean;
   error: string | null;
 }>;
 
 export const initialState: TPostsState = {
   posts: [],
+  canFetchMorePosts: true,
   loading: false,
   error: null,
 };
 
-const getPosts = createAsyncThunk(
+const getPosts = createAsyncThunk<TPostsResponse, TFetchPostsParams>(
   SLICE_NAME,
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const posts = await fetchPosts();
+      const posts = await fetchPosts(params);
       return posts;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -46,7 +48,8 @@ export const postsSlice = createSlice({
       .addCase(getPosts.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.posts = action.payload;
+        state.posts = [...state.posts, ...action.payload.posts];
+        state.canFetchMorePosts = action.payload.canFetchMorePosts;
       });
   },
 });
