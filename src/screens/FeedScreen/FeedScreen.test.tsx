@@ -1,7 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import { act, render } from '@testing-library/react-native';
 import Toast from 'react-native-root-toast';
-import { FeedScreen } from './FeedScreen';
+import { FlatList } from 'react-native';
+import { FeedScreen, POSTS_LIMIT } from './FeedScreen';
 import { Providers } from '../../Providers';
 import * as reduxPosts from '../../redux/posts';
 import * as reduxHooks from '../../redux/hooks';
@@ -39,6 +40,7 @@ describe('screens - FeedScreen', () => {
     render(<FeedScreen />, { wrapper: Providers });
 
     expect(getPostsSpy).toHaveBeenCalledTimes(1);
+    expect(getPostsSpy).toHaveBeenCalledWith({ offset: 0, limit: POSTS_LIMIT });
     expect(dispatchMock).toHaveBeenCalledTimes(1);
     expect(dispatchMock).toHaveBeenCalledWith(action);
     getPostsSpy.mockRestore();
@@ -46,7 +48,7 @@ describe('screens - FeedScreen', () => {
 
   describe('when posts are loading', () => {
     beforeEach(() => {
-      useSelectorSpy.mockReturnValueOnce({
+      useSelectorSpy.mockReturnValue({
         ...reduxPosts.initialState,
         loading: true,
       });
@@ -63,7 +65,7 @@ describe('screens - FeedScreen', () => {
     const posts = [createMockPost(), createMockPost()];
 
     beforeEach(() => {
-      useSelectorSpy.mockReturnValueOnce({ ...reduxPosts.initialState, posts });
+      useSelectorSpy.mockReturnValue({ ...reduxPosts.initialState, posts });
     });
 
     it('renders post items', () => {
@@ -72,6 +74,48 @@ describe('screens - FeedScreen', () => {
       });
 
       expect(getAllByTestId('PostItem')).toHaveLength(posts.length);
+    });
+
+    describe('when reaches the end of list', () => {
+      beforeEach(() => {
+        useSelectorSpy.mockReturnValue({
+          ...reduxPosts.initialState,
+          loading: true,
+          posts,
+        });
+      });
+
+      it('dispatches a second get posts action', () => {
+        const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
+        // eslint-disable-next-line camelcase
+        const { UNSAFE_getByType } = render(<FeedScreen />, {
+          wrapper: Providers,
+        });
+
+        expect(getPostsSpy).toHaveBeenCalledTimes(1);
+        getPostsSpy.mockReset();
+
+        act(() => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(getPostsSpy).toHaveBeenCalledTimes(1);
+        expect(getPostsSpy).toHaveBeenCalledWith({
+          offset: POSTS_LIMIT,
+          limit: POSTS_LIMIT,
+        });
+
+        getPostsSpy.mockRestore();
+      });
+
+      it('rendes loading as footer of list', async () => {
+        const { queryByTestId } = render(<FeedScreen />, {
+          wrapper: Providers,
+        });
+
+        expect(queryByTestId('loadingPosts')).toBeFalsy();
+        expect(queryByTestId('loadingMorePosts')).toBeTruthy();
+      });
     });
   });
 
