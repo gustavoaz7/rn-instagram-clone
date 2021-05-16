@@ -12,21 +12,29 @@ export function FeedScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const [offset, setOffset] = useState(0);
 
+  const {
+    posts,
+    loading: loadingPosts,
+    error: errorPosts,
+    canFetchMorePosts,
+  } = usePostsSelector();
+
   const getPosts = useCallback(() => {
-    dispatch(postsActions.getPosts({ offset, limit: POSTS_LIMIT }));
-    setOffset(offset + POSTS_LIMIT);
-  }, [dispatch, offset]);
+    if (canFetchMorePosts) {
+      dispatch(postsActions.getPosts({ offset, limit: POSTS_LIMIT }));
+      setOffset(offset + POSTS_LIMIT);
+    }
+  }, [canFetchMorePosts, dispatch, offset]);
+
+  const LoadingMorePosts = useCallback(
+    () => (loadingPosts ? <Loading testID="loadingMorePosts" /> : null),
+    [loadingPosts],
+  );
 
   useEffect(() => {
     getPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // didMount
-
-  const {
-    posts,
-    loading: loadingPosts,
-    error: errorPosts,
-  } = usePostsSelector();
 
   useEffect(() => {
     if (errorPosts) {
@@ -46,7 +54,7 @@ export function FeedScreen(): JSX.Element {
           keyExtractor={item => item.id}
           onEndReached={getPosts}
           onEndReachedThreshold={2}
-          ListFooterComponent={() => <Loading testID="loadingMorePosts" />}
+          ListFooterComponent={LoadingMorePosts}
         />
       ) : null}
     </Container>

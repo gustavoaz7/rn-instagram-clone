@@ -55,9 +55,10 @@ describe('screens - FeedScreen', () => {
     });
 
     it('renders loading', () => {
-      const { getByTestId } = render(<FeedScreen />, { wrapper: Providers });
+      const { queryByTestId } = render(<FeedScreen />, { wrapper: Providers });
 
-      expect(getByTestId('loadingPosts')).toBeTruthy();
+      expect(queryByTestId('loadingPosts')).toBeTruthy();
+      expect(queryByTestId('loadingMorePosts')).toBeFalsy();
     });
   });
 
@@ -115,6 +116,32 @@ describe('screens - FeedScreen', () => {
 
         expect(queryByTestId('loadingPosts')).toBeFalsy();
         expect(queryByTestId('loadingMorePosts')).toBeTruthy();
+      });
+
+      describe('and there is no more posts to fetch', () => {
+        beforeEach(() => {
+          useSelectorSpy.mockReturnValue({
+            ...reduxPosts.initialState,
+            posts,
+            canFetchMorePosts: false,
+          });
+        });
+
+        it('does not dispatches another get posts action', () => {
+          const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
+          // eslint-disable-next-line camelcase
+          const { UNSAFE_getByType } = render(<FeedScreen />, {
+            wrapper: Providers,
+          });
+
+          act(() => {
+            UNSAFE_getByType(FlatList).props.onEndReached();
+          });
+
+          expect(getPostsSpy).not.toHaveBeenCalled();
+
+          getPostsSpy.mockRestore();
+        });
       });
     });
   });
