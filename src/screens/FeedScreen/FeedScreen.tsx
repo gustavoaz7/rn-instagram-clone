@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import Toast from 'react-native-root-toast';
@@ -6,17 +6,35 @@ import { PostItem } from '../../components/post-item/PostItem';
 import { useAppDispatch } from '../../redux/hooks';
 import { postsActions, usePostsSelector } from '../../redux/posts';
 
+export const POSTS_LIMIT = 20;
+
 export function FeedScreen(): JSX.Element {
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(postsActions.getPosts());
-  }, [dispatch]);
+  const [offset, setOffset] = useState(0);
 
   const {
     posts,
     loading: loadingPosts,
     error: errorPosts,
+    canFetchMorePosts,
   } = usePostsSelector();
+
+  const getPosts = useCallback(() => {
+    if (canFetchMorePosts) {
+      dispatch(postsActions.getPosts({ offset, limit: POSTS_LIMIT }));
+      setOffset(offset + POSTS_LIMIT);
+    }
+  }, [canFetchMorePosts, dispatch, offset]);
+
+  const LoadingMorePosts = useCallback(
+    () => (loadingPosts ? <Loading testID="loadingMorePosts" /> : null),
+    [loadingPosts],
+  );
+
+  useEffect(() => {
+    getPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // didMount
 
   useEffect(() => {
     if (errorPosts) {
@@ -28,12 +46,15 @@ export function FeedScreen(): JSX.Element {
 
   return (
     <Container>
-      {loadingPosts ? <Loading testID="loadingPosts" /> : null}
+      {loadingPosts && !posts.length ? <Loading testID="loadingPosts" /> : null}
       {posts.length ? (
         <FlatList
           data={posts}
           renderItem={({ item }) => <PostItem {...item} />}
           keyExtractor={item => item.id}
+          onEndReached={getPosts}
+          onEndReachedThreshold={2}
+          ListFooterComponent={LoadingMorePosts}
         />
       ) : null}
     </Container>

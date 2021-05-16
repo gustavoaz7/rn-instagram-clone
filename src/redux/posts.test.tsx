@@ -1,7 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
-import { fetchPosts } from '../api';
+import { fetchPosts, TFetchPostsParams } from '../api';
 import { Providers } from '../Providers';
 import {
   initialState,
@@ -15,31 +15,60 @@ const fetchPostsMock = fetchPosts as jest.Mock;
 
 describe('redux - posts', () => {
   describe('getPosts', () => {
+    const params: TFetchPostsParams = {
+      offset: 0,
+      limit: 10,
+    };
+
     beforeEach(() => {
       fetchPostsMock.mockClear();
     });
 
-    it('handles success case correctly', async () => {
+    describe('when request succeeds', () => {
       const store = configureStore({ reducer: postsReducer });
-      const posts = [{ fake: 'post' }];
-      fetchPostsMock.mockResolvedValueOnce(posts);
+      const response1 = {
+        posts: [{ fake1: 'post1' }],
+        canFetchMorePosts: false,
+      };
 
-      expect(store.getState()).toEqual(initialState);
+      it('adds response posts to state', async () => {
+        fetchPostsMock.mockResolvedValueOnce(response1);
 
-      const action = store.dispatch(postsActions.getPosts());
+        expect(store.getState()).toEqual(initialState);
 
-      expect(fetchPostsMock).toHaveBeenCalledTimes(1);
-      expect(store.getState()).toEqual({
-        ...initialState,
-        loading: true,
+        const action = store.dispatch(postsActions.getPosts(params));
+
+        expect(fetchPostsMock).toHaveBeenCalledTimes(1);
+        expect(store.getState()).toEqual({
+          ...initialState,
+          loading: true,
+        });
+
+        await action;
+
+        expect(store.getState()).toEqual({
+          loading: false,
+          error: null,
+          posts: response1.posts,
+          canFetchMorePosts: response1.canFetchMorePosts,
+        });
       });
 
-      await action;
+      it('appends new posts to end of state list', async () => {
+        const response2 = {
+          posts: [{ fake2: 'post2' }],
+          canFetchMorePosts: false,
+        };
+        fetchPostsMock.mockResolvedValueOnce(response2);
 
-      expect(store.getState()).toEqual({
-        loading: false,
-        error: null,
-        posts,
+        await store.dispatch(postsActions.getPosts(params));
+
+        expect(store.getState()).toEqual({
+          loading: false,
+          error: null,
+          posts: [...response1.posts, ...response2.posts],
+          canFetchMorePosts: response2.canFetchMorePosts,
+        });
       });
     });
 
@@ -50,7 +79,7 @@ describe('redux - posts', () => {
 
       expect(store.getState()).toEqual(initialState);
 
-      const action = store.dispatch(postsActions.getPosts());
+      const action = store.dispatch(postsActions.getPosts(params));
 
       expect(fetchPostsMock).toHaveBeenCalledTimes(1);
       expect(store.getState()).toEqual({
@@ -61,9 +90,9 @@ describe('redux - posts', () => {
       await action;
 
       expect(store.getState()).toEqual({
+        ...initialState,
         loading: false,
         error: error.message,
-        posts: [],
       });
     });
   });
