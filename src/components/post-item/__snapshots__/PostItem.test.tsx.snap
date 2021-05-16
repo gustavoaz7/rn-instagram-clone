@@ -140,7 +140,12 @@ exports[`components - PostItem matches snapshot 1`] = `
       </View>
     </View>
     <SvgMock
-      color="black"
+      color="#262626"
+      style={
+        Array [
+          Object {},
+        ]
+      }
     />
   </View>
   <Image
@@ -196,7 +201,7 @@ exports[`components - PostItem matches snapshot 1`] = `
         }
       >
         <SvgMock
-          color="black"
+          color="#262626"
           style={
             Array [
               Object {
@@ -206,7 +211,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           }
         />
         <SvgMock
-          color="black"
+          color="#262626"
           style={
             Array [
               Object {
@@ -216,7 +221,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           }
         />
         <SvgMock
-          color="black"
+          color="#262626"
           style={
             Array [
               Object {
@@ -227,7 +232,12 @@ exports[`components - PostItem matches snapshot 1`] = `
         />
       </View>
       <SvgMock
-        color="black"
+        color="#262626"
+        style={
+          Array [
+            Object {},
+          ]
+        }
       />
     </View>
     <Text
@@ -275,6 +285,61 @@ exports[`components - PostItem matches snapshot 1`] = `
       </Text>
       Tempora rerum minima dolor quibusdam blanditiis ea et. Earum iste iure expedita velit laudantium inventore quia qui. Distinctio consectetur accusamus voluptatum hic rem at quas. Incidunt ipsum sed illo molestiae vitae ullam sit consequatur autem. Ut voluptatem nisi. Velit ex dignissimos sed aut.
     </Text>
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={2}
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "flexBasis": 0,
+              "flexGrow": 1,
+              "flexShrink": 1,
+              "marginRight": 5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#262626",
+              },
+              Object {
+                "fontWeight": "bold",
+              },
+            ]
+          }
+        >
+          Vivienne_Doyle
+           
+        </Text>
+        Aspernatur quod ea unde repellendus magni nihil sunt.
+      </Text>
+      <SvgMock
+        color="#8e8e8e"
+        height={16}
+        style={
+          Array [
+            Object {},
+          ]
+        }
+        width={16}
+      />
+    </View>
     <Text
       style={
         Array [

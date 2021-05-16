@@ -106,4 +106,39 @@ describe('components - PostItem', () => {
       });
     });
   });
+
+  describe('comments', () => {
+    it('renders without comments', () => {
+      const { comments, ...rest } = post;
+      render(<PostItem {...rest} comments={[]} />, options);
+    });
+
+    describe('when there is a single comment', () => {
+      it('renders first comment without "see all"', () => {
+        const { queryByText } = render(<PostItem {...post} />, options);
+
+        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
+        expect(
+          queryByText(new RegExp(`${post.comments[0].text}$`)),
+        ).toBeTruthy();
+        expect(queryByText(new RegExp(`^See all`))).toBeFalsy();
+      });
+    });
+
+    describe('when there are multiple comments', () => {
+      it('renders first comment and "see all" text', () => {
+        const comments = [post.comments[0], post.comments[0]];
+        const { queryByText } = render(
+          <PostItem {...post} comments={comments} />,
+          options,
+        );
+
+        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
+        expect(
+          queryByText(new RegExp(`${post.comments[0].text}$`)),
+        ).toBeTruthy();
+        expect(queryByText(`See all ${comments.length} comments`)).toBeTruthy();
+      });
+    });
+  });
 });
