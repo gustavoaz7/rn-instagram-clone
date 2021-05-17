@@ -3,7 +3,7 @@ import AppLoading from 'expo-app-loading';
 import { Alert } from 'react-native';
 import { Navigation } from './navigation/Navigation';
 import { useAppDispatch } from './redux/hooks';
-import { userActions, userSelectors } from './redux/user';
+import { userActions, useUserSelector } from './redux/user';
 
 export const Root = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -13,7 +13,7 @@ export const Root = (): JSX.Element => {
     login();
   }, [login]);
 
-  const error = userSelectors.useErrorSelector();
+  const { user, loading, error } = useUserSelector();
 
   if (error) {
     Alert.alert(
@@ -28,8 +28,6 @@ export const Root = (): JSX.Element => {
     );
   }
 
-  const user = userSelectors.useUserSelector();
-  const loading = userSelectors.useLoadingSelector();
   const isAppReady = !loading && user;
 
   return isAppReady ? <Navigation /> : <AppLoading />;

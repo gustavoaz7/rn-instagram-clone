@@ -18,15 +18,13 @@ describe('screens - FeedScreen', () => {
   const useSelectorSpy = jest
     .spyOn(reduxPosts, 'usePostsSelector')
     .mockReturnValue(reduxPosts.initialState);
+  const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
   const toastSpy = jest.spyOn(Toast, 'show');
-
-  beforeEach(() => {
-    dispatchMock.mockReset();
-  });
 
   afterAll(() => {
     useDispatchSpy.mockRestore();
     useSelectorSpy.mockRestore();
+    getPostsSpy.mockRestore();
     toastSpy.mockRestore();
   });
 
@@ -36,16 +34,13 @@ describe('screens - FeedScreen', () => {
 
   it('dispatches get posts action', () => {
     const action = Math.random();
-    const getPostsSpy = jest
-      .spyOn(reduxPosts.postsActions, 'getPosts')
-      .mockReturnValue(action as any);
+    getPostsSpy.mockReturnValueOnce(action as any);
     render(<FakeNavigator component={FeedScreen} />, options);
 
     expect(getPostsSpy).toHaveBeenCalledTimes(1);
     expect(getPostsSpy).toHaveBeenCalledWith({ offset: 0, limit: POSTS_LIMIT });
     expect(dispatchMock).toHaveBeenCalledTimes(1);
     expect(dispatchMock).toHaveBeenCalledWith(action);
-    getPostsSpy.mockRestore();
   });
 
   describe('when posts are loading', () => {
@@ -93,7 +88,6 @@ describe('screens - FeedScreen', () => {
       });
 
       it('dispatches a second get posts action', () => {
-        const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
         // eslint-disable-next-line camelcase
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
@@ -112,8 +106,6 @@ describe('screens - FeedScreen', () => {
           offset: POSTS_LIMIT,
           limit: POSTS_LIMIT,
         });
-
-        getPostsSpy.mockRestore();
       });
 
       it('rendes loading as footer of list', async () => {
@@ -136,7 +128,6 @@ describe('screens - FeedScreen', () => {
         });
 
         it('does not dispatches another get posts action', () => {
-          const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
           // eslint-disable-next-line camelcase
           const { UNSAFE_getByType } = render(
             <FakeNavigator component={FeedScreen} />,
@@ -148,8 +139,6 @@ describe('screens - FeedScreen', () => {
           });
 
           expect(getPostsSpy).not.toHaveBeenCalled();
-
-          getPostsSpy.mockRestore();
         });
       });
     });

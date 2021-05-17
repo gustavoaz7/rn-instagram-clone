@@ -3,6 +3,7 @@ const packagesToTranspile = ['react-native', 'expo-*', '@unimodules'];
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['./setup-tests.js'],
+  clearMocks: true,
   transformIgnorePatterns: [
     `/node_modules/(?!${packagesToTranspile.join('|')})`,
   ],

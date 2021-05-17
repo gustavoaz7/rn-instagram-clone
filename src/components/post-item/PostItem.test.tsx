@@ -22,10 +22,6 @@ describe('components - PostItem', () => {
   const post = createMockPost();
   const options: RenderOptions = { wrapper: Providers };
 
-  beforeEach(() => {
-    useNavigationMock.mockReset();
-  });
-
   it('renders', () => {
     render(<PostItem {...post} />, options);
   });
