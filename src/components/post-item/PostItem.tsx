@@ -2,6 +2,7 @@ import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -11,18 +12,24 @@ import DirectSvg from '../../../assets/svg/direct.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
 import { TPost } from '../../types';
 import { dateToString } from '../../utils/date';
+import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
+import { HOME_STACK_SCREENS } from '../../navigation/screens';
 
 type TPostItemProps = TPost;
 
-export const PostItem = memo(function PostItem({
-  owner,
-  createdAt,
-  medias,
-  caption,
-  likedBy,
-  comments,
-  location,
-}: TPostItemProps): JSX.Element {
+export const PostItem = memo(function PostItem(
+  post: TPostItemProps,
+): JSX.Element {
+  const {
+    owner,
+    createdAt,
+    medias,
+    caption,
+    likedBy,
+    comments,
+    location,
+  } = post;
+  const navigation = useNavigation<THomeStackNavigationProps>();
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const handleCaptionLayout = useCallback(
@@ -34,6 +41,9 @@ export const PostItem = memo(function PostItem({
   const handleCaptionExpand = useCallback(() => {
     setCaptionExpanded(true);
   }, []);
+  const handleSeeAllCommentsPress = useCallback(() => {
+    navigation.navigate(HOME_STACK_SCREENS.COMMENTS, { post });
+  }, [navigation, post]);
   const hasLikes = likedBy.length > 0;
   const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
 
@@ -90,7 +100,9 @@ export const PostItem = memo(function PostItem({
         {comments.length ? (
           <>
             {comments.length > 1 ? (
-              <WeakText>See all {comments.length} comments</WeakText>
+              <WeakText onPress={handleSeeAllCommentsPress}>
+                See all {comments.length} comments
+              </WeakText>
             ) : null}
             <CommentContainer>
               <Comment>

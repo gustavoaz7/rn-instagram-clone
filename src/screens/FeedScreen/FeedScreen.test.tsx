@@ -7,8 +7,10 @@ import { Providers } from '../../Providers';
 import * as reduxPosts from '../../redux/posts';
 import * as reduxHooks from '../../redux/hooks';
 import { createMockPost } from '../../data/post';
+import { FakeNavigator } from '../../test/fake-navigator';
 
 describe('screens - FeedScreen', () => {
+  const options = { wrapper: Providers };
   const dispatchMock = jest.fn();
   const useDispatchSpy = jest
     .spyOn(reduxHooks, 'useAppDispatch')
@@ -29,7 +31,7 @@ describe('screens - FeedScreen', () => {
   });
 
   it('renders', async () => {
-    render(<FeedScreen />, { wrapper: Providers });
+    render(<FakeNavigator component={FeedScreen} />, options);
   });
 
   it('dispatches get posts action', () => {
@@ -37,7 +39,7 @@ describe('screens - FeedScreen', () => {
     const getPostsSpy = jest
       .spyOn(reduxPosts.postsActions, 'getPosts')
       .mockReturnValue(action as any);
-    render(<FeedScreen />, { wrapper: Providers });
+    render(<FakeNavigator component={FeedScreen} />, options);
 
     expect(getPostsSpy).toHaveBeenCalledTimes(1);
     expect(getPostsSpy).toHaveBeenCalledWith({ offset: 0, limit: POSTS_LIMIT });
@@ -55,7 +57,10 @@ describe('screens - FeedScreen', () => {
     });
 
     it('renders loading', () => {
-      const { queryByTestId } = render(<FeedScreen />, { wrapper: Providers });
+      const { queryByTestId } = render(
+        <FakeNavigator component={FeedScreen} />,
+        options,
+      );
 
       expect(queryByTestId('loadingPosts')).toBeTruthy();
       expect(queryByTestId('loadingMorePosts')).toBeFalsy();
@@ -70,9 +75,10 @@ describe('screens - FeedScreen', () => {
     });
 
     it('renders post items', () => {
-      const { getAllByTestId } = render(<FeedScreen />, {
-        wrapper: Providers,
-      });
+      const { getAllByTestId } = render(
+        <FakeNavigator component={FeedScreen} />,
+        options,
+      );
 
       expect(getAllByTestId('PostItem')).toHaveLength(posts.length);
     });
@@ -89,9 +95,10 @@ describe('screens - FeedScreen', () => {
       it('dispatches a second get posts action', () => {
         const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
         // eslint-disable-next-line camelcase
-        const { UNSAFE_getByType } = render(<FeedScreen />, {
-          wrapper: Providers,
-        });
+        const { UNSAFE_getByType } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
 
         expect(getPostsSpy).toHaveBeenCalledTimes(1);
         getPostsSpy.mockReset();
@@ -110,9 +117,10 @@ describe('screens - FeedScreen', () => {
       });
 
       it('rendes loading as footer of list', async () => {
-        const { queryByTestId } = render(<FeedScreen />, {
-          wrapper: Providers,
-        });
+        const { queryByTestId } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
 
         expect(queryByTestId('loadingPosts')).toBeFalsy();
         expect(queryByTestId('loadingMorePosts')).toBeTruthy();
@@ -130,9 +138,10 @@ describe('screens - FeedScreen', () => {
         it('does not dispatches another get posts action', () => {
           const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
           // eslint-disable-next-line camelcase
-          const { UNSAFE_getByType } = render(<FeedScreen />, {
-            wrapper: Providers,
-          });
+          const { UNSAFE_getByType } = render(
+            <FakeNavigator component={FeedScreen} />,
+            options,
+          );
 
           act(() => {
             UNSAFE_getByType(FlatList).props.onEndReached();
@@ -155,7 +164,7 @@ describe('screens - FeedScreen', () => {
     });
 
     it('shows toast', () => {
-      render(<FeedScreen />, { wrapper: Providers });
+      render(<FakeNavigator component={FeedScreen} />, options);
 
       expect(toastSpy).toHaveBeenCalledTimes(1);
       expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {

@@ -7,14 +7,24 @@ import {
   act,
 } from '@testing-library/react-native';
 import faker from 'faker';
+import { useNavigation } from '@react-navigation/native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import { createMockPost } from '../../data/post';
+import { HOME_STACK_SCREENS } from '../../navigation/screens';
+
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(),
+}));
+const useNavigationMock = useNavigation as jest.Mock;
 
 describe('components - PostItem', () => {
   const post = createMockPost();
-
   const options: RenderOptions = { wrapper: Providers };
+
+  beforeEach(() => {
+    useNavigationMock.mockReset();
+  });
 
   it('renders', () => {
     render(<PostItem {...post} />, options);
@@ -126,10 +136,12 @@ describe('components - PostItem', () => {
     });
 
     describe('when there are multiple comments', () => {
+      const comments = [post.comments[0], post.comments[0]];
+      const multiCommentPost = { ...post, comments };
+
       it('renders first comment and "see all" text', () => {
-        const comments = [post.comments[0], post.comments[0]];
         const { queryByText } = render(
-          <PostItem {...post} comments={comments} />,
+          <PostItem {...multiCommentPost} />,
           options,
         );
 
@@ -138,6 +150,22 @@ describe('components - PostItem', () => {
           queryByText(new RegExp(`${post.comments[0].text}$`)),
         ).toBeTruthy();
         expect(queryByText(`See all ${comments.length} comments`)).toBeTruthy();
+      });
+
+      it('navigates to comments screen on "see all" press', () => {
+        const navigateSpy = jest.fn();
+        useNavigationMock.mockReturnValueOnce({ navigate: navigateSpy });
+        const { getByText } = render(
+          <PostItem {...multiCommentPost} />,
+          options,
+        );
+
+        fireEvent.press(getByText(`See all ${comments.length} comments`));
+
+        expect(navigateSpy).toHaveBeenCalledTimes(1);
+        expect(navigateSpy).toHaveBeenCalledWith(HOME_STACK_SCREENS.COMMENTS, {
+          post: multiCommentPost,
+        });
       });
     });
   });
