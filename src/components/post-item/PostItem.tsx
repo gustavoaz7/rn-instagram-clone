@@ -2,6 +2,7 @@ import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -11,18 +12,24 @@ import DirectSvg from '../../../assets/svg/direct.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
 import { TPost } from '../../types';
 import { dateToString } from '../../utils/date';
+import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
+import { HOME_STACK_SCREENS } from '../../navigation/screens';
 
 type TPostItemProps = TPost;
 
-export const PostItem = memo(function PostItem({
-  owner,
-  createdAt,
-  medias,
-  caption,
-  likedBy,
-  // comments,
-  location,
-}: TPostItemProps): JSX.Element {
+export const PostItem = memo(function PostItem(
+  post: TPostItemProps,
+): JSX.Element {
+  const {
+    owner,
+    createdAt,
+    medias,
+    caption,
+    likedBy,
+    comments,
+    location,
+  } = post;
+  const navigation = useNavigation<THomeStackNavigationProps>();
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const handleCaptionLayout = useCallback(
@@ -34,6 +41,9 @@ export const PostItem = memo(function PostItem({
   const handleCaptionExpand = useCallback(() => {
     setCaptionExpanded(true);
   }, []);
+  const handleSeeAllCommentsPress = useCallback(() => {
+    navigation.navigate(HOME_STACK_SCREENS.COMMENTS, { post });
+  }, [navigation, post]);
   const hasLikes = likedBy.length > 0;
   const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
 
@@ -55,17 +65,17 @@ export const PostItem = memo(function PostItem({
             {location ? <Subtitle>{location}</Subtitle> : null}
           </TitleContainer>
         </Row>
-        <MenuVerticalSvg color="black" />
+        <MenuVerticalIcon />
       </Header>
       <PostImage source={{ uri: medias[0].url }} />
       <Footer>
         <ActionsRow>
           <Row>
-            <Heart color="black" />
-            <Comment color="black" />
-            <Direct color="black" />
+            <HeartIcon />
+            <CommentIcon />
+            <DirectIcon />
           </Row>
-          <BookmarkSvg color="black" />
+          <BookmarkIcon />
         </ActionsRow>
         {hasLikes ? (
           <BoldText>
@@ -83,11 +93,26 @@ export const PostItem = memo(function PostItem({
               {caption}
             </Text>
             {captionLines > 2 && !captionExpanded ? (
-              <ShowMoreText onPress={handleCaptionExpand}>more</ShowMoreText>
+              <WeakText onPress={handleCaptionExpand}>more</WeakText>
             ) : null}
           </>
         ) : null}
-        {/* TODO: comments */}
+        {comments.length ? (
+          <>
+            {comments.length > 1 ? (
+              <WeakText onPress={handleSeeAllCommentsPress}>
+                See all {comments.length} comments
+              </WeakText>
+            ) : null}
+            <CommentContainer>
+              <Comment>
+                <BoldText>{comments[0].owner.username} </BoldText>
+                {comments[0].text}
+              </Comment>
+              <CommentLike />
+            </CommentContainer>
+          </>
+        ) : null}
         <Time>{dateToString(new Date(createdAt))}</Time>
       </Footer>
     </Container>
@@ -172,26 +197,56 @@ const actionsSvgStyle = css`
   margin-right: ${({ theme }) => theme.spacing.l};
 `;
 
-const Heart = styled(HeartSvg)`
+const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
+  color: theme.color.black,
+}))``;
+
+const HeartIcon = styled(HeartSvg).attrs(({ theme }) => ({
+  color: theme.color.black,
+}))`
   ${actionsSvgStyle};
 `;
 
-const Comment = styled(CommentSvg)`
+const CommentIcon = styled(CommentSvg).attrs(({ theme }) => ({
+  color: theme.color.black,
+}))`
   ${actionsSvgStyle};
 `;
 
-const Direct = styled(DirectSvg)`
+const DirectIcon = styled(DirectSvg).attrs(({ theme }) => ({
+  color: theme.color.black,
+}))`
   ${actionsSvgStyle};
 `;
 
-const ShowMoreText = styled(Text)`
+const BookmarkIcon = styled(BookmarkSvg).attrs(({ theme }) => ({
+  color: theme.color.black,
+}))``;
+
+const WeakText = styled(Text)`
   color: ${({ theme }) => theme.color.gray};
 `;
 
-const Time = styled(Text)`
+const Time = styled(WeakText)`
   ${({ theme }) => `
     font-size: ${theme.font.size.s};
-    color: ${theme.color.gray}
-    margin-top: ${theme.spacing.xs}
+    margin-top: ${theme.spacing.xs};
   `};
 `;
+
+const CommentContainer = styled(Row)`
+  justify-content: space-between;
+`;
+
+const Comment = styled(Text).attrs({
+  numberOfLines: 2,
+})`
+  flex: 1;
+  margin-right: ${({ theme }) => theme.spacing.xs};
+`;
+
+const CommentLike = styled(HeartSvg).attrs(({ theme }) => ({
+  color: theme.color.gray,
+  width: 16,
+  height: 16,
+}))``;

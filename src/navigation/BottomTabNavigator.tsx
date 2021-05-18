@@ -12,7 +12,7 @@ import Reels from '../../assets/svg/reels.svg';
 import Shop from '../../assets/svg/shop.svg';
 import { BOTTOM_TAB_SCREENS } from './screens';
 import { HomeStackNavigator, THomeStackParams } from './HomeStackNavigator';
-import { userSelectors } from '../redux/user';
+import { useUserSelector } from '../redux/user';
 
 export type TBottomTabParams = Record<BOTTOM_TAB_SCREENS, undefined> & {
   [BOTTOM_TAB_SCREENS.HOME]: NavigatorScreenParams<THomeStackParams>;
@@ -43,7 +43,7 @@ const Tab = createBottomTabNavigator<TBottomTabParams>();
 
 export function BottomTabNavigator(): JSX.Element {
   const theme = useTheme();
-  const user = userSelectors.useUserSelector();
+  const { user } = useUserSelector();
 
   return (
     <Tab.Navigator

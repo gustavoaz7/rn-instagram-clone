@@ -7,13 +7,19 @@ import {
   act,
 } from '@testing-library/react-native';
 import faker from 'faker';
+import { useNavigation } from '@react-navigation/native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import { createMockPost } from '../../data/post';
+import { HOME_STACK_SCREENS } from '../../navigation/screens';
+
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(),
+}));
+const useNavigationMock = useNavigation as jest.Mock;
 
 describe('components - PostItem', () => {
   const post = createMockPost();
-
   const options: RenderOptions = { wrapper: Providers };
 
   it('renders', () => {
@@ -103,6 +109,59 @@ describe('components - PostItem', () => {
         fireEvent.press(moreText);
 
         expect(getByText(RegExp(`${caption}$`))).toBeTruthy();
+      });
+    });
+  });
+
+  describe('comments', () => {
+    it('renders without comments', () => {
+      const { comments, ...rest } = post;
+      render(<PostItem {...rest} comments={[]} />, options);
+    });
+
+    describe('when there is a single comment', () => {
+      it('renders first comment without "see all"', () => {
+        const { queryByText } = render(<PostItem {...post} />, options);
+
+        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
+        expect(
+          queryByText(new RegExp(`${post.comments[0].text}$`)),
+        ).toBeTruthy();
+        expect(queryByText(new RegExp(`^See all`))).toBeFalsy();
+      });
+    });
+
+    describe('when there are multiple comments', () => {
+      const comments = [post.comments[0], post.comments[0]];
+      const multiCommentPost = { ...post, comments };
+
+      it('renders first comment and "see all" text', () => {
+        const { queryByText } = render(
+          <PostItem {...multiCommentPost} />,
+          options,
+        );
+
+        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
+        expect(
+          queryByText(new RegExp(`${post.comments[0].text}$`)),
+        ).toBeTruthy();
+        expect(queryByText(`See all ${comments.length} comments`)).toBeTruthy();
+      });
+
+      it('navigates to comments screen on "see all" press', () => {
+        const navigateSpy = jest.fn();
+        useNavigationMock.mockReturnValueOnce({ navigate: navigateSpy });
+        const { getByText } = render(
+          <PostItem {...multiCommentPost} />,
+          options,
+        );
+
+        fireEvent.press(getByText(`See all ${comments.length} comments`));
+
+        expect(navigateSpy).toHaveBeenCalledTimes(1);
+        expect(navigateSpy).toHaveBeenCalledWith(HOME_STACK_SCREENS.COMMENTS, {
+          post: multiCommentPost,
+        });
       });
     });
   });

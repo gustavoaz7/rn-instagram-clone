@@ -3,12 +3,13 @@ const packagesToTranspile = ['react-native', 'expo-*', '@unimodules'];
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['./setup-tests.js'],
+  clearMocks: true,
   transformIgnorePatterns: [
     `/node_modules/(?!${packagesToTranspile.join('|')})`,
   ],
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
   moduleNameMapper: {
-    '\\.svg': '<rootDir>/__mocks__/svgMock.js',
+    '\\.(jpg|jpeg|png|svg)$': '<rootDir>/__mocks__/svgMock.js',
   },
 };
