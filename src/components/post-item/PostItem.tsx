@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
@@ -14,6 +13,7 @@ import { TPost } from '../../types';
 import { dateToString } from '../../utils/date';
 import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
 import { HOME_STACK_SCREENS } from '../../navigation/screens';
+import { AvatarWithRing } from '../avatar-with-ring';
 
 type TPostItemProps = TPost;
 
@@ -51,15 +51,11 @@ export const PostItem = memo(function PostItem(
     <Container testID="PostItem">
       <Header>
         <Row>
-          <StatusRing>
-            <AvatarInnerRing>
-              <Avatar
-                source={{
-                  uri: owner.profilePicUrl,
-                }}
-              />
-            </AvatarInnerRing>
-          </StatusRing>
+          <AvatarWithRing
+            size={40}
+            imageUrl={owner.profilePicUrl}
+            color="gradient"
+          />
           <TitleContainer>
             <BoldText>{owner.username}</BoldText>
             {location ? <Subtitle>{location}</Subtitle> : null}
@@ -119,11 +115,6 @@ export const PostItem = memo(function PostItem(
   );
 });
 
-const centerStyle = css`
-  align-items: center;
-  justify-content: center;
-`;
-
 const Row = styled.View`
   flex-direction: row;
   align-items: center;
@@ -139,31 +130,6 @@ const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-
-const StatusRing = styled(LinearGradient).attrs(({ theme }) => ({
-  colors: [theme.color.purpleRed, theme.color.yellow],
-  start: { x: 0.7, y: 0.3 },
-  end: { x: 0.3, y: 0.7 },
-}))`
-  width: 40px;
-  height: 40px;
-  border-radius: 40px;
-  ${centerStyle};
-`;
-
-const AvatarInnerRing = styled.View`
-  width: 37px;
-  height: 37px;
-  border-radius: 37px;
-  ${centerStyle};
-  background-color: ${({ theme }) => theme.color.white};
-`;
-
-const Avatar = styled.Image`
-  width: 33px;
-  height: 33px;
-  border-radius: 33px;
 `;
 
 const TitleContainer = styled.View`

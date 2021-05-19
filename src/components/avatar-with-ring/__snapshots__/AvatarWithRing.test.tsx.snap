@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - AvatarWithRing matches snapshot 1`] = `
+<View
+  size={70}
+  style={
+    Array [
+      Object {
+        "borderRadius": 70,
+        "height": 70,
+        "overflow": "hidden",
+        "position": "relative",
+        "width": 70,
+      },
+    ]
+  }
+>
+  <ViewManagerAdapter_ExpoLinearGradient
+    proxiedProperties={
+      Object {
+        "colors": Array [
+          4278190080,
+          4278190080,
+        ],
+        "endPoint": Array [
+          0.3,
+          0.7,
+        ],
+        "locations": undefined,
+        "startPoint": Array [
+          0.7,
+          0.3,
+        ],
+      }
+    }
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "height": "100%",
+          "justifyContent": "center",
+          "width": "100%",
+        },
+      ]
+    }
+  >
+    <View
+      ringWidth={2}
+      size={70}
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 66,
+            "height": 66,
+            "justifyContent": "center",
+            "width": 66,
+          },
+        ]
+      }
+    >
+      <Image
+        offset={2}
+        ringWidth={2}
+        size={70}
+        source={
+          Object {
+            "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+          }
+        }
+        style={
+          Array [
+            Object {
+              "borderColor": "#26262633",
+              "borderRadius": 62,
+              "borderWidth": 2,
+              "height": 62,
+              "width": 62,
+            },
+          ]
+        }
+      />
+    </View>
+  </ViewManagerAdapter_ExpoLinearGradient>
+</View>
+`;
+
+exports[`components - AvatarWithRing matches snapshot for custom ringWidth and offset 1`] = `
+<View
+  size={70}
+  style={
+    Array [
+      Object {
+        "borderRadius": 70,
+        "height": 70,
+        "overflow": "hidden",
+        "position": "relative",
+        "width": 70,
+      },
+    ]
+  }
+>
+  <ViewManagerAdapter_ExpoLinearGradient
+    proxiedProperties={
+      Object {
+        "colors": Array [
+          4278190080,
+          4278190080,
+        ],
+        "endPoint": Array [
+          0.3,
+          0.7,
+        ],
+        "locations": undefined,
+        "startPoint": Array [
+          0.7,
+          0.3,
+        ],
+      }
+    }
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "height": "100%",
+          "justifyContent": "center",
+          "width": "100%",
+        },
+      ]
+    }
+  >
+    <View
+      ringWidth={1}
+      size={70}
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 68,
+            "height": 68,
+            "justifyContent": "center",
+            "width": 68,
+          },
+        ]
+      }
+    >
+      <Image
+        offset={5}
+        ringWidth={1}
+        size={70}
+        source={
+          Object {
+            "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+          }
+        }
+        style={
+          Array [
+            Object {
+              "borderColor": "#26262633",
+              "borderRadius": 58,
+              "borderWidth": 2,
+              "height": 58,
+              "width": 58,
+            },
+          ]
+        }
+      />
+    </View>
+  </ViewManagerAdapter_ExpoLinearGradient>
+</View>
+`;

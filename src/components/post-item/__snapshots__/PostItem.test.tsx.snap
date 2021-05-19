@@ -37,68 +37,89 @@ exports[`components - PostItem matches snapshot 1`] = `
         ]
       }
     >
-      <ViewManagerAdapter_ExpoLinearGradient
-        proxiedProperties={
-          Object {
-            "colors": Array [
-              4292948076,
-              4294750021,
-            ],
-            "endPoint": Array [
-              0.3,
-              0.7,
-            ],
-            "locations": undefined,
-            "startPoint": Array [
-              0.7,
-              0.3,
-            ],
-          }
-        }
+      <View
+        size={40}
         style={
           Array [
             Object {
-              "alignItems": "center",
               "borderRadius": 40,
               "height": 40,
-              "justifyContent": "center",
+              "overflow": "hidden",
+              "position": "relative",
               "width": 40,
             },
           ]
         }
       >
-        <View
+        <ViewManagerAdapter_ExpoLinearGradient
+          proxiedProperties={
+            Object {
+              "colors": Array [
+                4292948076,
+                4294750021,
+              ],
+              "endPoint": Array [
+                0.3,
+                0.7,
+              ],
+              "locations": undefined,
+              "startPoint": Array [
+                0.7,
+                0.3,
+              ],
+            }
+          }
           style={
             Array [
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#FFFFFF",
-                "borderRadius": 37,
-                "height": 37,
+                "height": "100%",
                 "justifyContent": "center",
-                "width": 37,
+                "width": "100%",
               },
             ]
           }
         >
-          <Image
-            source={
-              Object {
-                "uri": "https://avatars.githubusercontent.com/u/28453820?v=4",
-              }
-            }
+          <View
+            ringWidth={2}
+            size={40}
             style={
               Array [
                 Object {
-                  "borderRadius": 33,
-                  "height": 33,
-                  "width": 33,
+                  "alignItems": "center",
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 36,
+                  "height": 36,
+                  "justifyContent": "center",
+                  "width": 36,
                 },
               ]
             }
-          />
-        </View>
-      </ViewManagerAdapter_ExpoLinearGradient>
+          >
+            <Image
+              offset={2}
+              ringWidth={2}
+              size={40}
+              source={
+                Object {
+                  "uri": "https://avatars.githubusercontent.com/u/28453820?v=4",
+                }
+              }
+              style={
+                Array [
+                  Object {
+                    "borderColor": "#26262633",
+                    "borderRadius": 32,
+                    "borderWidth": 2,
+                    "height": 32,
+                    "width": 32,
+                  },
+                ]
+              }
+            />
+          </View>
+        </ViewManagerAdapter_ExpoLinearGradient>
+      </View>
       <View
         style={
           Array [
