@@ -1,0 +1,220 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - Comment matches snapshot 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingBottom": 0,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 0,
+      },
+    ]
+  }
+>
+  <View
+    size={40}
+    style={
+      Array [
+        Object {
+          "borderRadius": 40,
+          "height": 40,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 40,
+        },
+      ]
+    }
+  >
+    <ViewManagerAdapter_ExpoLinearGradient
+      proxiedProperties={
+        Object {
+          "colors": Array [
+            4292948076,
+            4294750021,
+          ],
+          "endPoint": Array [
+            0.3,
+            0.7,
+          ],
+          "locations": undefined,
+          "startPoint": Array [
+            0.7,
+            0.3,
+          ],
+        }
+      }
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          },
+        ]
+      }
+    >
+      <View
+        ringWidth={2}
+        size={40}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 36,
+              "height": 36,
+              "justifyContent": "center",
+              "width": 36,
+            },
+          ]
+        }
+      >
+        <Image
+          offset={2}
+          ringWidth={2}
+          size={40}
+          source={
+            Object {
+              "uri": "https://cdn.fakercloud.com/avatars/antonyzotov_128.jpg",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "borderColor": "#26262633",
+                "borderRadius": 32,
+                "borderWidth": 2,
+                "height": 32,
+                "width": 32,
+              },
+            ]
+          }
+        />
+      </View>
+    </ViewManagerAdapter_ExpoLinearGradient>
+  </View>
+  <View
+    style={
+      Array [
+        Object {
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "paddingLeft": 15,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        Array [
+          Object {
+            "color": "#262626",
+          },
+          Object {
+            "marginBottom": 5,
+            "marginRight": 5,
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        Vivienne_Doyle
+         
+      </Text>
+      Aspernatur quod ea unde repellendus magni nihil sunt.
+    </Text>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "color": "#8e8e8e",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "marginRight": 15,
+            },
+          ]
+        }
+      >
+        1 h
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "color": "#8e8e8e",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "marginRight": 15,
+            },
+          ]
+        }
+      >
+        3
+         
+        likes
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "color": "#8e8e8e",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "marginRight": 15,
+            },
+          ]
+        }
+      >
+        Reply
+      </Text>
+    </View>
+  </View>
+  <SvgMock
+    color="#8e8e8e"
+    height={16}
+    style={
+      Array [
+        Object {
+          "marginTop": 12,
+        },
+      ]
+    }
+    width={16}
+  />
+</View>
+`;
