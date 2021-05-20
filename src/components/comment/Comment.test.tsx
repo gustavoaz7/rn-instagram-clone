@@ -46,4 +46,20 @@ describe('components - Comment', () => {
       expect(getByText('2 likes')).toBeTruthy();
     });
   });
+
+  describe('when not interactable', () => {
+    it('matches snapshot', () => {
+      const realDateNow = Date.now.bind(global.Date);
+      const dateNowMock = jest.fn(() => comment.createdAt + 3600 * 1000);
+      global.Date.now = dateNowMock;
+
+      const { toJSON } = render(
+        <Comment {...comment} interactable={false} />,
+        options,
+      );
+
+      expect(toJSON()).toMatchSnapshot();
+      global.Date.now = realDateNow;
+    });
+  });
 });

@@ -9,37 +9,42 @@ import { dateToString } from '../../utils/date';
 
 export const AVATAR_SIZE = 40;
 
-type TCommentProps = TComment;
+type TCommentProps = TComment & { interactable?: boolean };
 
-export const Comment = memo(function Comment(
-  comment: TCommentProps,
-): JSX.Element {
-  const likeCount = comment.likedBy.length;
+export const Comment = memo(function Comment({
+  owner,
+  likedBy,
+  createdAt,
+  text,
+  interactable = true,
+}: TCommentProps): JSX.Element {
+  const likeCount = likedBy.length;
   return (
-    <Container>
+    <Container testID="Comment">
       <AvatarWithRing
         size={AVATAR_SIZE}
         color="gradient"
-        imageUrl={comment.owner.profilePicUrl}
+        imageUrl={owner.profilePicUrl}
       />
       <CommentContainer>
         <CommentText>
-          <BoldText>{comment.owner.username} </BoldText>
-          {comment.text}
+          <BoldText>{owner.username} </BoldText>
+          {text}
         </CommentText>
         <Row>
-          <CommentStats>
-            {dateToString(new Date(comment.createdAt), true)}
-          </CommentStats>
-          {likeCount > 0 ? (
-            <CommentStats>
-              {likeCount} {pluralizeWithS('like', likeCount)}
-            </CommentStats>
-          ) : null}
-          <CommentStats>Reply</CommentStats>
+          <CommentStats>{dateToString(new Date(createdAt), true)}</CommentStats>
+          {(interactable && likeCount > 0 && (
+            <>
+              <CommentStats>
+                {likeCount} {pluralizeWithS('like', likeCount)}
+              </CommentStats>
+              <CommentStats>Reply</CommentStats>
+            </>
+          )) ||
+            null}
         </Row>
       </CommentContainer>
-      <HeartIcon />
+      {interactable ? <HeartIcon /> : null}
     </Container>
   );
 });
@@ -52,15 +57,16 @@ const BoldText = styled(Text)`
   font-weight: bold;
 `;
 
+const Container = styled(Row)`
+  justify-content: space-between;
+  padding: 0 ${({ theme }) => theme.spacing.l};
+  margin: ${({ theme }) => theme.spacing.s} 0;
+`;
+
 const CommentStats = styled(BoldText)`
   color: ${({ theme }) => theme.color.gray};
   margin-right: ${({ theme }) => theme.spacing.m};
   font-size: ${({ theme }) => theme.font.size.s};
-`;
-
-const Container = styled(Row)`
-  justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing.l};
 `;
 
 const CommentContainer = styled.View`
