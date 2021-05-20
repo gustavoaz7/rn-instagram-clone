@@ -20,10 +20,10 @@ import {
 } from './screens';
 import type { THomeSwitchParams } from './HomeSwipeNavigator';
 import { NotImplemented } from '../screens/NotImplemented';
-import { FeedScreen } from '../screens/FeedScreen';
+import { FeedScreen } from '../screens/feed-screen';
 import { ActivityScreen } from '../screens/ActivityScreen';
 import { ArrowBack } from './ArrowBack';
-import { CommentsScreen } from '../screens/CommentsScreen';
+import { CommentsScreen } from '../screens/comments-screen';
 import type { TPost } from '../types';
 
 export type THomeStackParams = {
@@ -87,6 +87,10 @@ export function HomeStackNavigator(): JSX.Element {
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerLeft: ArrowBack,
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+        },
       }}
     >
       <Stack.Screen
@@ -96,10 +100,6 @@ export function HomeStackNavigator(): JSX.Element {
           headerTitle: nullFn,
           headerLeft: HeaderLeft,
           headerRight: HeaderRight,
-          headerStyle: {
-            elevation: 0,
-            shadowOpacity: 0,
-          },
         }}
       />
       <Stack.Screen

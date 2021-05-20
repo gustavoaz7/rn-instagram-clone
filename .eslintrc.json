@@ -77,7 +77,8 @@
       },
       "rules": {
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "camelcase": ["error", {"allow": ["^UNSAFE_"]}]
       }
     },
     {

@@ -88,7 +88,6 @@ describe('screens - FeedScreen', () => {
       });
 
       it('dispatches a second get posts action', () => {
-        // eslint-disable-next-line camelcase
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
@@ -128,7 +127,6 @@ describe('screens - FeedScreen', () => {
         });
 
         it('does not dispatches another get posts action', () => {
-          // eslint-disable-next-line camelcase
           const { UNSAFE_getByType } = render(
             <FakeNavigator component={FeedScreen} />,
             options,

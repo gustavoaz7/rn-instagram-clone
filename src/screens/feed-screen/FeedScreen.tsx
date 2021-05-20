@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, ListRenderItem } from 'react-native';
 import styled from 'styled-components/native';
 import Toast from 'react-native-root-toast';
-import { PostItem } from '../../components/post-item/PostItem';
+import { PostItem } from '../../components/post-item';
 import { useAppDispatch } from '../../redux/hooks';
 import { postsActions, usePostsSelector } from '../../redux/posts';
+import { TPost } from '../../types';
 
 export const POSTS_LIMIT = 20;
 
@@ -44,14 +45,21 @@ export function FeedScreen(): JSX.Element {
     }
   }, [errorPosts]);
 
+  const renderItem = useCallback<ListRenderItem<TPost>>(
+    ({ item }) => <PostItem {...item} />,
+    [],
+  );
+  const keyExtractor = useCallback((item: TPost) => item.id, []);
+
   return (
     <Container>
       {loadingPosts && !posts.length ? <Loading testID="loadingPosts" /> : null}
       {posts.length ? (
         <FlatList
           data={posts}
-          renderItem={({ item }) => <PostItem {...item} />}
-          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          maxToRenderPerBatch={4}
           onEndReached={getPosts}
           onEndReachedThreshold={2}
           ListFooterComponent={LoadingMorePosts}
@@ -64,7 +72,6 @@ export function FeedScreen(): JSX.Element {
 const Container = styled.View`
   flex: 1;
   align-items: center;
-  background-color: ${({ theme }) => theme.color.white};
 `;
 
 const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
