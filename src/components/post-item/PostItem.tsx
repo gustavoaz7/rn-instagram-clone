@@ -14,6 +14,7 @@ import { dateToString } from '../../utils/date';
 import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
 import { HOME_STACK_SCREENS } from '../../navigation/screens';
 import { AvatarWithRing } from '../avatar-with-ring';
+import { pluralizeWithS } from '../../utils/string';
 
 type TPostItemProps = TPost;
 
@@ -44,8 +45,7 @@ export const PostItem = memo(function PostItem(
   const handleSeeAllCommentsPress = useCallback(() => {
     navigation.navigate(HOME_STACK_SCREENS.COMMENTS, { post });
   }, [navigation, post]);
-  const hasLikes = likedBy.length > 0;
-  const likeText = `like${likedBy.length === 1 ? '' : 's'}`;
+  const likeCount = likedBy.length;
 
   return (
     <Container testID="PostItem">
@@ -73,9 +73,9 @@ export const PostItem = memo(function PostItem(
           </Row>
           <BookmarkIcon />
         </ActionsRow>
-        {hasLikes ? (
+        {likeCount > 0 ? (
           <BoldText>
-            {likedBy.length} {likeText}
+            {likeCount} {pluralizeWithS('like', likeCount)}
           </BoldText>
         ) : null}
         {caption ? (
