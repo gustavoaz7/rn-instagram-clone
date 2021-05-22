@@ -1,6 +1,10 @@
 import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
-import { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  TextLayoutEventData,
+  ViewProps,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
@@ -16,11 +20,12 @@ import { HOME_STACK_SCREENS } from '../../navigation/screens';
 import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
 
-type TPostItemProps = TPost;
+type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
-export const PostItem = memo(function PostItem(
-  post: TPostItemProps,
-): JSX.Element {
+export const PostItem = memo(function PostItem({
+  style,
+  ...post
+}: TPostItemProps): JSX.Element {
   const {
     owner,
     createdAt,
@@ -48,7 +53,7 @@ export const PostItem = memo(function PostItem(
   const likeCount = likedBy.length;
 
   return (
-    <Container testID="PostItem">
+    <Container testID="PostItem" style={style}>
       <Header>
         <Row>
           <AvatarWithRing
@@ -122,7 +127,6 @@ const Row = styled.View`
 
 const Container = styled.View`
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing.l};
 `;
 
 const Header = styled.View`
