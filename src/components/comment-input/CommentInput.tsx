@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 import { useUserSelector } from '../../redux/user';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import { AvatarWithRing } from '../avatar-with-ring';
@@ -14,14 +14,22 @@ export const CommentInput = (): JSX.Element => {
   const handleTextChange = useCallback(newText => {
     setText(newText);
   }, []);
+  const handleEmojiPress = useCallback(
+    emoji => {
+      setText(`${text}${emoji}`);
+    },
+    [text],
+  );
 
   return (
     <Container>
       <EmojisRow>
         {EMOJIS.map(emoji => (
-          <EmojiContainer key={emoji}>
-            <Emoji>{emoji}</Emoji>
-          </EmojiContainer>
+          <CommentInput.Emoji
+            key={emoji}
+            emoji={emoji}
+            onPress={handleEmojiPress}
+          />
         ))}
       </EmojisRow>
       <InputRow>
@@ -43,6 +51,38 @@ export const CommentInput = (): JSX.Element => {
     </Container>
   );
 };
+
+type TCommentInputEmojiProps = {
+  emoji: string;
+  onPress: (text: string) => void;
+};
+CommentInput.Emoji = memo(
+  ({ emoji, onPress }: TCommentInputEmojiProps): JSX.Element => {
+    const theme = useTheme();
+    const [isPressing, setIsPressing] = useState(false);
+    const scale = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+      Animated.timing(scale, {
+        toValue: isPressing ? 0.9 : 1,
+        duration: theme.animation.timingFast,
+        useNativeDriver: true,
+      }).start();
+    }, [isPressing, scale, theme.animation.timingFast]);
+
+    return (
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <EmojiContainer
+          onPress={() => onPress(emoji)}
+          onPressIn={() => setIsPressing(true)}
+          onPressOut={() => setIsPressing(false)}
+        >
+          <Emoji>{emoji}</Emoji>
+        </EmojiContainer>
+      </Animated.View>
+    );
+  },
+);
 
 const Container = styled.View``;
 
