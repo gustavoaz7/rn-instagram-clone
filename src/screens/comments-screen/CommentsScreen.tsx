@@ -23,7 +23,7 @@ export function CommentsScreen(): JSX.Element {
   const { post } = route.params;
 
   const renderItem = useCallback<ListRenderItem<TComment>>(
-    ({ item }) => <Comment {...item} />,
+    ({ item }) => <StyledComment {...item} />,
     [],
   );
   const keyExtractor = useCallback((item: TComment) => item.id, []);
@@ -31,7 +31,7 @@ export function CommentsScreen(): JSX.Element {
     () =>
       post.caption ? (
         <HeaderContainer>
-          <Comment
+          <StyledComment
             {...{
               id: post.id,
               owner: post.owner,
@@ -60,4 +60,8 @@ const HeaderContainer = styled.View`
   padding-right: ${({ theme }) => theme.spacing.xl};
   border-color: ${({ theme }) => theme.color.gray};
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
+`;
+
+const StyledComment = styled(Comment)`
+  margin: ${({ theme }) => theme.spacing.s} 0;
 `;

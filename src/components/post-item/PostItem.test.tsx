@@ -37,6 +37,16 @@ describe('components - PostItem', () => {
     global.Date.now = realDateNow;
   });
 
+  it('inherits style', () => {
+    const style = { backgroundColor: 'orange' };
+    const { getByTestId } = render(
+      <PostItem {...post} style={style} />,
+      options,
+    );
+
+    expect(getByTestId('PostItem')).toHaveStyle(style);
+  });
+
   it('renders without location', () => {
     const { location, ...rest } = post;
     render(<PostItem {...rest} />, options);

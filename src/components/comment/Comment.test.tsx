@@ -23,6 +23,16 @@ describe('components - Comment', () => {
     global.Date.now = realDateNow;
   });
 
+  it('inherits style', () => {
+    const style = { backgroundColor: 'orange' };
+    const { getByTestId } = render(
+      <Comment {...comment} style={style} />,
+      options,
+    );
+
+    expect(getByTestId('Comment')).toHaveStyle(style);
+  });
+
   describe('likes', () => {
     it('renders without likes', () => {
       render(<Comment {...comment} likedBy={[]} />, options);

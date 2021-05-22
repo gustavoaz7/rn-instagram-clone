@@ -7,10 +7,6 @@ exports[`components - Comment matches snapshot 1`] = `
       Object {
         "flexDirection": "row",
         "justifyContent": "space-between",
-        "marginBottom": 10,
-        "marginLeft": 0,
-        "marginRight": 0,
-        "marginTop": 10,
         "paddingBottom": 0,
         "paddingLeft": 20,
         "paddingRight": 20,
@@ -231,10 +227,6 @@ exports[`components - Comment when not interactable matches snapshot 1`] = `
       Object {
         "flexDirection": "row",
         "justifyContent": "space-between",
-        "marginBottom": 10,
-        "marginLeft": 0,
-        "marginRight": 0,
-        "marginTop": 10,
         "paddingBottom": 0,
         "paddingLeft": 20,
         "paddingRight": 20,

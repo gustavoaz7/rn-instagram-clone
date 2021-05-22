@@ -46,7 +46,7 @@ export function FeedScreen(): JSX.Element {
   }, [errorPosts]);
 
   const renderItem = useCallback<ListRenderItem<TPost>>(
-    ({ item }) => <PostItem {...item} />,
+    ({ item }) => <StyledPost {...item} />,
     [],
   );
   const keyExtractor = useCallback((item: TPost) => item.id, []);
@@ -78,3 +78,7 @@ const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
   size: 'large',
   color: theme.color.gray,
 }))``;
+
+const StyledPost = styled(PostItem)`
+  margin-bottom: ${({ theme }) => theme.spacing.l};
+`;

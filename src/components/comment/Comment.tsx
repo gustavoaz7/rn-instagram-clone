@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import styled from 'styled-components/native';
+import { ViewProps } from 'react-native';
 import { Text } from '../text';
 import { AvatarWithRing } from '../avatar-with-ring';
 import HeartSvg from '../../../assets/svg/heart.svg';
@@ -9,7 +10,10 @@ import { dateToString } from '../../utils/date';
 
 export const AVATAR_SIZE = 40;
 
-type TCommentProps = TComment & { interactable?: boolean };
+type TCommentProps = TComment & {
+  interactable?: boolean;
+  style?: ViewProps['style'];
+};
 
 export const Comment = memo(function Comment({
   owner,
@@ -17,10 +21,11 @@ export const Comment = memo(function Comment({
   createdAt,
   text,
   interactable = true,
+  style,
 }: TCommentProps): JSX.Element {
   const likeCount = likedBy.length;
   return (
-    <Container testID="Comment">
+    <Container testID="Comment" style={style}>
       <AvatarWithRing
         size={AVATAR_SIZE}
         color="gradient"
@@ -60,7 +65,6 @@ const BoldText = styled(Text)`
 const Container = styled(Row)`
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing.l};
-  margin: ${({ theme }) => theme.spacing.s} 0;
 `;
 
 const CommentStats = styled(BoldText)`
