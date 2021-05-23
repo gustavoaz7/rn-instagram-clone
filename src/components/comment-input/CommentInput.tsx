@@ -8,7 +8,11 @@ import { Text } from '../text';
 
 export const EMOJIS = ['❤️', '🙌', '🔥', '👏', '😢', '😍', '😮', '😂'];
 
-export const CommentInput = (): JSX.Element => {
+export type TCommentInputProps = {
+  onSubmit: (text: string) => void;
+};
+
+export const CommentInput = ({ onSubmit }: TCommentInputProps): JSX.Element => {
   const { user } = useUserSelector();
   const [text, setText] = useState('');
   const handleTextChange = useCallback(newText => {
@@ -20,6 +24,9 @@ export const CommentInput = (): JSX.Element => {
     },
     [text],
   );
+  const handlePostPress = useCallback(() => {
+    onSubmit(text);
+  }, [onSubmit, text]);
 
   return (
     <Container>
@@ -44,7 +51,7 @@ export const CommentInput = (): JSX.Element => {
           placeholder="Add a comment..."
           multiline
         />
-        <PostButton disabled={!text.length}>
+        <PostButton disabled={!text.length} onPress={handlePostPress}>
           <PostText>Post</PostText>
         </PostButton>
       </InputRow>
@@ -98,7 +105,7 @@ const EmojisRow = styled(Row)`
 `;
 
 const InputRow = styled(Row)`
-  padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
+  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.m}`};
   align-items: baseline;
 `;
 
