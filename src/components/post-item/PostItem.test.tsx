@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import { createMockPost } from '../../data/post';
-import { HOME_STACK_SCREENS } from '../../navigation/screens';
+import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -169,7 +169,7 @@ describe('components - PostItem', () => {
         fireEvent.press(getByText(`See all ${comments.length} comments`));
 
         expect(navigateSpy).toHaveBeenCalledTimes(1);
-        expect(navigateSpy).toHaveBeenCalledWith(HOME_STACK_SCREENS.COMMENTS, {
+        expect(navigateSpy).toHaveBeenCalledWith(ROOT_STACK_SCREENS.COMMENTS, {
           post: multiCommentPost,
         });
       });

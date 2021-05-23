@@ -17,7 +17,6 @@ export enum HOME_STACK_SCREENS {
   FEED = '@Home-Stack/Feed',
   ACTIVITY = '@Home-Stack/Activity',
   PROFILE = '@Home-Stack/Profile',
-  COMMENTS = '@Home-Stack/Comments',
 }
 
 export enum HOME_SWIPE_SCREENS {
@@ -28,4 +27,5 @@ export enum HOME_SWIPE_SCREENS {
 
 export enum ROOT_STACK_SCREENS {
   HOME_SWIPE = '@Root-Stack/Home-Swipe',
+  COMMENTS = '@Root-Stack/Comments',
 }

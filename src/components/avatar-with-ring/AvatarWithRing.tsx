@@ -5,7 +5,7 @@ import styled, { css, useTheme } from 'styled-components/native';
 export type TAvatarWithRingProps = {
   size: number;
   color: string;
-  imageUrl: string;
+  imageUrl?: string;
   ringWidth?: number;
   offset?: number;
 };

@@ -4,18 +4,19 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { FlatList, ListRenderItem, StyleSheet } from 'react-native';
 import { Comment } from '../../components/comment';
-import { THomeStackParams } from '../../navigation/HomeStackNavigator';
-import { HOME_STACK_SCREENS } from '../../navigation/screens';
+import { TRootStackParams } from '../../navigation/RootStackNavigator';
+import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { TComment } from '../../types';
+import { CommentInput } from '../../components/comment-input';
 
 type CommentsScreenNavigationProp = StackNavigationProp<
-  THomeStackParams,
-  HOME_STACK_SCREENS.COMMENTS
+  TRootStackParams,
+  ROOT_STACK_SCREENS.COMMENTS
 >;
 
 export type CommentsScreenRouteProp = RouteProp<
-  THomeStackParams,
-  HOME_STACK_SCREENS.COMMENTS
+  TRootStackParams,
+  ROOT_STACK_SCREENS.COMMENTS
 >;
 
 export function CommentsScreen(): JSX.Element {
@@ -47,14 +48,25 @@ export function CommentsScreen(): JSX.Element {
   );
 
   return (
-    <FlatList
-      data={post.comments}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      ListHeaderComponent={ListHeaderComponent}
-    />
+    <Container>
+      <FlatList
+        data={post.comments}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ListHeaderComponent={ListHeaderComponent}
+      />
+      <CommentInput
+        onSubmit={() => {
+          /* TODO */
+        }}
+      />
+    </Container>
   );
 }
+
+const Container = styled.View`
+  flex: 1;
+`;
 
 const HeaderContainer = styled.View`
   padding-right: ${({ theme }) => theme.spacing.xl};
