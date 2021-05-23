@@ -23,14 +23,11 @@ import { NotImplemented } from '../screens/NotImplemented';
 import { FeedScreen } from '../screens/feed-screen';
 import { ActivityScreen } from '../screens/ActivityScreen';
 import { ArrowBack } from './ArrowBack';
-import { CommentsScreen } from '../screens/comments-screen';
-import type { TPost } from '../types';
 
 export type THomeStackParams = {
   [HOME_STACK_SCREENS.FEED]: undefined;
   [HOME_STACK_SCREENS.ACTIVITY]: undefined;
   [HOME_STACK_SCREENS.PROFILE]: undefined;
-  [HOME_STACK_SCREENS.COMMENTS]: { post: TPost };
 };
 
 export type THomeStackNavigationProps = CompositeNavigationProp<
@@ -109,13 +106,6 @@ export function HomeStackNavigator(): JSX.Element {
       <Stack.Screen
         name={HOME_STACK_SCREENS.PROFILE}
         component={NotImplemented}
-      />
-      <Stack.Screen
-        name={HOME_STACK_SCREENS.COMMENTS}
-        component={CommentsScreen}
-        options={{
-          title: 'Comments',
-        }}
       />
     </Stack.Navigator>
   );

@@ -15,8 +15,8 @@ import DirectSvg from '../../../assets/svg/direct.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
 import { TPost } from '../../types';
 import { dateToString } from '../../utils/date';
-import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
-import { HOME_STACK_SCREENS } from '../../navigation/screens';
+import { THomeStackNavigationProps } from '../../navigation/RootStackNavigator';
+import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
 
@@ -48,7 +48,7 @@ export const PostItem = memo(function PostItem({
     setCaptionExpanded(true);
   }, []);
   const handleSeeAllCommentsPress = useCallback(() => {
-    navigation.navigate(HOME_STACK_SCREENS.COMMENTS, { post });
+    navigation.navigate(ROOT_STACK_SCREENS.COMMENTS, { post });
   }, [navigation, post]);
   const likeCount = likedBy.length;
 

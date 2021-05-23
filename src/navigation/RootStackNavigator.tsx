@@ -1,25 +1,47 @@
 import React from 'react';
 import {
+  CardStyleInterpolators,
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
 import { HomeSwipeNavigator } from './HomeSwipeNavigator';
+import { CommentsScreen } from '../screens/comments-screen';
 import { ROOT_STACK_SCREENS } from './screens';
+import { TPost } from '../types';
+import { ArrowBack } from './ArrowBack';
 
 export type TRootStackParams = {
   [ROOT_STACK_SCREENS.HOME_SWIPE]: undefined;
+  [ROOT_STACK_SCREENS.COMMENTS]: { post: TPost };
 };
 
-export type THomeStackProps = StackNavigationProp<TRootStackParams>;
+export type THomeStackNavigationProps = StackNavigationProp<TRootStackParams>;
 
 const Stack = createStackNavigator<TRootStackParams>();
 
 export function RootStackNavigator(): JSX.Element {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerLeft: ArrowBack,
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+      }}
+    >
       <Stack.Screen
         name={ROOT_STACK_SCREENS.HOME_SWIPE}
         component={HomeSwipeNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ROOT_STACK_SCREENS.COMMENTS}
+        component={CommentsScreen}
+        options={{
+          title: 'Comments',
+        }}
       />
     </Stack.Navigator>
   );

@@ -27,6 +27,9 @@ export const theme = {
       s: '12px',
     },
   },
+  animation: {
+    timingFast: 150,
+  },
 };
 
 export type TTheme = typeof theme;
