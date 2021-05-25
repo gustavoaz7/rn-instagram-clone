@@ -21,11 +21,11 @@ export function FeedScreen(): JSX.Element {
   } = usePostsSelector();
 
   const getPosts = useCallback(() => {
-    if (canFetchMorePosts) {
+    if (canFetchMorePosts && !loadingPosts) {
       dispatch(postsActions.getPosts({ offset, limit: POSTS_LIMIT }));
       setOffset(offset + POSTS_LIMIT);
     }
-  }, [canFetchMorePosts, dispatch, offset]);
+  }, [canFetchMorePosts, loadingPosts, dispatch, offset]);
 
   const LoadingMorePosts = useCallback(
     () => (loadingPosts ? <Loading testID="loadingMorePosts" /> : null),
