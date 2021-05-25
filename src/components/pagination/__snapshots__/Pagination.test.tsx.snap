@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - Pagination matches snapshot 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "row",
+      },
+    ]
+  }
+>
+  <View
+    active={false}
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#8e8e8e",
+          "borderRadius": 5,
+          "height": 5,
+          "marginBottom": 0,
+          "marginLeft": 2,
+          "marginRight": 2,
+          "marginTop": 0,
+          "width": 5,
+        },
+      ]
+    }
+    testID="Pagination-Dot"
+  />
+  <View
+    active={true}
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#0095f6",
+          "borderRadius": 6,
+          "height": 6,
+          "marginBottom": 0,
+          "marginLeft": 2,
+          "marginRight": 2,
+          "marginTop": 0,
+          "width": 6,
+        },
+      ]
+    }
+    testID="Pagination-Dot"
+  />
+  <View
+    active={false}
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#8e8e8e",
+          "borderRadius": 5,
+          "height": 5,
+          "marginBottom": 0,
+          "marginLeft": 2,
+          "marginRight": 2,
+          "marginTop": 0,
+          "width": 5,
+        },
+      ]
+    }
+    testID="Pagination-Dot"
+  />
+  <View
+    active={false}
+    style={
+      Array [
+        Object {
+          "backgroundColor": "#8e8e8e",
+          "borderRadius": 5,
+          "height": 5,
+          "marginBottom": 0,
+          "marginLeft": 2,
+          "marginRight": 2,
+          "marginTop": 0,
+          "width": 5,
+        },
+      ]
+    }
+    testID="Pagination-Dot"
+  />
+</View>
+`;

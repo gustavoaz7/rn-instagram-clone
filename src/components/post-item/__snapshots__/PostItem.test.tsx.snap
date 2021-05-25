@@ -168,21 +168,31 @@ exports[`components - PostItem matches snapshot 1`] = `
       }
     />
   </View>
-  <Image
-    source={
-      Object {
-        "uri": "http://placeimg.com/640/480/cats",
-      }
-    }
+  <View
     style={
       Array [
         Object {
-          "height": 750,
-          "width": 750,
+          "position": "relative",
         },
       ]
     }
-  />
+  >
+    <Image
+      source={
+        Object {
+          "uri": "http://placeimg.com/640/480/cats",
+        }
+      }
+      style={
+        Array [
+          Object {
+            "height": 750,
+            "width": 750,
+          },
+        ]
+      }
+    />
+  </View>
   <View
     style={
       Array [
@@ -225,7 +235,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "marginRight": 20,
+                "marginRight": 15,
               },
             ]
           }
@@ -235,7 +245,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "marginRight": 20,
+                "marginRight": 15,
               },
             ]
           }
@@ -245,7 +255,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "marginRight": 20,
+                "marginRight": 15,
               },
             ]
           }

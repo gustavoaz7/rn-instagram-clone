@@ -8,10 +8,12 @@ import {
 } from '@testing-library/react-native';
 import faker from 'faker';
 import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import { createMockPost } from '../../data/post';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
+import { generatePostMedia } from '../../data/media';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -173,6 +175,44 @@ describe('components - PostItem', () => {
           post: multiCommentPost,
         });
       });
+    });
+  });
+
+  describe('when post has multiple images', () => {
+    const multiImagePost = {
+      ...post,
+      medias: [...Array(4)].map(generatePostMedia),
+    };
+
+    it('renders images slider', () => {
+      const { getByTestId } = render(<PostItem {...multiImagePost} />, options);
+
+      const slider = getByTestId('PostItem-Slider');
+
+      expect(slider.props).toMatchObject({
+        horizontal: true,
+        pagingEnabled: true,
+      });
+      slider.findAllByType(Image).forEach((image, i) => {
+        expect(image.props.source.uri).toBe(multiImagePost.medias[i].url);
+      });
+    });
+
+    it('renders pagination', () => {
+      const { getAllByTestId } = render(
+        <PostItem {...multiImagePost} />,
+        options,
+      );
+
+      expect(getAllByTestId('Pagination-Dot')).toHaveLength(
+        multiImagePost.medias.length,
+      );
+    });
+
+    it('renders slider page indicator', () => {
+      const { getByText } = render(<PostItem {...multiImagePost} />, options);
+
+      expect(getByText(`1/${multiImagePost.medias.length}`));
     });
   });
 });

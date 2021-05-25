@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type {
   TUser,
   TPost,
-  TFeedItemMedia,
+  TPostMedia,
   TComment,
   TTappableObject,
   TOwner,
@@ -104,7 +104,7 @@ export const generateTappableObject = (
   };
 };
 
-export const generateMedia = (owner: TOwner): TFeedItemMedia => ({
+export const generateMedia = (owner: TOwner): TPostMedia => ({
   id: uuidv4(),
   url: faker.random.image(),
   owner,
