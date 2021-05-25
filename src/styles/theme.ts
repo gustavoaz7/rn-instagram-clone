@@ -29,6 +29,8 @@ export const theme = {
   },
   animation: {
     timingFast: 150,
+    timingBase: 300,
+    timingSlow: 500,
   },
 };
 

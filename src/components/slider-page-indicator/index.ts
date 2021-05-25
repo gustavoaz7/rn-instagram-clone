@@ -1,0 +1,1 @@
+export { SliderPageIndicator } from './SliderPageIndicator';
