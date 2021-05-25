@@ -88,6 +88,10 @@ describe('screens - FeedScreen', () => {
       });
 
       it('dispatches a second get posts action', () => {
+        useSelectorSpy.mockReturnValue({
+          ...reduxPosts.initialState,
+          posts,
+        });
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
@@ -105,6 +109,19 @@ describe('screens - FeedScreen', () => {
           offset: POSTS_LIMIT,
           limit: POSTS_LIMIT,
         });
+      });
+
+      it('does not dispatches get posts when alerady loading', () => {
+        const { UNSAFE_getByType } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
+
+        act(() => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(getPostsSpy).not.toHaveBeenCalled();
       });
 
       it('rendes loading as footer of list', async () => {
