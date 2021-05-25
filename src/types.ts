@@ -14,7 +14,7 @@ export type TTappableObject = {
   scale: number;
 };
 
-export type TFeedItemMedia = {
+export type TPostMedia = {
   id: string;
   url: string;
   owner: TOwner;
@@ -33,7 +33,7 @@ export type TPost = {
   id: string;
   owner: TOwner;
   createdAt: number;
-  medias: TFeedItemMedia[];
+  medias: TPostMedia[];
   caption?: string;
   likedBy: string[];
   comments: TComment[];

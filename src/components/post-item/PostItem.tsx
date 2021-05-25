@@ -1,11 +1,14 @@
 import React, { memo, useCallback, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import {
+  NativeScrollEvent,
   NativeSyntheticEvent,
   TextLayoutEventData,
   ViewProps,
+  StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -19,6 +22,8 @@ import { THomeStackNavigationProps } from '../../navigation/RootStackNavigator';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
+import { Pagination } from '../pagination';
+import { SliderPageIndicator } from '../slider-page-indicator';
 
 type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
@@ -38,6 +43,7 @@ export const PostItem = memo(function PostItem({
   const navigation = useNavigation<THomeStackNavigationProps>();
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const handleCaptionLayout = useCallback(
     (e: NativeSyntheticEvent<TextLayoutEventData>) => {
       setCaptionLines(e.nativeEvent.lines.length);
@@ -50,7 +56,18 @@ export const PostItem = memo(function PostItem({
   const handleSeeAllCommentsPress = useCallback(() => {
     navigation.navigate(ROOT_STACK_SCREENS.COMMENTS, { post });
   }, [navigation, post]);
+
+  const handleScroll = useCallback<
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => void
+  >(({ nativeEvent }) => {
+    const { contentOffset } = nativeEvent;
+    const viewSize = nativeEvent.layoutMeasurement;
+
+    const newMediaIndex = Math.round(contentOffset.x / viewSize.width);
+    setCurrentMediaIndex(newMediaIndex);
+  }, []);
   const likeCount = likedBy.length;
+  const isMultiImage = medias.length > 1;
 
   return (
     <Container testID="PostItem" style={style}>
@@ -68,7 +85,31 @@ export const PostItem = memo(function PostItem({
         </Row>
         <MenuVerticalIcon />
       </Header>
-      <PostImage source={{ uri: medias[0].url }} />
+      <ImageContainer>
+        {isMultiImage ? (
+          <>
+            <SliderPageIndicator
+              current={currentMediaIndex + 1}
+              total={medias.length}
+            />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              bounces={false}
+              overScrollMode="never"
+              pagingEnabled
+              onScroll={handleScroll}
+              testID="PostItem-Slider"
+            >
+              {medias.map(media => (
+                <Image key={media.id} source={{ uri: media.url }} />
+              ))}
+            </ScrollView>
+          </>
+        ) : (
+          <Image source={{ uri: medias[0].url }} />
+        )}
+      </ImageContainer>
       <Footer>
         <ActionsRow>
           <Row>
@@ -76,6 +117,12 @@ export const PostItem = memo(function PostItem({
             <CommentIcon />
             <DirectIcon />
           </Row>
+          {isMultiImage ? (
+            <StyledPagination
+              total={medias.length}
+              current={currentMediaIndex}
+            />
+          ) : null}
           <BookmarkIcon />
         </ActionsRow>
         {likeCount > 0 ? (
@@ -153,9 +200,19 @@ const Footer = styled.View`
   padding: 0 ${({ theme }) => theme.spacing.m};
 `;
 
-const PostImage = styled.Image`
+const ImageContainer = styled.View`
+  position: relative;
+`;
+
+const Image = styled.Image`
   width: ${SCREEN_WIDTH}px;
   height: ${SCREEN_WIDTH}px;
+`;
+
+const StyledPagination = styled(Pagination)`
+  ${StyleSheet.absoluteFill};
+  justify-content: center;
+  align-items: center;
 `;
 
 const ActionsRow = styled(Row)`
@@ -164,7 +221,7 @@ const ActionsRow = styled(Row)`
 `;
 
 const actionsSvgStyle = css`
-  margin-right: ${({ theme }) => theme.spacing.l};
+  margin-right: ${({ theme }) => theme.spacing.m};
 `;
 
 const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({

@@ -17,7 +17,7 @@ export const Pagination = ({
     <Container style={style}>
       {[...Array(total)].map((_, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <Dot key={`dot-${i}`} active={i === current} />
+        <Dot key={`dot-${i}`} active={i === current} testID="Pagination-Dot" />
       ))}
     </Container>
   );

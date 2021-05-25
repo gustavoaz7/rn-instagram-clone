@@ -26,6 +26,7 @@ exports[`components - Pagination matches snapshot 1`] = `
         },
       ]
     }
+    testID="Pagination-Dot"
   />
   <View
     active={true}
@@ -43,6 +44,7 @@ exports[`components - Pagination matches snapshot 1`] = `
         },
       ]
     }
+    testID="Pagination-Dot"
   />
   <View
     active={false}
@@ -60,6 +62,7 @@ exports[`components - Pagination matches snapshot 1`] = `
         },
       ]
     }
+    testID="Pagination-Dot"
   />
   <View
     active={false}
@@ -77,6 +80,7 @@ exports[`components - Pagination matches snapshot 1`] = `
         },
       ]
     }
+    testID="Pagination-Dot"
   />
 </View>
 `;
