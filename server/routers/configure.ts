@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import faker from 'faker';
 import { database } from '../database';
-import { generatePost, generateUser } from '../utils';
+import { generateComment, generatePost, generateUser } from '../utils';
 
 export const configureRouter = Router();
 
@@ -34,7 +34,21 @@ configureRouter.post('/', (req, res) => {
   database.users.push(...[currentUser, ...users]);
 
   [currentUser, ...users].forEach(user => {
-    database.posts.push(...[...Array(20)].map(() => generatePost(user)));
+    const posts = [...Array(20)].map(() => generatePost(user));
+    posts.forEach(post => {
+      const comments = [
+        ...Array(
+          // 50% -> has comments
+          Math.random() < 0.5 ? 0 : faker.datatype.number({ min: 1, max: 50 }),
+        ),
+      ]
+        .map(() => generateComment({ associatedId: post.id }))
+        .sort((a, b) => b.createdAt - a.createdAt);
+
+      database.comments.push(...comments);
+      post.commentsIds.push(...comments.map(comment => comment.id));
+      database.posts.push(post);
+    });
   });
   database.posts.sort((a, b) => b.createdAt - a.createdAt);
 

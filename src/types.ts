@@ -37,6 +37,7 @@ export type TPost = {
   caption?: string;
   likedBy: string[];
   comments: TComment[];
+  commentsCount: number;
   location?: string;
 };
 

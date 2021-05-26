@@ -1,15 +1,34 @@
 import { Router } from 'express';
+import type { TPost } from '../../src/types';
 import { database } from '../database';
 
 export const postsRouter = Router();
 
-postsRouter.get('/', (req, res) => {
-  const offset = Number(req.query.offset);
-  const limit = Number(req.query.limit);
+const COMMENTS_LIMIT = 10;
 
-  const postsWithNext = database.posts.slice(offset, offset + limit + 1);
+postsRouter.get<null, { posts: TPost[]; canFetchMorePosts: boolean }>(
+  '/',
+  (req, res) => {
+    const offset = Number(req.query.offset);
+    const limit = Number(req.query.limit);
 
-  const canFetchMorePosts = postsWithNext.length > limit;
-  const posts = postsWithNext.slice(0, -1);
-  return res.send({ posts, canFetchMorePosts });
-});
+    const postsDBWithNext = database.posts.slice(offset, offset + limit + 1);
+    const canFetchMorePosts = postsDBWithNext.length > limit;
+
+    const posts = postsDBWithNext
+      .slice(0, -1)
+      .map(({ commentsIds, ...post }) => {
+        const comments = database.comments.filter(
+          comment => comment.associatedId === post.id,
+        );
+        const commentsCount = comments.length;
+
+        return {
+          ...post,
+          comments: comments.slice(0, COMMENTS_LIMIT),
+          commentsCount,
+        };
+      });
+    return res.send({ posts, canFetchMorePosts });
+  },
+);
