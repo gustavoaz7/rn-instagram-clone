@@ -315,6 +315,23 @@ exports[`components - PostItem matches snapshot 1`] = `
       </Text>
       Tempora rerum minima dolor quibusdam blanditiis ea et. Earum iste iure expedita velit laudantium inventore quia qui. Distinctio consectetur accusamus voluptatum hic rem at quas. Incidunt ipsum sed illo molestiae vitae ullam sit consequatur autem. Ut voluptatem nisi. Velit ex dignissimos sed aut.
     </Text>
+    <Text
+      onPress={[Function]}
+      style={
+        Array [
+          Object {
+            "color": "#262626",
+          },
+          Object {
+            "color": "#8e8e8e",
+          },
+        ]
+      }
+    >
+      See all 
+      2
+       comments
+    </Text>
     <View
       style={
         Array [

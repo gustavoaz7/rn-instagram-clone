@@ -128,12 +128,20 @@ describe('components - PostItem', () => {
   describe('comments', () => {
     it('renders without comments', () => {
       const { comments, ...rest } = post;
-      render(<PostItem {...rest} comments={[]} />, options);
+      render(<PostItem {...rest} commentsCount={0} comments={[]} />, options);
     });
 
     describe('when there is a single comment', () => {
       it('renders first comment without "see all"', () => {
-        const { queryByText } = render(<PostItem {...post} />, options);
+        const singleCommentPost = {
+          ...post,
+          comments: [post.comments[0]],
+          commentsCount: 1,
+        };
+        const { queryByText } = render(
+          <PostItem {...singleCommentPost} />,
+          options,
+        );
 
         expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
         expect(
@@ -144,35 +152,28 @@ describe('components - PostItem', () => {
     });
 
     describe('when there are multiple comments', () => {
-      const comments = [post.comments[0], post.comments[0]];
-      const multiCommentPost = { ...post, comments };
-
       it('renders first comment and "see all" text', () => {
-        const { queryByText } = render(
-          <PostItem {...multiCommentPost} />,
-          options,
-        );
+        const { queryByText } = render(<PostItem {...post} />, options);
 
         expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
         expect(
           queryByText(new RegExp(`${post.comments[0].text}$`)),
         ).toBeTruthy();
-        expect(queryByText(`See all ${comments.length} comments`)).toBeTruthy();
+        expect(
+          queryByText(`See all ${post.commentsCount} comments`),
+        ).toBeTruthy();
       });
 
       it('navigates to comments screen on "see all" press', () => {
         const navigateSpy = jest.fn();
         useNavigationMock.mockReturnValueOnce({ navigate: navigateSpy });
-        const { getByText } = render(
-          <PostItem {...multiCommentPost} />,
-          options,
-        );
+        const { getByText } = render(<PostItem {...post} />, options);
 
-        fireEvent.press(getByText(`See all ${comments.length} comments`));
+        fireEvent.press(getByText(`See all ${post.commentsCount} comments`));
 
         expect(navigateSpy).toHaveBeenCalledTimes(1);
         expect(navigateSpy).toHaveBeenCalledWith(ROOT_STACK_SCREENS.COMMENTS, {
-          post: multiCommentPost,
+          post,
         });
       });
     });

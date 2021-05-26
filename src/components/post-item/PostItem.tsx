@@ -38,6 +38,7 @@ export const PostItem = memo(function PostItem({
     caption,
     likedBy,
     comments,
+    commentsCount,
     location,
   } = post;
   const navigation = useNavigation<THomeStackNavigationProps>();
@@ -145,11 +146,11 @@ export const PostItem = memo(function PostItem({
             ) : null}
           </>
         ) : null}
-        {comments.length ? (
+        {commentsCount ? (
           <>
-            {comments.length > 1 ? (
+            {commentsCount > 1 ? (
               <WeakText onPress={handleSeeAllCommentsPress}>
-                See all {comments.length} comments
+                See all {commentsCount} comments
               </WeakText>
             ) : null}
             <CommentContainer>
