@@ -36,9 +36,8 @@ export const PostItem = memo(function PostItem({
     createdAt,
     medias,
     caption,
-    likedBy,
-    comments,
-    commentsCount,
+    previewLikes,
+    previewComments,
     location,
   } = post;
   const navigation = useNavigation<THomeStackNavigationProps>();
@@ -67,7 +66,6 @@ export const PostItem = memo(function PostItem({
     const newMediaIndex = Math.round(contentOffset.x / viewSize.width);
     setCurrentMediaIndex(newMediaIndex);
   }, []);
-  const likeCount = likedBy.length;
   const isMultiImage = medias.length > 1;
 
   return (
@@ -126,9 +124,9 @@ export const PostItem = memo(function PostItem({
           ) : null}
           <BookmarkIcon />
         </ActionsRow>
-        {likeCount > 0 ? (
+        {previewLikes.count > 0 ? (
           <BoldText>
-            {likeCount} {pluralizeWithS('like', likeCount)}
+            {previewLikes.count} {pluralizeWithS('like', previewLikes.count)}
           </BoldText>
         ) : null}
         {caption ? (
@@ -146,20 +144,24 @@ export const PostItem = memo(function PostItem({
             ) : null}
           </>
         ) : null}
-        {commentsCount ? (
+        {previewComments.count ? (
           <>
-            {commentsCount > 1 ? (
+            {previewComments.count > 1 ? (
               <WeakText onPress={handleSeeAllCommentsPress}>
-                See all {commentsCount} comments
+                See all {previewComments.count} comments
               </WeakText>
             ) : null}
-            <CommentContainer>
-              <Comment>
-                <BoldText>{comments[0].owner.username} </BoldText>
-                {comments[0].text}
-              </Comment>
-              <CommentLike />
-            </CommentContainer>
+            {previewComments.comments.length ? (
+              <CommentContainer>
+                <Comment>
+                  <BoldText>
+                    {previewComments.comments[0].owner.username}{' '}
+                  </BoldText>
+                  {previewComments.comments[0].text}
+                </Comment>
+                <CommentLike />
+              </CommentContainer>
+            ) : null}
           </>
         ) : null}
         <Time>{dateToString(new Date(createdAt))}</Time>

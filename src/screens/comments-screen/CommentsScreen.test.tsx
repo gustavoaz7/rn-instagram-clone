@@ -3,12 +3,12 @@ import { render } from '@testing-library/react-native';
 import { useRoute } from '@react-navigation/native';
 import { CommentsScreen } from './CommentsScreen';
 import { Providers } from '../../Providers';
-import { createMockPost } from '../../data/post';
+import { generateMockPost } from '../../data';
 
 jest.mock('@react-navigation/native');
 
 describe('screens - CommentsScreen', () => {
-  const post = createMockPost();
+  const post = generateMockPost();
   const options = { wrapper: Providers };
   const useRouteSpy = useRoute as jest.Mock;
   useRouteSpy.mockReturnValue({ params: { post } });
@@ -21,7 +21,9 @@ describe('screens - CommentsScreen', () => {
     it('renders all comments and caption as comment', () => {
       const { getAllByTestId } = render(<CommentsScreen />, options);
 
-      expect(getAllByTestId('Comment')).toHaveLength(post.comments.length + 1);
+      expect(getAllByTestId('Comment')).toHaveLength(
+        post.previewComments.comments.length + 1,
+      );
     });
   });
 
@@ -34,7 +36,9 @@ describe('screens - CommentsScreen', () => {
     it('renders all comments and caption as comment', () => {
       const { getAllByTestId } = render(<CommentsScreen />, options);
 
-      expect(getAllByTestId('Comment')).toHaveLength(post.comments.length);
+      expect(getAllByTestId('Comment')).toHaveLength(
+        post.previewComments.comments.length,
+      );
     });
   });
 });

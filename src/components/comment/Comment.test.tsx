@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { createMockPost } from '../../data/post';
+import { generateMockComment } from '../../data';
 import { Comment } from './Comment';
 import { Providers } from '../../Providers';
 
 describe('components - Comment', () => {
   const options = { wrapper: Providers };
-  const comment = createMockPost().comments[0];
+  const comment = generateMockComment(3);
 
   it('renders', () => {
     render(<Comment {...comment} />, options);
@@ -35,12 +35,12 @@ describe('components - Comment', () => {
 
   describe('likes', () => {
     it('renders without likes', () => {
-      render(<Comment {...comment} likedBy={[]} />, options);
+      render(<Comment {...generateMockComment(0)} />, options);
     });
 
     it('renders singular when 1 like', () => {
       const { getByText } = render(
-        <Comment {...comment} likedBy={['single']} />,
+        <Comment {...generateMockComment(1)} />,
         options,
       );
 
@@ -49,7 +49,7 @@ describe('components - Comment', () => {
 
     it('renders plural when > 2 likes', () => {
       const { getByText } = render(
-        <Comment {...comment} likedBy={['1', '2']} />,
+        <Comment {...generateMockComment(2)} />,
         options,
       );
 

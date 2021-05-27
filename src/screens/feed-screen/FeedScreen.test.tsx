@@ -6,7 +6,7 @@ import { FeedScreen, POSTS_LIMIT } from './FeedScreen';
 import { Providers } from '../../Providers';
 import * as reduxPosts from '../../redux/posts';
 import * as reduxHooks from '../../redux/hooks';
-import { createMockPost } from '../../data/post';
+import { generateMockPost } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
 
 describe('screens - FeedScreen', () => {
@@ -63,7 +63,7 @@ describe('screens - FeedScreen', () => {
   });
 
   describe('when posts succeeds', () => {
-    const posts = [createMockPost(), createMockPost()];
+    const posts = [generateMockPost(), generateMockPost()];
 
     beforeEach(() => {
       useSelectorSpy.mockReturnValue({ ...reduxPosts.initialState, posts });
