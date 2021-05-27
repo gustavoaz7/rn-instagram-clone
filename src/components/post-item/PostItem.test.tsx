@@ -11,9 +11,13 @@ import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
-import { createMockPost } from '../../data/post';
+import {
+  generateMockPost,
+  generateMockMedia,
+  generateMockLike,
+  generateMockComment,
+} from '../../data';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
-import { generatePostMedia } from '../../data/media';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -21,7 +25,14 @@ jest.mock('@react-navigation/native', () => ({
 const useNavigationMock = useNavigation as jest.Mock;
 
 describe('components - PostItem', () => {
-  const post = createMockPost();
+  const post = generateMockPost();
+  const multiCommentPost = {
+    ...post,
+    previewComments: {
+      count: 2,
+      comments: [...Array(2)].map(generateMockComment),
+    },
+  };
   const options: RenderOptions = { wrapper: Providers };
 
   it('renders', () => {
@@ -30,10 +41,10 @@ describe('components - PostItem', () => {
 
   it('matches snapshot', () => {
     const realDateNow = Date.now.bind(global.Date);
-    const dateNowMock = jest.fn(() => post.createdAt + 3600 * 1000);
+    const dateNowMock = jest.fn(() => multiCommentPost.createdAt + 3600 * 1000);
     global.Date.now = dateNowMock;
 
-    const { toJSON } = render(<PostItem {...post} />, options);
+    const { toJSON } = render(<PostItem {...multiCommentPost} />, options);
 
     expect(toJSON()).toMatchSnapshot();
     global.Date.now = realDateNow;
@@ -56,14 +67,14 @@ describe('components - PostItem', () => {
 
   describe('likes', () => {
     it('renders without likes', () => {
-      const { likedBy, ...rest } = post;
-      render(<PostItem {...rest} likedBy={[]} />, options);
+      const previewLikes = { count: 0, likes: [] };
+      render(<PostItem {...post} previewLikes={previewLikes} />, options);
     });
 
     it('renders singular when 1 like', () => {
-      const { likedBy, ...rest } = post;
+      const previewLikes = { count: 1, likes: [generateMockLike()] };
       const { getByText } = render(
-        <PostItem {...rest} likedBy={['single']} />,
+        <PostItem {...post} previewLikes={previewLikes} />,
         options,
       );
 
@@ -71,9 +82,12 @@ describe('components - PostItem', () => {
     });
 
     it('renders plural when > 2 likes', () => {
-      const { likedBy, ...rest } = post;
+      const previewLikes = {
+        count: 2,
+        likes: [...Array(2).map(generateMockLike)],
+      };
       const { getByText } = render(
-        <PostItem {...rest} likedBy={['1', '2']} />,
+        <PostItem {...post} previewLikes={previewLikes} />,
         options,
       );
 
@@ -127,37 +141,46 @@ describe('components - PostItem', () => {
 
   describe('comments', () => {
     it('renders without comments', () => {
-      const { comments, ...rest } = post;
-      render(<PostItem {...rest} comments={[]} />, options);
+      const previewComments = { count: 0, comments: [] };
+      render(<PostItem {...post} previewComments={previewComments} />, options);
     });
 
     describe('when there is a single comment', () => {
       it('renders first comment without "see all"', () => {
         const { queryByText } = render(<PostItem {...post} />, options);
 
-        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
         expect(
-          queryByText(new RegExp(`${post.comments[0].text}$`)),
+          queryByText(`${post.previewComments.comments[0].owner.username} `),
+        ).toBeTruthy();
+        expect(
+          queryByText(new RegExp(`${post.previewComments.comments[0].text}$`)),
         ).toBeTruthy();
         expect(queryByText(new RegExp(`^See all`))).toBeFalsy();
       });
     });
 
     describe('when there are multiple comments', () => {
-      const comments = [post.comments[0], post.comments[0]];
-      const multiCommentPost = { ...post, comments };
-
       it('renders first comment and "see all" text', () => {
         const { queryByText } = render(
           <PostItem {...multiCommentPost} />,
           options,
         );
 
-        expect(queryByText(`${post.comments[0].owner.username} `)).toBeTruthy();
         expect(
-          queryByText(new RegExp(`${post.comments[0].text}$`)),
+          queryByText(
+            `${multiCommentPost.previewComments.comments[0].owner.username} `,
+          ),
         ).toBeTruthy();
-        expect(queryByText(`See all ${comments.length} comments`)).toBeTruthy();
+        expect(
+          queryByText(
+            new RegExp(`${multiCommentPost.previewComments.comments[0].text}$`),
+          ),
+        ).toBeTruthy();
+        expect(
+          queryByText(
+            `See all ${multiCommentPost.previewComments.count} comments`,
+          ),
+        ).toBeTruthy();
       });
 
       it('navigates to comments screen on "see all" press', () => {
@@ -168,7 +191,11 @@ describe('components - PostItem', () => {
           options,
         );
 
-        fireEvent.press(getByText(`See all ${comments.length} comments`));
+        fireEvent.press(
+          getByText(
+            `See all ${multiCommentPost.previewComments.count} comments`,
+          ),
+        );
 
         expect(navigateSpy).toHaveBeenCalledTimes(1);
         expect(navigateSpy).toHaveBeenCalledWith(ROOT_STACK_SCREENS.COMMENTS, {
@@ -181,7 +208,7 @@ describe('components - PostItem', () => {
   describe('when post has multiple images', () => {
     const multiImagePost = {
       ...post,
-      medias: [...Array(4)].map(generatePostMedia),
+      medias: [...Array(4)].map(generateMockMedia),
     };
 
     it('renders images slider', () => {

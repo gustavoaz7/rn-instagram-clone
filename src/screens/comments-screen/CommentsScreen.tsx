@@ -36,7 +36,7 @@ export function CommentsScreen(): JSX.Element {
             {...{
               id: post.id,
               owner: post.owner,
-              likedBy: post.likedBy,
+              previewLikes: post.previewLikes,
               createdAt: post.createdAt,
               text: post.caption,
             }}
@@ -50,7 +50,7 @@ export function CommentsScreen(): JSX.Element {
   return (
     <Container>
       <FlatList
-        data={post.comments}
+        data={post.previewComments.comments}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}

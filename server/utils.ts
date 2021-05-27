@@ -2,12 +2,13 @@ import faker from 'faker';
 import { v4 as uuidv4 } from 'uuid';
 import type {
   TUser,
-  TPost,
+  TPostDB,
   TPostMedia,
-  TComment,
+  TCommentDB,
   TTappableObject,
   TOwner,
-} from '../src/types';
+  TLikeDB,
+} from './types';
 
 // ----- USER -----
 
@@ -45,6 +46,16 @@ export const generateUser = (partialUser?: Partial<TUser>): TUser => {
   };
 };
 
+// ----- LIKE -----
+
+export const generateLike = (partialLike?: Partial<TLikeDB>): TLikeDB => ({
+  associatedId: uuidv4(),
+  id: uuidv4(),
+  createdAt: faker.date.recent(10).getTime(),
+  owner: generateOwner(),
+  ...partialLike,
+});
+
 // ----- POST -----
 
 export const generateOwner = (partialOwner?: Partial<TOwner>): TOwner => ({
@@ -55,17 +66,16 @@ export const generateOwner = (partialOwner?: Partial<TOwner>): TOwner => ({
 });
 
 export const generateComment = (
-  partialComment?: Partial<TComment>,
-): TComment => ({
+  partialComment?: Partial<TCommentDB>,
+): TCommentDB => ({
+  associatedId: uuidv4(),
   id: uuidv4(),
   owner: generateOwner(),
   // Disclaimer: might cause a comment to be more recent than
   // the post itself.
   createdAt: faker.date.recent(10).getTime(),
   text: faker.lorem.sentence(),
-  likedBy: [...Array(faker.datatype.number(4))].map(() =>
-    faker.internet.userName(),
-  ),
+  likesIds: [],
   ...partialComment,
 });
 
@@ -116,12 +126,8 @@ export const generateMedia = (owner: TOwner): TPostMedia => ({
   ].map(generateTappableObject),
 });
 
-export const generatePost = (user: TUser): TPost => {
-  const owner: TOwner = {
-    id: user.id,
-    profilePicUrl: user.profilePicUrl,
-    username: user.username,
-  };
+export const generatePost = (user: TUser): TPostDB => {
+  const owner = convertUserToOwner(user);
 
   return {
     id: uuidv4(),
@@ -139,16 +145,18 @@ export const generatePost = (user: TUser): TPost => {
       caption:
         Math.random() < 0.5 ? faker.lorem.paragraph() : faker.lorem.words(5),
     }),
-    likedBy: [...Array(faker.datatype.number(20))].map(() =>
-      faker.internet.userName(),
-    ),
-    // 60% -> no comments
-    comments: [
-      ...Array(
-        Math.random() < 0.6 ? 0 : faker.datatype.number({ min: 1, max: 5 }),
-      ),
-    ].map(() => generateComment()),
     // 20% -> has location
     ...(Math.random() < 0.2 && { location: faker.address.city() }),
+
+    commentsIds: [],
+    likesIds: [],
   };
 };
+
+// ----- HELPERS -----
+
+export const convertUserToOwner = (user: TUser): TOwner => ({
+  id: user.id,
+  profilePicUrl: user.profilePicUrl,
+  username: user.username,
+});

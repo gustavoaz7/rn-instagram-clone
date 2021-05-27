@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express';
-import { postsRouter, configureRouter } from './routers';
+import { postsRouter, userRouter } from './routers';
 
 const PORT = 8000;
 const REQUEST_DELAY = 250;
@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-app.use('/configure', configureRouter);
+app.use('/user', userRouter);
 app.use('/posts', postsRouter);
 
 app.listen(PORT, () => {

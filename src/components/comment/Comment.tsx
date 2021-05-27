@@ -17,13 +17,12 @@ type TCommentProps = TComment & {
 
 export const Comment = memo(function Comment({
   owner,
-  likedBy,
+  previewLikes,
   createdAt,
   text,
   interactable = true,
   style,
 }: TCommentProps): JSX.Element {
-  const likeCount = likedBy.length;
   return (
     <Container testID="Comment" style={style}>
       <AvatarWithRing
@@ -38,10 +37,11 @@ export const Comment = memo(function Comment({
         </CommentText>
         <Row>
           <CommentStats>{dateToString(new Date(createdAt), true)}</CommentStats>
-          {(interactable && likeCount > 0 && (
+          {(interactable && previewLikes.count > 0 && (
             <>
               <CommentStats>
-                {likeCount} {pluralizeWithS('like', likeCount)}
+                {previewLikes.count}{' '}
+                {pluralizeWithS('like', previewLikes.count)}
               </CommentStats>
               <CommentStats>Reply</CommentStats>
             </>

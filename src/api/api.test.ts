@@ -13,7 +13,7 @@ describe('api', () => {
 
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(fetch.mock.calls[0]).toEqual([
-        `${BASE_URL}/configure`,
+        `${BASE_URL}/user/login`,
         {
           method: 'post',
           body: JSON.stringify(STATIC_USER_DATA),
