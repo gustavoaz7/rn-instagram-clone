@@ -1,2 +1,2 @@
 export { postsRouter } from './posts';
-export { configureRouter } from './configure';
+export { userRouter } from './user';

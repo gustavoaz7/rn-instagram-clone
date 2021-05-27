@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import faker from 'faker';
 import { database } from '../database';
+import { session } from '../session';
 import { generateComment, generatePost, generateUser } from '../utils';
 
-export const configureRouter = Router();
+export const userRouter = Router();
 
-configureRouter.post('/', (req, res) => {
+userRouter.post('/login', (req, res) => {
   const { username, profilePicUrl } = req.body;
   // Only configure when database is empty (on 1st request)
   if (database.users.length) {
@@ -51,6 +52,8 @@ configureRouter.post('/', (req, res) => {
     });
   });
   database.posts.sort((a, b) => b.createdAt - a.createdAt);
+
+  session.setUsername(currentUser.username);
 
   res.send(currentUser);
 });
