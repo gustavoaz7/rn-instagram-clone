@@ -2,7 +2,12 @@ import { Router } from 'express';
 import faker from 'faker';
 import { database } from '../database';
 import { session } from '../session';
-import { generateComment, generatePost, generateUser } from '../utils';
+import {
+  generateComment,
+  generateLike,
+  generatePost,
+  generateUser,
+} from '../utils';
 
 export const userRouter = Router();
 
@@ -48,6 +53,14 @@ userRouter.post('/login', (req, res) => {
 
       database.comments.push(...comments);
       post.commentsIds.push(...comments.map(comment => comment.id));
+
+      const likes = [...Array(faker.datatype.number(20))]
+        .map(() => generateLike({ associatedId: post.id }))
+        .sort((a, b) => b.createdAt - a.createdAt);
+
+      database.likes.push(...likes);
+      post.likesIds.push(...likes.map(like => like.id));
+
       database.posts.push(post);
     });
   });

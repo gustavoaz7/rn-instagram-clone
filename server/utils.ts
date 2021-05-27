@@ -7,6 +7,7 @@ import type {
   TCommentDB,
   TTappableObject,
   TOwner,
+  TLikeDB,
 } from './types';
 
 // ----- USER -----
@@ -45,6 +46,16 @@ export const generateUser = (partialUser?: Partial<TUser>): TUser => {
   };
 };
 
+// ----- LIKE -----
+
+export const generateLike = (partialLike?: Partial<TLikeDB>): TLikeDB => ({
+  associatedId: uuidv4(),
+  id: uuidv4(),
+  createdAt: faker.date.recent(10).getTime(),
+  owner: generateOwner(),
+  ...partialLike,
+});
+
 // ----- POST -----
 
 export const generateOwner = (partialOwner?: Partial<TOwner>): TOwner => ({
@@ -64,9 +75,7 @@ export const generateComment = (
   // the post itself.
   createdAt: faker.date.recent(10).getTime(),
   text: faker.lorem.sentence(),
-  likedBy: [...Array(faker.datatype.number(4))].map(() =>
-    faker.internet.userName(),
-  ),
+  likesIds: [],
   ...partialComment,
 });
 
@@ -136,13 +145,11 @@ export const generatePost = (user: TUser): TPostDB => {
       caption:
         Math.random() < 0.5 ? faker.lorem.paragraph() : faker.lorem.words(5),
     }),
-    likedBy: [...Array(faker.datatype.number(20))].map(() =>
-      faker.internet.userName(),
-    ),
     // 20% -> has location
     ...(Math.random() < 0.2 && { location: faker.address.city() }),
 
     commentsIds: [],
+    likesIds: [],
   };
 };
 

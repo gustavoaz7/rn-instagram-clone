@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import type { TPost } from '../../src/types';
 import { database } from '../database';
+import { transformPost } from '../transformations';
 
 export const postsRouter = Router();
-
-const COMMENTS_LIMIT = 10;
 
 postsRouter.get<null, { posts: TPost[]; canFetchMorePosts: boolean }>(
   '/',
@@ -15,20 +14,8 @@ postsRouter.get<null, { posts: TPost[]; canFetchMorePosts: boolean }>(
     const postsDBWithNext = database.posts.slice(offset, offset + limit + 1);
     const canFetchMorePosts = postsDBWithNext.length > limit;
 
-    const posts = postsDBWithNext
-      .slice(0, -1)
-      .map(({ commentsIds, ...post }) => {
-        const comments = database.comments.filter(
-          comment => comment.associatedId === post.id,
-        );
-        const commentsCount = comments.length;
+    const posts: TPost[] = postsDBWithNext.slice(0, -1).map(transformPost);
 
-        return {
-          ...post,
-          comments: comments.slice(0, COMMENTS_LIMIT),
-          commentsCount,
-        };
-      });
     return res.send({ posts, canFetchMorePosts });
   },
 );

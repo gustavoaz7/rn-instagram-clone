@@ -21,12 +21,27 @@ export type TPostMedia = {
   tappableObjects: TTappableObject[];
 };
 
+export type TLike = {
+  id: string;
+  owner: TOwner;
+  createdAt: number;
+};
+
+export type TPreviewLikes = {
+  count: number;
+  likes: TLike[];
+};
 export type TComment = {
   id: string;
   owner: TOwner;
   createdAt: number;
   text: string;
-  likedBy: string[];
+  previewLikes: TPreviewLikes;
+};
+
+export type TPreviewComments = {
+  count: number;
+  comments: TComment[];
 };
 
 export type TPost = {
@@ -35,9 +50,8 @@ export type TPost = {
   createdAt: number;
   medias: TPostMedia[];
   caption?: string;
-  likedBy: string[];
-  comments: TComment[];
-  commentsCount: number;
+  previewLikes: TPreviewLikes;
+  previewComments: TPreviewComments;
   location?: string;
 };
 
