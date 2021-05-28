@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express';
-import { postsRouter, userRouter } from './routers';
+import { postsRouter, userRouter, commentsRouter } from './routers';
 
 const PORT = 8000;
 const REQUEST_DELAY = 250;
@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use('/user', userRouter);
 app.use('/posts', postsRouter);
+app.use('/comments', commentsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
