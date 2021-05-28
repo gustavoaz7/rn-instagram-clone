@@ -1,13 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { FlatList, ListRenderItem, StyleSheet } from 'react-native';
+import Toast from 'react-native-root-toast';
 import { Comment } from '../../components/comment';
 import { TRootStackParams } from '../../navigation/RootStackNavigator';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { TComment } from '../../types';
 import { CommentInput } from '../../components/comment-input';
+import { useAppDispatch } from '../../redux/hooks';
+import { commentsActions, useCommentsSelector } from '../../redux/comments';
 
 type CommentsScreenNavigationProp = StackNavigationProp<
   TRootStackParams,
@@ -19,9 +22,55 @@ export type CommentsScreenRouteProp = RouteProp<
   ROOT_STACK_SCREENS.COMMENTS
 >;
 
+export const COMMENTS_LIMIT = 20;
+
 export function CommentsScreen(): JSX.Element {
   const route = useRoute<CommentsScreenRouteProp>();
   const { post } = route.params;
+  const dispatch = useAppDispatch();
+  const [offset, setOffset] = useState(0);
+
+  const {
+    comments,
+    loading: loadingComments,
+    error: errorComments,
+    canFetchMoreComments,
+  } = useCommentsSelector();
+
+  const getComments = useCallback(() => {
+    if (canFetchMoreComments && !loadingComments) {
+      dispatch(
+        commentsActions.getComments({
+          postId: post.id,
+          offset,
+          limit: COMMENTS_LIMIT,
+        }),
+      );
+      setOffset(offset + COMMENTS_LIMIT);
+    }
+  }, [canFetchMoreComments, loadingComments, dispatch, offset, post.id]);
+
+  const LoadingComments = useCallback(
+    () => (loadingComments ? <Loading testID="LoadingComments" /> : null),
+    [loadingComments],
+  );
+
+  useEffect(() => {
+    getComments();
+
+    return () => {
+      dispatch(commentsActions.clearComments());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // didMount
+
+  useEffect(() => {
+    if (errorComments) {
+      Toast.show('Failed fetching comments.', {
+        position: Toast.positions.CENTER,
+      });
+    }
+  }, [errorComments]);
 
   const renderItem = useCallback<ListRenderItem<TComment>>(
     ({ item }) => <StyledComment {...item} />,
@@ -50,10 +99,13 @@ export function CommentsScreen(): JSX.Element {
   return (
     <Container>
       <FlatList
-        data={post.previewComments.comments}
+        data={comments}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={LoadingComments}
+        onEndReachedThreshold={2}
+        onEndReached={getComments}
       />
       <CommentInput
         onSubmit={() => {
@@ -77,3 +129,8 @@ const HeaderContainer = styled.View`
 const StyledComment = styled(Comment)`
   margin: ${({ theme }) => theme.spacing.s} 0;
 `;
+
+const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
+  size: 'large',
+  color: theme.color.gray,
+}))``;

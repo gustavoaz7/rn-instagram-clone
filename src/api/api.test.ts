@@ -1,6 +1,12 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL, STATIC_USER_DATA } from '../constants';
-import { fakeLogin, fetchPosts, TFetchPostsParams } from './api';
+import {
+  fakeLogin,
+  fetchComments,
+  fetchPosts,
+  TFetchCommentsParams,
+  TFetchPostsParams,
+} from './api';
 
 describe('api', () => {
   beforeEach(() => {
@@ -62,6 +68,36 @@ describe('api', () => {
       fetch.mockRejectOnce(new Error(''));
 
       expect(fetchPosts(params)).rejects.toThrow();
+    });
+  });
+
+  describe('fetchComments', () => {
+    const postId = `${Math.random()}`;
+    const params: TFetchCommentsParams = {
+      offset: Math.random(),
+      limit: Math.random(),
+    };
+
+    it('makes request correctly', () => {
+      fetchComments(postId, params);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(fetch.mock.calls[0]).toEqual([
+        `${BASE_URL}/comments/${postId}?offset=${params.offset}&limit=${params.limit}`,
+      ]);
+    });
+
+    it('returns response json', async () => {
+      const expected = 'hello world';
+      fetch.mockResponseOnce(JSON.stringify(expected));
+
+      expect(await fetchComments(postId, params)).toEqual(expected);
+    });
+
+    it('does not handle error', () => {
+      fetch.mockRejectOnce(new Error(''));
+
+      expect(fetchComments(postId, params)).rejects.toThrow();
     });
   });
 });
