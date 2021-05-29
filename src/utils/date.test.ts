@@ -33,6 +33,9 @@ describe('utils - date', () => {
 
     describe('short version', () => {
       it('returns correct string', () => {
+        expect(dateToString(new Date(Date.now() - 2 * 1000 + 123), true)).toBe(
+          '2 s',
+        );
         expect(dateToString(new Date(Date.now() - 50 * 1000), true)).toBe(
           '50 s',
         );

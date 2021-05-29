@@ -34,6 +34,7 @@ export async function fetchPosts(
 export type TFetchCommentsParams = {
   offset: number;
   limit: number;
+  refresh?: boolean;
 };
 export type TCommentsResponse = {
   comments: TComment[];

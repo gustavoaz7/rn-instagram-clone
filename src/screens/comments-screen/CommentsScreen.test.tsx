@@ -9,6 +9,7 @@ import { generateMockPost, generateMockComment } from '../../data';
 import * as reduxComments from '../../redux/comments';
 import * as reduxHooks from '../../redux/hooks';
 import { FakeNavigator } from '../../test/fake-navigator';
+import { theme } from '../../styles/theme';
 
 jest.mock('@react-navigation/native', () => {
   const actual = jest.requireActual('@react-navigation/native');
@@ -226,6 +227,39 @@ describe('screens - CommentsScreen', () => {
 
         expect(clearCommentsSpy).toHaveBeenCalledTimes(1);
         expect(dispatchMock).toHaveBeenLastCalledWith(action);
+      });
+    });
+
+    describe('on pull to refresh', () => {
+      it('dispatches get comments action with "refresh" param', async () => {
+        const { UNSAFE_getByType } = render(
+          <FakeNavigator component={CommentsScreen} />,
+          options,
+        );
+
+        const { refreshControl } = UNSAFE_getByType(FlatList).props;
+
+        await act(async () => {
+          await refreshControl.props.onRefresh();
+        });
+
+        expect(getCommentsSpy).toHaveBeenLastCalledWith({
+          offset: 0,
+          limit: COMMENTS_LIMIT,
+          postId: post.id,
+          refresh: true,
+        });
+      });
+
+      it('has gray color', () => {
+        const { UNSAFE_getByType } = render(
+          <FakeNavigator component={CommentsScreen} />,
+          options,
+        );
+        const { refreshControl } = UNSAFE_getByType(FlatList).props;
+
+        expect(refreshControl.props.tintColor).toBe(theme.color.gray);
+        expect(refreshControl.props.colors).toEqual([theme.color.gray]);
       });
     });
   });

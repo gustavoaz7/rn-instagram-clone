@@ -2,13 +2,13 @@ import { Router } from 'express';
 import type { TFetchCommentsParams, TCommentsResponse } from '../../src/api';
 import { database } from '../database';
 import { tranformComment } from '../transformations';
-import { sortByCreatedAt } from '../utils';
+import { generateComment, sortByCreatedAt } from '../utils';
 
 export const commentsRouter = Router();
 
 type TCommentsGetParams = { id: string };
 type TCommentsGetRes = TCommentsResponse;
-type TCommentsGetQuery = TFetchCommentsParams;
+type TCommentsGetQuery = TFetchCommentsParams & { refresh?: string };
 commentsRouter.get<
   TCommentsGetParams,
   TCommentsGetRes,
@@ -18,8 +18,19 @@ commentsRouter.get<
   const postId = req.params.id;
   const offset = Number(req.query.offset);
   const limit = Number(req.query.limit);
+  const refresh = Boolean(req.query.refresh);
 
   const post = database.posts.get(postId)!;
+
+  if (refresh) {
+    const comment = generateComment({
+      associatedId: post.id,
+      createdAt: Date.now(),
+    });
+    post.commentsIds.push(comment.id);
+    database.comments.set(comment.id, comment);
+  }
+
   const commentsDBWithNext = post.commentsIds
     .map(commentId => database.comments.get(commentId)!)
     .sort(sortByCreatedAt)

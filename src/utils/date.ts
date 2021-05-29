@@ -6,7 +6,7 @@ const DAY_IN_SEC = 24 * HOUR_IN_SEC;
 const WEEK_IN_SEC = 7 * DAY_IN_SEC;
 
 export const dateToString = (date: Date, short = false): string => {
-  const diff = Math.round(Date.now() - date.getTime()) / 1000;
+  const diff = Math.round((Date.now() - date.getTime()) / 1000);
 
   if (diff < MINUTE_IN_SEC) {
     return short ? `${diff} s` : 'Just now';
