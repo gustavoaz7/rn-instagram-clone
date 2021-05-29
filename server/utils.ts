@@ -52,7 +52,7 @@ export const generateUser = (partialUser?: Partial<TUserDB>): TUserDB => {
 export const generateLike = (partialLike?: Partial<TLikeDB>): TLikeDB => ({
   associatedId: uuidv4(),
   id: uuidv4(),
-  createdAt: faker.date.recent(10).getTime(),
+  createdAt: faker.date.recent(180).getTime(),
   owner: generateOwner(),
   ...partialLike,
 });
@@ -74,7 +74,7 @@ export const generateComment = (
   owner: generateOwner(),
   // Disclaimer: might cause a comment to be more recent than
   // the post itself.
-  createdAt: faker.date.recent(10).getTime(),
+  createdAt: faker.date.recent(180).getTime(),
   text: faker.lorem.sentence(),
   likesIds: [],
   ...partialComment,
@@ -133,7 +133,7 @@ export const generatePost = (user: TUserDB): TPostDB => {
   return {
     id: uuidv4(),
     owner,
-    createdAt: faker.date.recent(10).getTime(),
+    createdAt: faker.date.recent(180).getTime(),
     // 70% -> single image item
     medias: [
       ...Array(
@@ -161,3 +161,6 @@ export const convertUserToOwner = (user: TUserDB): TOwner => ({
   profilePicUrl: user.profilePicUrl,
   username: user.username,
 });
+
+export const sortByCreatedAt = <T extends { createdAt: number }>(a: T, b: T) =>
+  b.createdAt - a.createdAt;

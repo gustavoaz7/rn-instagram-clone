@@ -3,6 +3,7 @@ import type { TFetchPostsParams, TPostsResponse } from '../../src/api';
 import { database } from '../database';
 import { session } from '../session';
 import { transformPost } from '../transformations';
+import { sortByCreatedAt } from '../utils';
 
 export const postsRouter = Router();
 
@@ -20,6 +21,7 @@ postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
 
   const postsDBWithNext = postsIds
     .map(postId => database.posts.get(postId)!)
+    .sort(sortByCreatedAt)
     .slice(offset, offset + limit + 1);
   const canFetchMorePosts = postsDBWithNext.length > limit;
 

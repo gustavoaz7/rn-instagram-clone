@@ -52,16 +52,14 @@ userRouter.post('/login', (req, res) => {
           // 50% -> has comments
           Math.random() < 0.5 ? 0 : faker.datatype.number({ min: 1, max: 50 }),
         ),
-      ]
-        .map(() => generateComment({ associatedId: post.id }))
-        .sort((a, b) => b.createdAt - a.createdAt);
+      ].map(() => generateComment({ associatedId: post.id }));
 
       comments.forEach(comment => database.comments.set(comment.id, comment));
       post.commentsIds.push(...comments.map(comment => comment.id));
 
-      const likes = [...Array(faker.datatype.number(20))]
-        .map(() => generateLike({ associatedId: post.id }))
-        .sort((a, b) => b.createdAt - a.createdAt);
+      const likes = [...Array(faker.datatype.number(20))].map(() =>
+        generateLike({ associatedId: post.id }),
+      );
 
       likes.forEach(like => database.likes.set(like.id, like));
       post.likesIds.push(...likes.map(like => like.id));
