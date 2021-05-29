@@ -16,12 +16,19 @@ const fetchPostsMock = fetchPosts as jest.Mock;
 describe('redux - posts', () => {
   describe('getPosts', () => {
     const params: TFetchPostsParams = {
-      offset: 0,
-      limit: 10,
+      offset: Math.random(),
+      limit: Math.random(),
     };
 
     beforeEach(() => {
       fetchPostsMock.mockClear();
+    });
+
+    it('calls fetchPosts with provided params', () => {
+      const store = configureStore({ reducer: postsReducer });
+      store.dispatch(postsActions.getPosts(params));
+
+      expect(fetchPostsMock).toHaveBeenCalledWith(params);
     });
 
     describe('when request succeeds', () => {
@@ -68,6 +75,29 @@ describe('redux - posts', () => {
           error: null,
           posts: [...response1.posts, ...response2.posts],
           canFetchMorePosts: response2.canFetchMorePosts,
+        });
+      });
+
+      describe('when `refresh` param is provided', () => {
+        it('replaces current posts with response', async () => {
+          const response3 = {
+            posts: [{ fake3: 'post3' }],
+            canFetchMorePosts: false,
+          };
+          fetchPostsMock.mockResolvedValueOnce(response3);
+
+          expect(store.getState().posts).not.toEqual(response3.posts);
+
+          await store.dispatch(
+            postsActions.getPosts({ ...params, refresh: true }),
+          );
+
+          expect(store.getState()).toEqual({
+            loading: false,
+            error: null,
+            posts: response3.posts,
+            canFetchMorePosts: response3.canFetchMorePosts,
+          });
         });
       });
     });

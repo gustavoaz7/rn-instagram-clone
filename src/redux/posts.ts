@@ -48,8 +48,11 @@ export const postsSlice = createSlice({
       .addCase(getPosts.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.posts = [...state.posts, ...action.payload.posts];
         state.canFetchMorePosts = action.payload.canFetchMorePosts;
+        const isRefresh = action.meta.arg.refresh;
+        state.posts = isRefresh
+          ? action.payload.posts
+          : [...state.posts, ...action.payload.posts];
       });
   },
 });
