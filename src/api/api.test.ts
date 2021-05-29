@@ -98,6 +98,17 @@ describe('api', () => {
       ]);
     });
 
+    describe('when refresh is provided', () => {
+      it('adds `refresh` param ', () => {
+        fetchComments(postId, { ...params, refresh: true });
+
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch.mock.calls[0]).toEqual([
+          `${BASE_URL}/comments/${postId}?offset=${params.offset}&limit=${params.limit}&refresh=true`,
+        ]);
+      });
+    });
+
     it('returns response json', async () => {
       const expected = 'hello world';
       fetch.mockResponseOnce(JSON.stringify(expected));

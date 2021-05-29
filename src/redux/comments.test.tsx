@@ -26,6 +26,14 @@ describe('redux - comments', () => {
       fetchCommentsMock.mockClear();
     });
 
+    it('calls fetchComments with provided params', () => {
+      const { postId, ...params } = thunkArg;
+      const store = configureStore({ reducer: commentsReducer });
+      store.dispatch(commentsActions.getComments(thunkArg));
+
+      expect(fetchCommentsMock).toHaveBeenCalledWith(postId, params);
+    });
+
     describe('when request succeeds', () => {
       const store = configureStore({ reducer: commentsReducer });
       const response1 = {
@@ -70,6 +78,29 @@ describe('redux - comments', () => {
           error: null,
           comments: [...response1.comments, ...response2.comments],
           canFetchMoreComments: response2.canFetchMoreComments,
+        });
+      });
+
+      describe('when `refresh` param is provided', () => {
+        it('replaces current comments with response', async () => {
+          const response3 = {
+            comments: [{ fake3: 'comment3' }],
+            canFetchMoreComments: false,
+          };
+          fetchCommentsMock.mockResolvedValueOnce(response3);
+
+          expect(store.getState().comments).not.toEqual(response3.comments);
+
+          await store.dispatch(
+            commentsActions.getComments({ ...thunkArg, refresh: true }),
+          );
+
+          expect(store.getState()).toEqual({
+            loading: false,
+            error: null,
+            comments: response3.comments,
+            canFetchMoreComments: response3.canFetchMoreComments,
+          });
         });
       });
     });

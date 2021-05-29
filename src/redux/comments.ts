@@ -51,8 +51,11 @@ export const commentsSlice = createSlice({
       .addCase(getComments.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.comments = [...state.comments, ...action.payload.comments];
         state.canFetchMoreComments = action.payload.canFetchMoreComments;
+        const isRefresh = action.meta.arg.refresh;
+        state.comments = isRefresh
+          ? action.payload.comments
+          : [...state.comments, ...action.payload.comments];
       });
   },
 });

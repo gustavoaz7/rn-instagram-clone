@@ -1,8 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import styled from 'styled-components/native';
-import { FlatList, ListRenderItem, StyleSheet } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
+import {
+  FlatList,
+  ListRenderItem,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native';
 import Toast from 'react-native-root-toast';
 import { Comment } from '../../components/comment';
 import { TRootStackParams } from '../../navigation/RootStackNavigator';
@@ -28,7 +33,9 @@ export function CommentsScreen(): JSX.Element {
   const route = useRoute<CommentsScreenRouteProp>();
   const { post } = route.params;
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const [offset, setOffset] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     comments,
@@ -49,6 +56,20 @@ export function CommentsScreen(): JSX.Element {
       setOffset(offset + COMMENTS_LIMIT);
     }
   }, [canFetchMoreComments, loadingComments, dispatch, offset, post.id]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setOffset(0);
+    await dispatch(
+      commentsActions.getComments({
+        postId: post.id,
+        offset: 0,
+        limit: COMMENTS_LIMIT,
+        refresh: true,
+      }),
+    );
+    setRefreshing(false);
+  }, [dispatch, post.id]);
 
   const LoadingComments = useCallback(
     () => (loadingComments ? <Loading testID="LoadingComments" /> : null),
@@ -106,6 +127,14 @@ export function CommentsScreen(): JSX.Element {
         ListFooterComponent={LoadingComments}
         onEndReachedThreshold={2}
         onEndReached={getComments}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.color.gray}
+            colors={[theme.color.gray]}
+          />
+        }
       />
       <CommentInput
         onSubmit={() => {
