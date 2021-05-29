@@ -1,7 +1,7 @@
 import faker from 'faker';
 import { v4 as uuidv4 } from 'uuid';
 import type {
-  TUser,
+  TUserDB,
   TPostDB,
   TPostMedia,
   TCommentDB,
@@ -12,14 +12,14 @@ import type {
 
 // ----- USER -----
 
-const GENDERS: TUser['gender'][] = [
+const GENDERS: TUserDB['gender'][] = [
   'Female',
   'Male',
   'Custom',
   'Prefer not to say',
 ];
 
-export const generateUser = (partialUser?: Partial<TUser>): TUser => {
+export const generateUser = (partialUser?: Partial<TUserDB>): TUserDB => {
   const card = faker.helpers.contextualCard();
 
   return {
@@ -42,6 +42,7 @@ export const generateUser = (partialUser?: Partial<TUser>): TUser => {
     }),
     gender: faker.random.arrayElement(GENDERS),
     dob: card.dob.getTime(),
+    postsIds: [],
     ...partialUser,
   };
 };
@@ -126,7 +127,7 @@ export const generateMedia = (owner: TOwner): TPostMedia => ({
   ].map(generateTappableObject),
 });
 
-export const generatePost = (user: TUser): TPostDB => {
+export const generatePost = (user: TUserDB): TPostDB => {
   const owner = convertUserToOwner(user);
 
   return {
@@ -155,7 +156,7 @@ export const generatePost = (user: TUser): TPostDB => {
 
 // ----- HELPERS -----
 
-export const convertUserToOwner = (user: TUser): TOwner => ({
+export const convertUserToOwner = (user: TUserDB): TOwner => ({
   id: user.id,
   profilePicUrl: user.profilePicUrl,
   username: user.username,

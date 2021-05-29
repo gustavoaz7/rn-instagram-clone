@@ -18,8 +18,9 @@ commentsRouter.get<
   const offset = Number(req.query.offset);
   const limit = Number(req.query.limit);
 
-  const commentsDBWithNext = database.comments
-    .filter(comment => comment.associatedId === postId)
+  const post = database.posts.get(postId)!;
+  const commentsDBWithNext = post.commentsIds
+    .map(commentId => database.comments.get(commentId)!)
     .slice(offset, offset + limit + 1);
   const canFetchMoreComments = commentsDBWithNext.length > limit;
   const comments = commentsDBWithNext.slice(0, -1).map(tranformComment);
