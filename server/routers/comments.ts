@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { TFetchCommentsParams, TCommentsResponse } from '../../src/api';
 import { database } from '../database';
 import { tranformComment } from '../transformations';
+import { sortByCreatedAt } from '../utils';
 
 export const commentsRouter = Router();
 
@@ -21,6 +22,7 @@ commentsRouter.get<
   const post = database.posts.get(postId)!;
   const commentsDBWithNext = post.commentsIds
     .map(commentId => database.comments.get(commentId)!)
+    .sort(sortByCreatedAt)
     .slice(offset, offset + limit + 1);
   const canFetchMoreComments = commentsDBWithNext.length > limit;
   const comments = commentsDBWithNext.slice(0, -1).map(tranformComment);

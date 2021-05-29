@@ -13,20 +13,3 @@ export const database: TDatabase = {
   comments: new Map(),
   likes: new Map(),
 };
-
-function sortByDate<T extends { createdAt: number }>(entries: [string, T][]) {
-  return entries.sort(
-    ([, entryA], [, entryB]) => entryB.createdAt - entryA.createdAt,
-  );
-}
-
-/* eslint-disable func-names */
-database.posts[Symbol.iterator] = function* () {
-  yield* sortByDate([...this.entries()]);
-};
-database.comments[Symbol.iterator] = function* () {
-  yield* sortByDate([...this.entries()]);
-};
-database.likes[Symbol.iterator] = function* () {
-  yield* sortByDate([...this.entries()]);
-};
