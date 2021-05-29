@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItem } from 'react-native';
-import styled from 'styled-components/native';
+import { FlatList, ListRenderItem, RefreshControl } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 import Toast from 'react-native-root-toast';
 import { PostItem } from '../../components/post-item';
 import { useAppDispatch } from '../../redux/hooks';
@@ -11,7 +11,9 @@ export const POSTS_LIMIT = 20;
 
 export function FeedScreen(): JSX.Element {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const [offset, setOffset] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     posts,
@@ -26,6 +28,15 @@ export function FeedScreen(): JSX.Element {
       setOffset(offset + POSTS_LIMIT);
     }
   }, [canFetchMorePosts, loadingPosts, dispatch, offset]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setOffset(0);
+    await dispatch(
+      postsActions.getPosts({ offset: 0, limit: POSTS_LIMIT, refresh: true }),
+    );
+    setRefreshing(false);
+  }, [dispatch]);
 
   const LoadingMorePosts = useCallback(
     () => (loadingPosts ? <Loading testID="loadingMorePosts" /> : null),
@@ -62,6 +73,14 @@ export function FeedScreen(): JSX.Element {
           maxToRenderPerBatch={4}
           onEndReached={getPosts}
           onEndReachedThreshold={2}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.color.gray}
+              colors={[theme.color.gray]}
+            />
+          }
           ListFooterComponent={LoadingMorePosts}
         />
       ) : null}

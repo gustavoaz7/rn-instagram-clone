@@ -127,7 +127,10 @@ export const generateMedia = (owner: TOwner): TPostMedia => ({
   ].map(generateTappableObject),
 });
 
-export const generatePost = (user: TUserDB): TPostDB => {
+export const generatePost = (
+  user: TUserDB,
+  partialPost?: Partial<TPostDB>,
+): TPostDB => {
   const owner = convertUserToOwner(user);
 
   return {
@@ -151,6 +154,7 @@ export const generatePost = (user: TUserDB): TPostDB => {
 
     commentsIds: [],
     likesIds: [],
+    ...partialPost,
   };
 };
 

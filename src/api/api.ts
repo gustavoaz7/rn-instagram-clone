@@ -12,6 +12,7 @@ export async function fakeLogin(): Promise<TUser> {
 export type TFetchPostsParams = {
   offset: number;
   limit: number;
+  refresh?: boolean;
 };
 export type TPostsResponse = {
   posts: TPost[];

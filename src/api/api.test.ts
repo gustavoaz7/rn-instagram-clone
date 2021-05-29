@@ -57,6 +57,17 @@ describe('api', () => {
       ]);
     });
 
+    describe('when refresh is provided', () => {
+      it('adds `refresh` param ', () => {
+        fetchPosts({ ...params, refresh: true });
+
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch.mock.calls[0]).toEqual([
+          `${BASE_URL}/posts?offset=${params.offset}&limit=${params.limit}&refresh=true`,
+        ]);
+      });
+    });
+
     it('returns response json', async () => {
       const expected = 'hello world';
       fetch.mockResponseOnce(JSON.stringify(expected));
