@@ -1,19 +1,31 @@
 import { Router } from 'express';
+import faker from 'faker';
 import type { TFetchPostsParams, TPostsResponse } from '../../src/api';
 import { database } from '../database';
 import { session } from '../session';
 import { transformPost } from '../transformations';
-import { sortByCreatedAt } from '../utils';
+import { generatePost, sortByCreatedAt } from '../utils';
 
 export const postsRouter = Router();
 
 type TGetPostsRes = TPostsResponse;
-type TGetPostsQuery = TFetchPostsParams;
+type TGetPostsQuery = TFetchPostsParams & { refresh?: string };
 postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
   const offset = Number(req.query.offset);
   const limit = Number(req.query.limit);
+  const refresh = Boolean(req.query.refresh);
 
   const currentUser = database.users.get(session.getUsername())!;
+
+  if (refresh) {
+    const user = database.users.get(
+      faker.random.arrayElement(currentUser.following),
+    )!;
+    const post = generatePost(user, { createdAt: Date.now() });
+    user.postsIds.push(post.id);
+    database.posts.set(post.id, post);
+  }
+
   const postsIds = currentUser.following.reduce<string[]>(
     (acc, username) => [...acc, ...database.users.get(username)!.postsIds],
     [],
