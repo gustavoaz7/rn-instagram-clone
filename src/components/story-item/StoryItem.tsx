@@ -12,6 +12,7 @@ type TStoryItemProps = {
   story: TStory;
   isCurrentStory: boolean;
   initialMediaIndex?: number;
+  shouldPauseAnimations?: boolean;
   onGoNext: () => void;
   onGoPrev: () => void;
 };
@@ -20,10 +21,12 @@ export const StoryItem = ({
   story,
   isCurrentStory,
   initialMediaIndex = 0,
+  shouldPauseAnimations = false,
   onGoNext,
   onGoPrev,
 }: TStoryItemProps) => {
   const [mediaIndex, setMediaIndex] = useState(initialMediaIndex);
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false);
   const [text, setText] = useState('');
   const handleTextChange = useCallback(newText => {
     setText(newText);
@@ -31,14 +34,18 @@ export const StoryItem = ({
 
   const progressBars = useRef<Animated.Value[]>(
     story.medias.map(() => new Animated.Value(0)),
-  );
+  ).current;
+
+  const stopProgressAnimation = useCallback(() => {
+    progressBars[mediaIndex].stopAnimation();
+  }, [progressBars, mediaIndex]);
 
   const goToPrevMedia = useCallback(() => {
     if (mediaIndex > 0) {
-      progressBars.current?.[mediaIndex - 1].setValue(0);
+      progressBars[mediaIndex - 1].setValue(0);
       setMediaIndex(mediaIndex - 1);
     } else {
-      progressBars.current?.[mediaIndex].setValue(0);
+      progressBars[mediaIndex].setValue(0);
       onGoPrev();
     }
   }, [mediaIndex, onGoPrev, progressBars]);
@@ -47,7 +54,7 @@ export const StoryItem = ({
     if (mediaIndex < story.medias.length - 1) {
       setMediaIndex(mediaIndex + 1);
     } else {
-      const bar = progressBars.current?.[mediaIndex];
+      const bar = progressBars[mediaIndex];
       bar.setValue(0);
       onGoNext();
     }
@@ -55,7 +62,8 @@ export const StoryItem = ({
 
   const handlePress = useCallback(
     (e: GestureResponderEvent) => {
-      const bar = progressBars.current?.[mediaIndex];
+      stopProgressAnimation();
+      const bar = progressBars[mediaIndex];
       if (e.nativeEvent.locationX < SCREEN_WIDTH / 2) {
         bar.setValue(0);
         goToPrevMedia();
@@ -64,14 +72,22 @@ export const StoryItem = ({
         goToNextMedia();
       }
     },
-    [progressBars, mediaIndex, goToPrevMedia, goToNextMedia],
+    [
+      stopProgressAnimation,
+      progressBars,
+      mediaIndex,
+      goToPrevMedia,
+      goToNextMedia,
+    ],
   );
 
   const startProgressAnimation = useCallback(() => {
-    const bar = progressBars.current?.[mediaIndex];
+    const bar = progressBars[mediaIndex];
     Animated.timing(bar, {
       toValue: 1,
-      duration: 5000,
+      // Adjusts duration when re-starting after stop animation
+      // eslint-disable-next-line
+      duration: 5000 - (bar as any).__getValue() * 5000,
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {
@@ -82,15 +98,45 @@ export const StoryItem = ({
 
   useEffect(() => {
     if (isCurrentStory) {
-      progressBars.current?.[mediaIndex].setValue(0);
+      progressBars[mediaIndex].setValue(0);
+      startProgressAnimation();
+    } else {
+      stopProgressAnimation();
+    }
+  }, [
+    mediaIndex,
+    isCurrentStory,
+    progressBars,
+    startProgressAnimation,
+    stopProgressAnimation,
+  ]);
+
+  useEffect(() => {
+    if (shouldPauseAnimations || isAnimationPaused) {
+      stopProgressAnimation();
+    }
+  }, [shouldPauseAnimations, isAnimationPaused, stopProgressAnimation]);
+
+  const handleLongPress = useCallback(() => {
+    setIsAnimationPaused(true);
+  }, [setIsAnimationPaused]);
+
+  const handlePressOut = useCallback(() => {
+    if (isAnimationPaused) {
       startProgressAnimation();
     }
-  }, [mediaIndex, isCurrentStory, startProgressAnimation]);
+    setIsAnimationPaused(false);
+  }, [setIsAnimationPaused, isAnimationPaused, startProgressAnimation]);
 
   const currentMedia = story.medias[mediaIndex];
 
   return (
-    <Container onPress={handlePress} delayLongPress={200}>
+    <Container
+      onPress={handlePress}
+      onLongPress={handleLongPress}
+      onPressOut={handlePressOut}
+      delayLongPress={200}
+    >
       <Image source={{ uri: currentMedia.url }} />
       <ProgressBarContainer>
         {story.medias.map((_, i) => (
@@ -100,7 +146,7 @@ export const StoryItem = ({
           >
             <ProgressBarItemAnimated
               style={{
-                width: progressBars.current?.[i].interpolate({
+                width: progressBars[i].interpolate({
                   inputRange: [0, 1],
                   outputRange: ['0%', '100%'],
                   extrapolate: 'clamp',
@@ -119,7 +165,12 @@ export const StoryItem = ({
         <MenuVerticalIcon />
       </Header>
       <Footer>
-        <Input value={text} onChangeText={handleTextChange} />
+        <Input
+          value={text}
+          onChangeText={handleTextChange}
+          onFocus={stopProgressAnimation}
+          onBlur={startProgressAnimation}
+        />
         <DirectIcon />
       </Footer>
     </Container>
