@@ -13,7 +13,7 @@ import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import {
   generateMockPost,
-  generateMockMedia,
+  generateMockPostMedia,
   generateMockLike,
   generateMockComment,
 } from '../../data';
@@ -208,7 +208,7 @@ describe('components - PostItem', () => {
   describe('when post has multiple images', () => {
     const multiImagePost = {
       ...post,
-      medias: [...Array(4)].map(generateMockMedia),
+      medias: [...Array(4)].map(generateMockPostMedia),
     };
 
     it('renders images slider', () => {

@@ -180,7 +180,7 @@ exports[`components - PostItem matches snapshot 1`] = `
     <Image
       source={
         Object {
-          "uri": "http://placeimg.com/640/480/cats",
+          "uri": "http://placeimg.com/640/480/cats?0",
         }
       }
       style={
