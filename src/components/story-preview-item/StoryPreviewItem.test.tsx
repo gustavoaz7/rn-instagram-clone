@@ -4,11 +4,25 @@ import {
   RenderOptions,
   fireEvent,
 } from '@testing-library/react-native';
+import { Animated } from 'react-native';
 import { StoryPreviewItem, SCALE_DURATION } from './StoryPreviewItem';
 import { Providers } from '../../Providers';
+import {
+  setupTimeTravel,
+  destroyTimeTravel,
+  timeTravel,
+} from '../../test/time-travel';
 
 describe('components - StoryPreviewItem', () => {
   const options: RenderOptions = { wrapper: Providers };
+
+  beforeEach(() => {
+    setupTimeTravel();
+  });
+
+  afterEach(() => {
+    destroyTimeTravel();
+  });
 
   it('renders', () => {
     render(<StoryPreviewItem />, options);
@@ -21,17 +35,19 @@ describe('components - StoryPreviewItem', () => {
   });
 
   it('bounces on press', () => {
-    jest.useFakeTimers();
-    const { getByText, toJSON } = render(<StoryPreviewItem />, options);
+    const { UNSAFE_getByType } = render(<StoryPreviewItem />, options);
 
-    fireEvent(getByText('veryLongNameHere'), 'pressIn');
-    jest.advanceTimersByTime(SCALE_DURATION);
+    const element = UNSAFE_getByType(Animated.View);
+    const animatedScale = element.props.style[1].transform[0].scale;
 
-    expect(toJSON()).toMatchSnapshot('scaled down');
+    fireEvent(element, 'pressIn');
+    timeTravel(SCALE_DURATION);
 
-    fireEvent(getByText('veryLongNameHere'), 'pressOut');
-    jest.advanceTimersByTime(SCALE_DURATION);
+    expect(animatedScale).toMatchInlineSnapshot('0.9');
 
-    expect(toJSON()).toMatchSnapshot('back to initial scale');
+    fireEvent(element, 'pressOut');
+    timeTravel(SCALE_DURATION);
+
+    expect(animatedScale).toMatchInlineSnapshot('1');
   });
 });

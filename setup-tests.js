@@ -6,6 +6,4 @@ import { FRAME_TIME } from './src/constants';
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 enableFetchMocks();
 
-global.requestAnimationFrame = callback => {
-  setTimeout(callback, FRAME_TIME);
-};
+global.requestAnimationFrame = callback => setTimeout(callback, FRAME_TIME);

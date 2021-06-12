@@ -2,10 +2,24 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { SliderPageIndicator, DELAY } from './SliderPageIndicator';
 import { Providers } from '../../Providers';
+import {
+  setupTimeTravel,
+  destroyTimeTravel,
+  timeTravel,
+} from '../../test/time-travel';
+import { theme } from '../../styles/theme';
 
 describe('components - SliderPageIndicator', () => {
   const options = { wrapper: Providers };
   const props = { total: 4, current: 3 };
+
+  beforeEach(() => {
+    setupTimeTravel();
+  });
+
+  afterEach(() => {
+    destroyTimeTravel();
+  });
 
   it('renders', () => {
     render(<SliderPageIndicator {...props} />, options);
@@ -40,39 +54,34 @@ describe('components - SliderPageIndicator', () => {
 
     describe('when stays on same page', () => {
       it('keeps visible', () => {
-        jest.useFakeTimers();
         const { getByText } = render(
           <SliderPageIndicator {...props} />,
           options,
         );
 
-        jest.runAllTimers();
+        timeTravel(DELAY * 2);
 
         expect(getByText(`${props.current}/${props.total}`)).toHaveStyle({
           opacity: 1,
         });
-        jest.useRealTimers();
       });
     });
 
     describe('when changes page', () => {
       it(`hides after ${DELAY}ms`, () => {
-        jest.useFakeTimers();
         const { getByText, rerender } = render(
           <SliderPageIndicator total={4} current={2} />,
           options,
         );
 
         rerender(<SliderPageIndicator total={4} current={3} />);
-        jest.advanceTimersByTime(DELAY);
+        timeTravel(DELAY + theme.animation.timingSlow);
 
         expect(getByText('3/4')).toHaveStyle({ opacity: 0 });
-        jest.useRealTimers();
       });
 
       describe('when go back to initial page', () => {
         it(`still hides after ${DELAY}ms`, () => {
-          jest.useFakeTimers();
           const { getByText, rerender } = render(
             <SliderPageIndicator total={4} current={2} />,
             options,
@@ -80,10 +89,9 @@ describe('components - SliderPageIndicator', () => {
 
           rerender(<SliderPageIndicator total={4} current={3} />);
           rerender(<SliderPageIndicator total={4} current={2} />);
-          jest.advanceTimersByTime(DELAY);
+          timeTravel(DELAY + theme.animation.timingSlow);
 
           expect(getByText('2/4')).toHaveStyle({ opacity: 0 });
-          jest.useRealTimers();
         });
       });
     });

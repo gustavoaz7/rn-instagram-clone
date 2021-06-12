@@ -131,10 +131,11 @@ describe('components - StoryItem', () => {
         timeTravel(STORY_TIMEOUT / 2);
       });
 
-      // eslint-disable-next-line no-underscore-dangle
-      expect((progressBarProps.style[1].width as any).__getValue()).toMatch(
-        /50.\d+%/,
-      );
+      expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+        Object {
+          "width": "50%",
+        }
+      `);
     });
 
     it('does not change story image', () => {
@@ -284,10 +285,11 @@ describe('components - StoryItem', () => {
       timeTravel(STORY_TIMEOUT);
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    expect((progressBarProps.style[1].width as any).__getValue()).toMatch(
-      /0.\d+%/,
-    );
+    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+      Object {
+        "width": "0%",
+      }
+    `);
     expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
       story.medias[0].url,
     );
@@ -298,8 +300,11 @@ describe('components - StoryItem', () => {
       timeTravel(STORY_TIMEOUT);
     });
 
-    // eslint-disable-next-line no-underscore-dangle
-    expect((progressBarProps.style[1].width as any).__getValue()).toBe('100%');
+    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+      Object {
+        "width": "100%",
+      }
+    `);
     expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
       story.medias[1].url,
     );
@@ -322,10 +327,11 @@ describe('components - StoryItem', () => {
       timeTravel(STORY_TIMEOUT);
     });
 
-    /* eslint-disable no-underscore-dangle */
-    expect((progressBarProps.style[1].width as any).__getValue()).toMatch(
-      /0.00\d+%/,
-    );
+    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+      Object {
+        "width": "0%",
+      }
+    `);
     expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
       story.medias[0].url,
     );
@@ -336,11 +342,14 @@ describe('components - StoryItem', () => {
       timeTravel(STORY_TIMEOUT);
     });
 
-    expect((progressBarProps.style[1].width as any).__getValue()).toBe('100%');
+    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+      Object {
+        "width": "100%",
+      }
+    `);
     expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
       story.medias[1].url,
     );
-    /* eslint-enable no-underscore-dangle */
   });
 
   describe('when at an intermediary media', () => {
