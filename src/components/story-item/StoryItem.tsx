@@ -10,20 +10,20 @@ import { dateToString } from '../../utils/date';
 
 type TStoryItemProps = {
   story: TStory;
+  storyIndex: number;
   isCurrentStory: boolean;
   initialMediaIndex?: number;
   shouldPauseAnimations?: boolean;
-  onGoNext: () => void;
-  onGoPrev: () => void;
+  goToStory: (nextStoryIndex: number) => void;
 };
 
 export const StoryItem = ({
   story,
+  storyIndex,
   isCurrentStory,
   initialMediaIndex = 0,
   shouldPauseAnimations = false,
-  onGoNext,
-  onGoPrev,
+  goToStory,
 }: TStoryItemProps) => {
   const [mediaIndex, setMediaIndex] = useState(initialMediaIndex);
   const [isAnimationPaused, setIsAnimationPaused] = useState(false);
@@ -41,14 +41,14 @@ export const StoryItem = ({
   }, [progressBars, mediaIndex]);
 
   const goToPrevMedia = useCallback(() => {
+    progressBars[mediaIndex].setValue(0);
     if (mediaIndex > 0) {
       progressBars[mediaIndex - 1].setValue(0);
       setMediaIndex(mediaIndex - 1);
     } else {
-      progressBars[mediaIndex].setValue(0);
-      onGoPrev();
+      goToStory(storyIndex - 1);
     }
-  }, [mediaIndex, onGoPrev, progressBars]);
+  }, [mediaIndex, goToStory, storyIndex, progressBars]);
 
   const goToNextMedia = useCallback(() => {
     if (mediaIndex < story.medias.length - 1) {
@@ -56,9 +56,9 @@ export const StoryItem = ({
     } else {
       const bar = progressBars[mediaIndex];
       bar.setValue(0);
-      onGoNext();
+      goToStory(storyIndex + 1);
     }
-  }, [mediaIndex, onGoNext, story.medias.length, progressBars]);
+  }, [mediaIndex, goToStory, storyIndex, story.medias.length, progressBars]);
 
   const handlePress = useCallback(
     (e: GestureResponderEvent) => {
@@ -97,16 +97,19 @@ export const StoryItem = ({
   }, [mediaIndex, progressBars, goToNextMedia]);
 
   useEffect(() => {
-    if (isCurrentStory) {
-      progressBars[mediaIndex].setValue(0);
+    if (isCurrentStory && !shouldPauseAnimations) {
       startProgressAnimation();
     } else {
+      if (!shouldPauseAnimations) {
+        progressBars[mediaIndex].setValue(0);
+      }
       stopProgressAnimation();
     }
   }, [
     mediaIndex,
     isCurrentStory,
     progressBars,
+    shouldPauseAnimations,
     startProgressAnimation,
     stopProgressAnimation,
   ]);
