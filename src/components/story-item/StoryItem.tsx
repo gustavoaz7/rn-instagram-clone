@@ -8,6 +8,8 @@ import { TStory } from '../../types';
 import { Text } from '../text';
 import { dateToString } from '../../utils/date';
 
+export const STORY_TIMEOUT = 5000;
+
 type TStoryItemProps = {
   story: TStory;
   storyIndex: number;
@@ -33,7 +35,9 @@ export const StoryItem = ({
   }, []);
 
   const progressBars = useRef<Animated.Value[]>(
-    story.medias.map(() => new Animated.Value(0)),
+    story.medias.map(
+      (m, i) => new Animated.Value(i < initialMediaIndex ? 1 : 0),
+    ),
   ).current;
 
   const stopProgressAnimation = useCallback(() => {
@@ -87,7 +91,7 @@ export const StoryItem = ({
       toValue: 1,
       // Adjusts duration when re-starting after stop animation
       // eslint-disable-next-line
-      duration: 5000 - (bar as any).__getValue() * 5000,
+      duration: STORY_TIMEOUT - (bar as any).__getValue() * STORY_TIMEOUT,
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {
@@ -139,9 +143,10 @@ export const StoryItem = ({
       onLongPress={handleLongPress}
       onPressOut={handlePressOut}
       delayLongPress={200}
+      testID="StoryItem"
     >
-      <Image source={{ uri: currentMedia.url }} />
-      <ProgressBarContainer>
+      <Image testID="StoryItem-Image" source={{ uri: currentMedia.url }} />
+      <ProgressBarContainer testID="StoryItem-ProgressBar">
         {story.medias.map((_, i) => (
           <ProgressBarItem
             // eslint-disable-next-line react/no-array-index-key

@@ -1,0 +1,304 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - StoryItem matches snapshot 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Array [
+      Object {
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "space-between",
+        "width": 750,
+      },
+    ]
+  }
+  testID="StoryItem"
+>
+  <Image
+    source={
+      Object {
+        "uri": "http://placeimg.com/640/480/cats?0",
+      }
+    }
+    style={
+      Array [
+        Object {
+          "borderRadius": 5,
+          "height": 1334,
+          "left": 0,
+          "position": "absolute",
+          "top": 0,
+          "width": 750,
+        },
+      ]
+    }
+    testID="StoryItem-Image"
+  />
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "height": 2,
+          "justifyContent": "space-between",
+          "left": 3,
+          "position": "absolute",
+          "right": 3,
+          "top": 10,
+        },
+      ]
+    }
+    testID="StoryItem-ProgressBar"
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF80",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "marginBottom": 0,
+            "marginLeft": 2,
+            "marginRight": 2,
+            "marginTop": 0,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "width": "0%",
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF80",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "marginBottom": 0,
+            "marginLeft": 2,
+            "marginRight": 2,
+            "marginTop": 0,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "width": "0%",
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF80",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "marginBottom": 0,
+            "marginLeft": 2,
+            "marginRight": 2,
+            "marginTop": 0,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 2,
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "height": "100%",
+            "width": "0%",
+          }
+        }
+      />
+    </View>
+  </View>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "paddingTop": 10,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "paddingBottom": 15,
+            "paddingLeft": 15,
+            "paddingRight": 15,
+            "paddingTop": 15,
+          },
+        ]
+      }
+    >
+      <Image
+        source={
+          Object {
+            "uri": "https://avatars.githubusercontent.com/u/28453820?v=4",
+          }
+        }
+        style={
+          Array [
+            Object {
+              "borderRadius": 36,
+              "height": 36,
+              "marginRight": 10,
+              "width": 36,
+            },
+          ]
+        }
+      />
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "color": "#FFFFFF",
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        gustavoaz7
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "color": "#FFFFFFCC",
+              "marginLeft": 10,
+            },
+          ]
+        }
+      >
+        1 h
+      </Text>
+    </View>
+    <SvgMock
+      color="#FFFFFF"
+      style={
+        Array [
+          Object {
+            "marginRight": 15,
+          },
+        ]
+      }
+    />
+  </View>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "paddingBottom": 10,
+          "paddingLeft": 15,
+          "paddingRight": 15,
+          "paddingTop": 10,
+        },
+      ]
+    }
+  >
+    <TextInput
+      allowFontScaling={true}
+      multiline={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder="Send message"
+      placeholderTextColor="#FFFFFF"
+      rejectResponderTermination={true}
+      style={
+        Array [
+          Object {
+            "borderColor": "#FFFFFF80",
+            "borderRadius": 25,
+            "borderWidth": 1,
+            "color": "#FFFFFF",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "maxHeight": 100,
+            "paddingBottom": 10,
+            "paddingLeft": 15,
+            "paddingRight": 15,
+            "paddingTop": 10,
+          },
+        ]
+      }
+      underlineColorAndroid="transparent"
+      value=""
+    />
+    <SvgMock
+      color="#FFFFFF"
+      style={
+        Array [
+          Object {
+            "marginLeft": 20,
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;

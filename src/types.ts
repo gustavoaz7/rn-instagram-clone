@@ -69,3 +69,27 @@ export type TUser = {
   gender: 'Female' | 'Male' | 'Custom' | 'Prefer not to say';
   dob: number;
 };
+
+export type TPreviewViewers = {
+  count: number;
+  viewers: TOwner[];
+};
+
+export type TStoryMedia = {
+  id: string;
+  url: string;
+  owner: TOwner;
+  tappableObjects: TTappableObject[];
+  previewViewers: TPreviewViewers;
+  takenAt: number;
+  expiresAt: number;
+};
+
+export type TStory = {
+  id: string;
+  owner: TOwner;
+  medias: TStoryMedia[];
+  expiresAt: number;
+  seenAt: number;
+  latestMediaAt: number;
+};

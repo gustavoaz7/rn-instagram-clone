@@ -69,7 +69,8 @@
     {
       "files": [
         "**/*.test.*",
-        "**/setup-tests.*"
+        "**/setup-tests.*",
+        "**/test/*"
       ],
       "env": {
         "node": true,
