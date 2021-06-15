@@ -1,5 +1,5 @@
 import { BASE_URL, STATIC_USER_DATA } from '../constants';
-import type { TComment, TPost, TUser } from '../types';
+import type { TComment, TPost, TStory, TUser } from '../types';
 
 export async function fakeLogin(): Promise<TUser> {
   return fetch(`${BASE_URL}/user/login`, {
@@ -54,4 +54,8 @@ export async function fetchComments(
   return fetch(`${BASE_URL}/comments/${postId}?${searchParams}`).then(res =>
     res.json(),
   );
+}
+
+export async function fetchStories(): Promise<TStory[]> {
+  return fetch(`${BASE_URL}/stories`).then(res => res.json());
 }
