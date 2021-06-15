@@ -8,6 +8,7 @@ import type {
   TTappableObject,
   TOwner,
   TLikeDB,
+  TStoryMediaDB,
 } from './types';
 
 // ----- USER -----
@@ -43,6 +44,7 @@ export const generateUser = (partialUser?: Partial<TUserDB>): TUserDB => {
     gender: faker.random.arrayElement(GENDERS),
     dob: card.dob.getTime(),
     postsIds: [],
+    storiesIds: [],
     ...partialUser,
   };
 };
@@ -155,6 +157,35 @@ export const generatePost = (
     commentsIds: [],
     likesIds: [],
     ...partialPost,
+  };
+};
+
+export const generateStory = (
+  user: TUserDB,
+  partialStory?: Partial<TStoryMediaDB>,
+): TStoryMediaDB => {
+  const owner = convertUserToOwner(user);
+
+  const takenAt = faker.date.recent(2).getTime();
+
+  return {
+    id: uuidv4(),
+    owner,
+    url: faker.random.image(),
+    takenAt,
+    expiresAt: takenAt + 3600 * 24 * 1000,
+    // 80% -> no tappable object
+    tappableObjects: [
+      ...Array(
+        Math.random() < 0.8 ? 0 : faker.datatype.number({ min: 1, max: 3 }),
+      ),
+    ].map(generateTappableObject),
+    previewViewers: {
+      count: 0,
+      viewers: [],
+    },
+    viewersIds: [],
+    ...partialStory,
   };
 };
 

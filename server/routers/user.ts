@@ -6,6 +6,7 @@ import {
   generateComment,
   generateLike,
   generatePost,
+  generateStory,
   generateUser,
 } from '../utils';
 
@@ -65,6 +66,13 @@ userRouter.post('/login', (req, res) => {
       post.likesIds.push(...likes.map(like => like.id));
 
       database.posts.set(post.id, post);
+    });
+
+    if (user === currentUser) return;
+    const stories = [...Array(10)].map(() => generateStory(user));
+    stories.forEach(story => {
+      database.users.get(user.username)!.storiesIds.push(story.id);
+      database.stories.set(story.id, story);
     });
   });
 

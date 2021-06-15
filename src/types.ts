@@ -90,6 +90,6 @@ export type TStory = {
   owner: TOwner;
   medias: TStoryMedia[];
   expiresAt: number;
-  seenAt: number;
   latestMediaAt: number;
+  seenAt?: number;
 };
