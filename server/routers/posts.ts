@@ -26,10 +26,12 @@ postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
     database.posts.set(post.id, post);
   }
 
-  const postsIds = currentUser.following.reduce<string[]>(
-    (acc, username) => [...acc, ...database.users.get(username)!.postsIds],
-    [],
-  );
+  const postsIds = currentUser.following
+    .reduce<string[]>(
+      (acc, username) => [...acc, ...database.users.get(username)!.postsIds],
+      [],
+    )
+    .concat(currentUser.postsIds);
 
   const postsDBWithNext = postsIds
     .map(postId => database.posts.get(postId)!)

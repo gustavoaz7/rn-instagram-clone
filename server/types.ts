@@ -1,14 +1,16 @@
-import type { TUser, TComment, TPost, TLike } from '../src/types';
+import type { TUser, TComment, TPost, TLike, TStoryMedia } from '../src/types';
 
 export type {
   TComment,
   TPostMedia,
   TTappableObject,
   TOwner,
+  TStory,
 } from '../src/types';
 
 export type TUserDB = TUser & {
   postsIds: string[];
+  storiesIds: string[];
 };
 
 export type TPostDB = Omit<TPost, 'previewComments' | 'previewLikes'> & {
@@ -23,4 +25,8 @@ export type TCommentDB = Omit<TComment, 'previewLikes'> & {
 
 export type TLikeDB = TLike & {
   associatedId: string;
+};
+
+export type TStoryMediaDB = TStoryMedia & {
+  viewersIds: string[];
 };

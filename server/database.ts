@@ -1,10 +1,17 @@
-import type { TCommentDB, TLikeDB, TPostDB, TUserDB } from './types';
+import type {
+  TCommentDB,
+  TLikeDB,
+  TPostDB,
+  TUserDB,
+  TStoryMediaDB,
+} from './types';
 
 export type TDatabase = {
   users: Map<string, TUserDB>;
   posts: Map<string, TPostDB>;
   comments: Map<string, TCommentDB>;
   likes: Map<string, TLikeDB>;
+  stories: Map<string, TStoryMediaDB>;
 };
 
 export const database: TDatabase = {
@@ -12,4 +19,5 @@ export const database: TDatabase = {
   posts: new Map(),
   comments: new Map(),
   likes: new Map(),
+  stories: new Map(),
 };
