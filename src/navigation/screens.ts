@@ -28,4 +28,5 @@ export enum HOME_SWIPE_SCREENS {
 export enum ROOT_STACK_SCREENS {
   HOME_SWIPE = '@Root-Stack/Home-Swipe',
   COMMENTS = '@Root-Stack/Comments',
+  STORY = '@Root-Stack/Story',
 }

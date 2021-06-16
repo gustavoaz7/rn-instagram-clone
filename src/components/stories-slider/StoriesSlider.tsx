@@ -11,13 +11,14 @@ import { StoryItem } from '../story-item';
 
 type TStoriesSliderProps = {
   stories: TStory[];
+  initialStoryIndex?: number;
 };
 
 export const StoriesSlider = ({
   stories,
+  initialStoryIndex = 0,
 }: TStoriesSliderProps): JSX.Element => {
-  const sliderRef = useRef<ScrollView>(null);
-  const [storyIndex, setStoryIndex] = useState(0);
+  const [storyIndex, setStoryIndex] = useState(initialStoryIndex);
   const [shouldPauseAnimations, setShouldPauseAnimations] = useState(false);
 
   const handleScrollBegin = useCallback(() => {
