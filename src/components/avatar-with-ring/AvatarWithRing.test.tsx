@@ -4,6 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AvatarWithRing } from './AvatarWithRing';
 import { Providers } from '../../Providers';
 import { theme } from '../../styles/theme';
+import {
+  setupTimeTravel,
+  destroyTimeTravel,
+  timeTravel,
+} from '../../test/time-travel';
 
 describe('components - AvatarWithRing', () => {
   const options = { wrapper: Providers };
@@ -30,6 +35,16 @@ describe('components - AvatarWithRing', () => {
     );
 
     expect(toJSON()).toMatchSnapshot();
+  });
+
+  it('matches snapshot for loading case', () => {
+    setupTimeTravel();
+    const { toJSON } = render(<AvatarWithRing {...props} loading />, options);
+
+    timeTravel(theme.animation.timingBase / 2);
+
+    expect(toJSON()).toMatchSnapshot();
+    destroyTimeTravel();
   });
 
   it('renders ring with provided color', () => {

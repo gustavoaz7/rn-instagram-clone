@@ -1,6 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Animated, Easing, StyleSheet } from 'react-native';
 import styled, { css, useTheme } from 'styled-components/native';
+import Svg, { Circle } from 'react-native-svg';
 
 export type TAvatarWithRingProps = {
   size: number;
@@ -8,7 +10,11 @@ export type TAvatarWithRingProps = {
   imageUrl?: string;
   ringWidth?: number;
   offset?: number;
+  loading?: boolean;
 };
+
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+const DASHES_COUNT = 30;
 
 export const AvatarWithRing = memo(function AvatarWithRing({
   size,
@@ -16,12 +22,30 @@ export const AvatarWithRing = memo(function AvatarWithRing({
   imageUrl,
   ringWidth = 2,
   offset = 2,
+  loading = false,
 }: TAvatarWithRingProps) {
+  const rotateSvgDeg = useMemo(() => new Animated.Value(0), []);
   const theme = useTheme();
   const gradientColors =
     color === 'gradient'
       ? [theme.color.purpleRed, theme.color.yellow]
       : [color, color];
+
+  useEffect(() => {
+    if (loading) {
+      Animated.loop(
+        Animated.timing(rotateSvgDeg, {
+          toValue: 1,
+          duration: theme.animation.timingBase,
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }),
+        { resetBeforeIteration: false },
+      ).start();
+    } else {
+      rotateSvgDeg.setValue(0);
+    }
+  }, [rotateSvgDeg, theme.animation.timingBase, loading]);
 
   return (
     <Container size={size}>
@@ -30,6 +54,26 @@ export const AvatarWithRing = memo(function AvatarWithRing({
         start={{ x: 0.7, y: 0.3 }}
         end={{ x: 0.3, y: 0.7 }}
       >
+        {loading ? (
+          <LoadingSvg
+            width={size}
+            height={size}
+            rotation={rotateSvgDeg.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, (360 / DASHES_COUNT) * 2],
+            })}
+          >
+            <Circle
+              cx={size / 2}
+              cy={size / 2}
+              r={size / 2}
+              fill="none"
+              stroke={theme.color.white}
+              strokeWidth={ringWidth * 2}
+              strokeDasharray={(Math.PI * size) / DASHES_COUNT}
+            />
+          </LoadingSvg>
+        ) : null}
         <AvatarContainer size={size} ringWidth={ringWidth}>
           <Avatar
             size={size}
@@ -82,4 +126,8 @@ const Avatar = styled.Image<Record<'size' | 'ringWidth' | 'offset', number>>`
     border-width: 2px;
     border-color: ${`${theme.color.black}33`};
   `}
+`;
+
+const LoadingSvg = styled(AnimatedSvg)`
+  ${StyleSheet.absoluteFill};
 `;

@@ -95,7 +95,7 @@ export function FeedScreen(): JSX.Element {
           showsHorizontalScrollIndicator={false}
         >
           {stories.map(story => (
-            <StyledStoryPreviewItem key={story.id} owner={story.owner} />
+            <StyledStoryPreviewItem key={story.id} story={story} />
           ))}
         </StyledStoryPreviewList>
       ),
