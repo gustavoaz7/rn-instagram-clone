@@ -5,8 +5,9 @@ import { FlatList } from 'react-native';
 import { FeedScreen, POSTS_LIMIT } from './FeedScreen';
 import { Providers } from '../../Providers';
 import * as reduxPosts from '../../redux/posts';
+import * as reduxStories from '../../redux/stories';
 import * as reduxHooks from '../../redux/hooks';
-import { generateMockPost } from '../../data';
+import { generateMockPost, generateMockStory } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
 import { theme } from '../../styles/theme';
 
@@ -16,16 +17,22 @@ describe('screens - FeedScreen', () => {
   const useDispatchSpy = jest
     .spyOn(reduxHooks, 'useAppDispatch')
     .mockReturnValue(dispatchMock);
-  const useSelectorSpy = jest
+  const usePostsSelectorSpy = jest
     .spyOn(reduxPosts, 'usePostsSelector')
     .mockReturnValue(reduxPosts.initialState);
   const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
+  const useStoriesSelectorSpy = jest
+    .spyOn(reduxStories, 'useStoriesSelector')
+    .mockReturnValue(reduxStories.initialState);
+  const getStoriesSpy = jest.spyOn(reduxStories.storiesActions, 'getStories');
   const toastSpy = jest.spyOn(Toast, 'show');
 
   afterAll(() => {
     useDispatchSpy.mockRestore();
-    useSelectorSpy.mockRestore();
+    usePostsSelectorSpy.mockRestore();
+    useStoriesSelectorSpy.mockRestore();
     getPostsSpy.mockRestore();
+    getStoriesSpy.mockRestore();
     toastSpy.mockRestore();
   });
 
@@ -33,20 +40,24 @@ describe('screens - FeedScreen', () => {
     render(<FakeNavigator component={FeedScreen} />, options);
   });
 
-  it('dispatches get posts action', () => {
-    const action = Math.random();
-    getPostsSpy.mockReturnValueOnce(action as any);
+  it('dispatches get posts and stories actions', () => {
+    const postsAction = Math.random();
+    const storiesAction = Math.random();
+    getPostsSpy.mockReturnValueOnce(postsAction as any);
+    getStoriesSpy.mockReturnValueOnce(storiesAction as any);
     render(<FakeNavigator component={FeedScreen} />, options);
 
     expect(getPostsSpy).toHaveBeenCalledTimes(1);
     expect(getPostsSpy).toHaveBeenCalledWith({ offset: 0, limit: POSTS_LIMIT });
-    expect(dispatchMock).toHaveBeenCalledTimes(1);
-    expect(dispatchMock).toHaveBeenCalledWith(action);
+    expect(getStoriesSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchMock).toHaveBeenCalledTimes(2);
+    expect(dispatchMock).toHaveBeenNthCalledWith(1, postsAction);
+    expect(dispatchMock).toHaveBeenNthCalledWith(2, storiesAction);
   });
 
   describe('when posts are loading', () => {
     beforeEach(() => {
-      useSelectorSpy.mockReturnValue({
+      usePostsSelectorSpy.mockReturnValue({
         ...reduxPosts.initialState,
         loading: true,
       });
@@ -67,7 +78,10 @@ describe('screens - FeedScreen', () => {
     const posts = [generateMockPost(), generateMockPost()];
 
     beforeEach(() => {
-      useSelectorSpy.mockReturnValue({ ...reduxPosts.initialState, posts });
+      usePostsSelectorSpy.mockReturnValue({
+        ...reduxPosts.initialState,
+        posts,
+      });
     });
 
     it('renders post items', () => {
@@ -81,7 +95,7 @@ describe('screens - FeedScreen', () => {
 
     describe('when reaches the end of list', () => {
       beforeEach(() => {
-        useSelectorSpy.mockReturnValue({
+        usePostsSelectorSpy.mockReturnValue({
           ...reduxPosts.initialState,
           loading: true,
           posts,
@@ -89,7 +103,7 @@ describe('screens - FeedScreen', () => {
       });
 
       it('dispatches a second get posts action', () => {
-        useSelectorSpy.mockReturnValue({
+        usePostsSelectorSpy.mockReturnValue({
           ...reduxPosts.initialState,
           posts,
         });
@@ -137,7 +151,7 @@ describe('screens - FeedScreen', () => {
 
       describe('and there is no more posts to fetch', () => {
         beforeEach(() => {
-          useSelectorSpy.mockReturnValue({
+          usePostsSelectorSpy.mockReturnValue({
             ...reduxPosts.initialState,
             posts,
             canFetchMorePosts: false,
@@ -190,12 +204,68 @@ describe('screens - FeedScreen', () => {
         expect(refreshControl.props.colors).toEqual([theme.color.gray]);
       });
     });
+
+    describe('when stories are still loading', () => {
+      beforeEach(() => {
+        useStoriesSelectorSpy.mockReturnValue({
+          ...reduxStories.initialState,
+          loading: true,
+        });
+      });
+
+      it('renders loading for stories', () => {
+        const { queryByTestId } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
+
+        expect(queryByTestId('loadingStories')).toBeTruthy();
+      });
+    });
+
+    describe('when stories succeeds', () => {
+      const stories = [generateMockStory(), generateMockStory()];
+
+      beforeEach(() => {
+        useStoriesSelectorSpy.mockReturnValue({
+          ...reduxStories.initialState,
+          stories,
+        });
+      });
+
+      it('renders story preview items', () => {
+        const { getAllByTestId } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
+
+        expect(getAllByTestId('StoryPreviewItem')).toHaveLength(stories.length);
+      });
+    });
   });
 
   describe('when posts fails', () => {
     beforeEach(() => {
-      useSelectorSpy.mockReturnValueOnce({
+      usePostsSelectorSpy.mockReturnValueOnce({
         ...reduxPosts.initialState,
+        error: 'fail',
+      });
+    });
+
+    it('shows toast', () => {
+      render(<FakeNavigator component={FeedScreen} />, options);
+
+      expect(toastSpy).toHaveBeenCalledTimes(1);
+      expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+        position: Toast.positions.CENTER,
+      });
+    });
+  });
+
+  describe('when stories fails', () => {
+    beforeEach(() => {
+      useStoriesSelectorSpy.mockReturnValueOnce({
+        ...reduxStories.initialState,
         error: 'fail',
       });
     });

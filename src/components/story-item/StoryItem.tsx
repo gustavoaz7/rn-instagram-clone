@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components/native';
-import { GestureResponderEvent, Animated } from 'react-native';
+import { GestureResponderEvent, Animated, Easing } from 'react-native';
 import DirectSvg from '../../../assets/svg/direct.svg';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../utils/dimensions';
@@ -93,6 +93,7 @@ export const StoryItem = ({
       // eslint-disable-next-line
       duration: STORY_TIMEOUT - (bar as any).__getValue() * STORY_TIMEOUT,
       useNativeDriver: false,
+      easing: Easing.linear,
     }).start(({ finished }) => {
       if (finished) {
         goToNextMedia();

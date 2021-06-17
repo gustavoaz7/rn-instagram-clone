@@ -1,14 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, ViewProps } from 'react-native';
 import styled from 'styled-components/native';
+import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
+import { TOwner } from '../../types';
+import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
+import { ROOT_STACK_SCREENS } from '../../navigation/screens';
+import { AvatarWithRing } from '../avatar-with-ring';
 
 export const SCALE_DURATION = 150;
 
-export function StoryPreviewItem(): JSX.Element {
+export type TStoryPreviewItemProps = {
+  owner: TOwner;
+  style?: ViewProps['style'];
+};
+
+export function StoryPreviewItem({
+  owner,
+  style,
+}: TStoryPreviewItemProps): JSX.Element {
   const [isPressing, setIsPressing] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
+  const navigation = useNavigation<THomeStackNavigationProps>();
+
+  const handlePressIn = useCallback(() => {
+    setIsPressing(true);
+  }, []);
+  const handlePressOut = useCallback(() => {
+    setIsPressing(false);
+  }, []);
+  const handlePress = useCallback(() => {
+    navigation.navigate(ROOT_STACK_SCREENS.STORY, { username: owner.username });
+  }, [navigation, owner.username]);
 
   useEffect(() => {
     Animated.timing(scale, {
@@ -20,21 +43,22 @@ export function StoryPreviewItem(): JSX.Element {
 
   return (
     <Container
-      onPressIn={() => setIsPressing(true)}
-      onPressOut={() => setIsPressing(false)}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+      style={style}
+      testID="StoryPreviewItem"
     >
-      <RingContainer style={{ transform: [{ scale }] }}>
-        <StatusRing>
-          <AvatarContainer>
-            <Avatar
-              source={{
-                uri: 'https://cdn.fakercloud.com/avatars/spbroma_128.jpg',
-              }}
-            />
-          </AvatarContainer>
-        </StatusRing>
-      </RingContainer>
-      <Text numberOfLines={1}>veryLongNameHere</Text>
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <AvatarWithRing
+          size={74}
+          offset={3}
+          imageUrl={owner.profilePicUrl}
+          ringWidth={2}
+          color="gradient"
+        />
+      </Animated.View>
+      <Text numberOfLines={1}>{owner.username}</Text>
     </Container>
   );
 }
@@ -42,40 +66,4 @@ export function StoryPreviewItem(): JSX.Element {
 const Container = styled.Pressable`
   align-items: center;
   width: 76px;
-`;
-
-const RingContainer = styled(Animated.View)`
-  position: relative;
-  height: 74px;
-  width: 74px;
-  border-radius: 74px;
-  overflow: hidden;
-`;
-
-const StatusRing = styled(LinearGradient).attrs(({ theme }) => ({
-  colors: [theme.color.purpleRed, theme.color.yellow],
-  start: { x: 0.7, y: 0.3 },
-  end: { x: 0.3, y: 0.7 },
-}))`
-  width: 100%;
-  height: 100%;
-`;
-
-const AvatarContainer = styled.View`
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 70px;
-  height: 70px;
-  border-radius: 70px;
-  background-color: ${({ theme }) => theme.color.white};
-`;
-
-const Avatar = styled.Image`
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 64px;
-  height: 64px;
-  border-radius: 64px;
 `;

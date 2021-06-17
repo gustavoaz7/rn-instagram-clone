@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItem, RefreshControl } from 'react-native';
+import {
+  FlatList,
+  ListRenderItem,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import Toast from 'react-native-root-toast';
 import { PostItem } from '../../components/post-item';
 import { useAppDispatch } from '../../redux/hooks';
 import { postsActions, usePostsSelector } from '../../redux/posts';
 import { TPost } from '../../types';
+import { storiesActions, useStoriesSelector } from '../../redux/stories';
+import { StoryPreviewItem } from '../../components/story-preview-item';
 
 export const POSTS_LIMIT = 20;
 
@@ -29,6 +36,16 @@ export function FeedScreen(): JSX.Element {
     }
   }, [canFetchMorePosts, loadingPosts, dispatch, offset]);
 
+  const {
+    stories,
+    loading: loadingStories,
+    error: errorStories,
+  } = useStoriesSelector();
+
+  const getStories = useCallback(() => {
+    dispatch(storiesActions.getStories());
+  }, [dispatch]);
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     setOffset(0);
@@ -45,6 +62,7 @@ export function FeedScreen(): JSX.Element {
 
   useEffect(() => {
     getPosts();
+    getStories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // didMount
 
@@ -54,13 +72,35 @@ export function FeedScreen(): JSX.Element {
         position: Toast.positions.CENTER,
       });
     }
-  }, [errorPosts]);
+    if (errorStories) {
+      Toast.show('Failed fetching stories.', {
+        position: Toast.positions.CENTER,
+      });
+    }
+  }, [errorPosts, errorStories]);
 
   const renderItem = useCallback<ListRenderItem<TPost>>(
     ({ item }) => <StyledPost {...item} />,
     [],
   );
   const keyExtractor = useCallback((item: TPost) => item.id, []);
+
+  const ListHeaderComponent = useCallback(
+    () =>
+      loadingStories ? (
+        <Loading testID="loadingStories" />
+      ) : (
+        <StyledStoryPreviewList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {stories.map(story => (
+            <StyledStoryPreviewItem key={story.id} owner={story.owner} />
+          ))}
+        </StyledStoryPreviewList>
+      ),
+    [stories, loadingStories],
+  );
 
   return (
     <Container>
@@ -82,6 +122,7 @@ export function FeedScreen(): JSX.Element {
             />
           }
           ListFooterComponent={LoadingMorePosts}
+          ListHeaderComponent={ListHeaderComponent}
         />
       ) : null}
     </Container>
@@ -100,4 +141,15 @@ const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
 
 const StyledPost = styled(PostItem)`
   margin-bottom: ${({ theme }) => theme.spacing.l};
+`;
+
+const StyledStoryPreviewList = styled.ScrollView`
+  padding-bottom: ${({ theme }) => theme.spacing.s};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-bottom-color: ${({ theme }) => theme.color.gray}80;
+`;
+
+const StyledStoryPreviewItem = styled(StoryPreviewItem)`
+  margin: 0 ${({ theme }) => theme.spacing.xs};
 `;

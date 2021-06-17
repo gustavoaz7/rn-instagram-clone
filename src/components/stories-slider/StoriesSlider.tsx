@@ -1,8 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
-  ScrollView,
+  FlatList,
+  FlatListProps,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ListRenderItem,
 } from 'react-native';
 import { TStory } from '../../types';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
@@ -11,13 +13,15 @@ import { StoryItem } from '../story-item';
 
 type TStoriesSliderProps = {
   stories: TStory[];
+  initialStoryIndex?: number;
 };
 
 export const StoriesSlider = ({
   stories,
+  initialStoryIndex = 0,
 }: TStoriesSliderProps): JSX.Element => {
-  const sliderRef = useRef<ScrollView>(null);
-  const [storyIndex, setStoryIndex] = useState(0);
+  const sliderRef = useRef<FlatList>(null);
+  const [storyIndex, setStoryIndex] = useState(initialStoryIndex);
   const [shouldPauseAnimations, setShouldPauseAnimations] = useState(false);
 
   const handleScrollBegin = useCallback(() => {
@@ -39,24 +43,51 @@ export const StoriesSlider = ({
 
   const handleGoToStory = useCallback(
     (nextStoryIndex: number) => {
-      if (nextStoryIndex >= stories.length || nextStoryIndex <= 0) {
+      if (nextStoryIndex >= stories.length || nextStoryIndex < 0) {
         // navigate back || close modal
         return;
       }
 
       setStoryIndex(nextStoryIndex);
-      sliderRef.current?.scrollTo({
-        x: nextStoryIndex * SCREEN_WIDTH,
-        y: 0,
+      sliderRef.current?.scrollToIndex({
+        index: nextStoryIndex,
         animated: true,
       });
     },
     [stories.length],
   );
 
+  const renderItem = useCallback<ListRenderItem<TStory>>(
+    ({ item: story, index: i }) => (
+      <StoryItem
+        key={story.id}
+        story={story}
+        storyIndex={i}
+        initialMediaIndex={0}
+        isCurrentStory={i === storyIndex}
+        shouldPauseAnimations={shouldPauseAnimations}
+        goToStory={handleGoToStory}
+      />
+    ),
+    [storyIndex, shouldPauseAnimations, handleGoToStory],
+  );
+
+  const getItemLayout = useCallback<
+    Required<FlatListProps<TStory>>['getItemLayout']
+  >(
+    (_, index) => ({
+      length: SCREEN_WIDTH,
+      offset: SCREEN_WIDTH * index,
+      index,
+    }),
+    [],
+  );
+
   return (
-    <ScrollView
+    <FlatList
       ref={sliderRef}
+      initialScrollIndex={initialStoryIndex}
+      getItemLayout={getItemLayout}
       horizontal
       showsHorizontalScrollIndicator={false}
       bounces={false}
@@ -64,18 +95,11 @@ export const StoriesSlider = ({
       pagingEnabled
       onScrollBeginDrag={handleScrollBegin}
       onMomentumScrollEnd={handleScrollMomentumEnd}
-    >
-      {stories.map((story, i) => (
-        <StoryItem
-          key={story.id}
-          story={story}
-          storyIndex={i}
-          initialMediaIndex={0}
-          isCurrentStory={i === storyIndex}
-          shouldPauseAnimations={shouldPauseAnimations}
-          goToStory={handleGoToStory}
-        />
-      ))}
-    </ScrollView>
+      data={stories}
+      renderItem={renderItem}
+      initialNumToRender={3}
+      maxToRenderPerBatch={3}
+      windowSize={3}
+    />
   );
 };
