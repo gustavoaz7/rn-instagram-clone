@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, ViewProps } from 'react-native';
+import { Animated, ViewProps, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { Text } from '../text';
-import { TOwner } from '../../types';
+import { TStory } from '../../types';
 import { THomeStackNavigationProps } from '../../navigation/HomeStackNavigator';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { AvatarWithRing } from '../avatar-with-ring';
@@ -11,15 +11,16 @@ import { AvatarWithRing } from '../avatar-with-ring';
 export const SCALE_DURATION = 150;
 
 export type TStoryPreviewItemProps = {
-  owner: TOwner;
+  story: TStory;
   style?: ViewProps['style'];
 };
 
 export function StoryPreviewItem({
-  owner,
+  story,
   style,
 }: TStoryPreviewItemProps): JSX.Element {
   const [isPressing, setIsPressing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
   const navigation = useNavigation<THomeStackNavigationProps>();
 
@@ -29,9 +30,12 @@ export function StoryPreviewItem({
   const handlePressOut = useCallback(() => {
     setIsPressing(false);
   }, []);
-  const handlePress = useCallback(() => {
-    navigation.navigate(ROOT_STACK_SCREENS.STORY, { username: owner.username });
-  }, [navigation, owner.username]);
+  const handlePress = useCallback(async () => {
+    setIsLoading(true);
+    await Promise.all(story.medias.map(media => Image.prefetch(media.url)));
+    setIsLoading(false);
+    navigation.navigate(ROOT_STACK_SCREENS.STORY, { id: story.id });
+  }, [navigation, story]);
 
   useEffect(() => {
     Animated.timing(scale, {
@@ -53,12 +57,13 @@ export function StoryPreviewItem({
         <AvatarWithRing
           size={74}
           offset={3}
-          imageUrl={owner.profilePicUrl}
+          imageUrl={story.owner.profilePicUrl}
           ringWidth={2}
           color="gradient"
+          loading={isLoading}
         />
       </Animated.View>
-      <Text numberOfLines={1}>{owner.username}</Text>
+      <Text numberOfLines={1}>{story.owner.username}</Text>
     </Container>
   );
 }

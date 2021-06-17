@@ -171,7 +171,10 @@ export const generateStory = (
   return {
     id: uuidv4(),
     owner,
-    url: faker.random.image(),
+    // Type definition seems to be outdated
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    url: faker.image.image(1080, 1920),
     takenAt,
     expiresAt: takenAt + 3600 * 24 * 1000,
     // 80% -> no tappable object

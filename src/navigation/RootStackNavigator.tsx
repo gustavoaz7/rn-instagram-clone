@@ -15,7 +15,7 @@ import { StoryScreen } from '../screens/StoryScreen';
 export type TRootStackParams = {
   [ROOT_STACK_SCREENS.HOME_SWIPE]: undefined;
   [ROOT_STACK_SCREENS.COMMENTS]: { post: TPost };
-  [ROOT_STACK_SCREENS.STORY]: { username: string };
+  [ROOT_STACK_SCREENS.STORY]: { id: string };
 };
 
 export type THomeStackNavigationProps = StackNavigationProp<TRootStackParams>;

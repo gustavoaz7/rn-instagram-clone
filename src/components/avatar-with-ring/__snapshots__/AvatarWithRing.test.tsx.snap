@@ -171,3 +171,142 @@ exports[`components - AvatarWithRing matches snapshot for custom ringWidth and o
   </ViewManagerAdapter_ExpoLinearGradient>
 </View>
 `;
+
+exports[`components - AvatarWithRing matches snapshot for loading case 1`] = `
+<View
+  size={70}
+  style={
+    Array [
+      Object {
+        "borderRadius": 70,
+        "height": 70,
+        "overflow": "hidden",
+        "position": "relative",
+        "width": 70,
+      },
+    ]
+  }
+>
+  <ViewManagerAdapter_ExpoLinearGradient
+    proxiedProperties={
+      Object {
+        "colors": Array [
+          4278190080,
+          4278190080,
+        ],
+        "endPoint": Array [
+          0.3,
+          0.7,
+        ],
+        "locations": undefined,
+        "startPoint": Array [
+          0.7,
+          0.3,
+        ],
+      }
+    }
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "height": "100%",
+          "justifyContent": "center",
+          "width": "100%",
+        },
+      ]
+    }
+  >
+    <RNSVGSvgView
+      bbHeight={70}
+      bbWidth={70}
+      focusable={false}
+      height={70}
+      rotation={12}
+      style={
+        Array [
+          Object {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          Object {
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          },
+          Object {
+            "flex": 0,
+            "height": 70,
+            "width": 70,
+          },
+        ]
+      }
+      width={70}
+    >
+      <RNSVGGroup>
+        <RNSVGCircle
+          cx={35}
+          cy={35}
+          fill={null}
+          propList={
+            Array [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeDasharray",
+            ]
+          }
+          r={35}
+          stroke={4294967295}
+          strokeDasharray={
+            Array [
+              7.330382858376184,
+              7.330382858376184,
+            ]
+          }
+          strokeWidth={4}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+    <View
+      ringWidth={2}
+      size={70}
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 66,
+            "height": 66,
+            "justifyContent": "center",
+            "width": 66,
+          },
+        ]
+      }
+    >
+      <Image
+        offset={2}
+        ringWidth={2}
+        size={70}
+        source={
+          Object {
+            "uri": "https://cdn.fakercloud.com/avatars/spbroma_128.jpg",
+          }
+        }
+        style={
+          Array [
+            Object {
+              "borderColor": "#26262633",
+              "borderRadius": 62,
+              "borderWidth": 2,
+              "height": 62,
+              "width": 62,
+            },
+          ]
+        }
+      />
+    </View>
+  </ViewManagerAdapter_ExpoLinearGradient>
+</View>
+`;
