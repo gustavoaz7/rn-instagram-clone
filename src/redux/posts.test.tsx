@@ -1,7 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
-import { fetchPosts, TFetchPostsParams } from '../api';
+import { fetchPosts, TFetchPostsParams } from '../services/posts';
 import { Providers } from '../Providers';
 import {
   initialState,
@@ -10,7 +10,7 @@ import {
   usePostsSelector,
 } from './posts';
 
-jest.mock('../api');
+jest.mock('../services/posts');
 const fetchPostsMock = fetchPosts as jest.Mock;
 
 describe('redux - posts', () => {

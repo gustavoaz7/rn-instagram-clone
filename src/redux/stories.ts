@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchStories } from '../api';
+import { fetchStories } from '../services/stories';
 import { TStory } from '../types';
 import { useAppSelector } from './hooks';
 

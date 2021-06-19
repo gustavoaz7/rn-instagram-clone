@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fakeLogin } from '../api';
+import { fakeLogin } from '../services/user';
 import { TUser } from '../types';
 import { useAppSelector } from './hooks';
 

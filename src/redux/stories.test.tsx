@@ -1,7 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
-import { fetchStories } from '../api';
+import { fetchStories } from '../services/stories';
 import { Providers } from '../Providers';
 import {
   initialState,
@@ -10,7 +10,7 @@ import {
   useStoriesSelector,
 } from './stories';
 
-jest.mock('../api');
+jest.mock('../services/stories');
 const fetchStoriesMock = fetchStories as jest.Mock;
 
 describe('redux - stories', () => {

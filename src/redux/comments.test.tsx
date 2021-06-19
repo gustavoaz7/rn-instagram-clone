@@ -1,7 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
-import { fetchComments } from '../api';
+import { fetchComments } from '../services/comments';
 import { Providers } from '../Providers';
 import {
   initialState,
@@ -11,7 +11,7 @@ import {
   TGetCommentsThunkArg,
 } from './comments';
 
-jest.mock('../api');
+jest.mock('../services/comments');
 const fetchCommentsMock = fetchComments as jest.Mock;
 
 describe('redux - comments', () => {

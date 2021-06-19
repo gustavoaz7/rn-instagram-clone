@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchPosts, TFetchPostsParams, TPostsResponse } from '../api';
+import {
+  fetchPosts,
+  TFetchPostsParams,
+  TPostsResponse,
+} from '../services/posts';
 import { TPost } from '../types';
 import { useAppSelector } from './hooks';
 

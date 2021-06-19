@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import faker from 'faker';
-import type { TFetchPostsParams, TPostsResponse } from '../../src/api';
+import type {
+  TFetchPostsParams,
+  TPostsResponse,
+} from '../../src/services/posts';
 import { database } from '../database';
 import { session } from '../session';
 import { transformPost } from '../transformations';

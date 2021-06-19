@@ -1,7 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
-import { fakeLogin } from '../api';
+import { fakeLogin } from '../services/user';
 import { Providers } from '../Providers';
 import {
   initialState,
@@ -10,7 +10,7 @@ import {
   useUserSelector,
 } from './user';
 
-jest.mock('../api');
+jest.mock('../services/user');
 const fakeLoginMock = fakeLogin as jest.Mock;
 
 describe('redux - user', () => {

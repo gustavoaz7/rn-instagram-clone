@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchComments, TFetchCommentsParams, TCommentsResponse } from '../api';
+import {
+  fetchComments,
+  TFetchCommentsParams,
+  TCommentsResponse,
+} from '../services/comments';
 import { TComment } from '../types';
 import { useAppSelector } from './hooks';
 
