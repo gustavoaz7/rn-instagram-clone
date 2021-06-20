@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled, { css, useTheme } from 'styled-components/native';
 import {
   NativeScrollEvent,
@@ -7,6 +7,7 @@ import {
   ViewProps,
   StyleSheet,
   Pressable,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -27,6 +28,8 @@ import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
 import { postsActions } from '../../redux/posts';
 import { useAppDispatch } from '../../redux/hooks';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
@@ -52,6 +55,7 @@ export const PostItem = memo(function PostItem({
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(viewerHasLiked);
+  const heartScale = useMemo(() => new Animated.Value(1), []);
   const handleCaptionLayout = useCallback(
     (e: NativeSyntheticEvent<TextLayoutEventData>) => {
       setCaptionLines(e.nativeEvent.lines.length);
@@ -91,9 +95,17 @@ export const PostItem = memo(function PostItem({
   const handleLike = useCallback(async () => {
     setIsLiked(prevIsLiked => {
       dispatchPostLike(!prevIsLiked);
+      heartScale.setValue(0.3);
+      Animated.spring(heartScale, {
+        toValue: 1,
+        useNativeDriver: true,
+        velocity: 5,
+        tension: 100,
+        friction: 5,
+      }).start();
       return !prevIsLiked;
     });
-  }, [dispatchPostLike]);
+  }, [dispatchPostLike, heartScale]);
 
   const isMultiImage = medias.length > 1;
 
@@ -141,13 +153,18 @@ export const PostItem = memo(function PostItem({
       <Footer>
         <ActionsRow>
           <Row>
-            <Pressable onPress={handleLike}>
-              <HeartIcon
-                color={isLiked ? theme.color.red : theme.color.black}
-                fill={isLiked ? theme.color.red : 'none'}
-                testID="PostItem-Heart"
-              />
-            </Pressable>
+            <HeartContainer>
+              <AnimatedPressable
+                onPress={handleLike}
+                style={{ transform: [{ scale: heartScale }] }}
+              >
+                <HeartSvg
+                  color={isLiked ? theme.color.red : theme.color.black}
+                  fill={isLiked ? theme.color.red : 'none'}
+                  testID="PostItem-Heart"
+                />
+              </AnimatedPressable>
+            </HeartContainer>
             <CommentIcon />
             <DirectIcon />
           </Row>
@@ -266,7 +283,7 @@ const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
   color: theme.color.black,
 }))``;
 
-const HeartIcon = styled(HeartSvg)`
+const HeartContainer = styled.View`
   ${actionsSvgStyle};
 `;
 
