@@ -1,14 +1,14 @@
 import { BASE_URL } from '../constants';
 
-export type TSaveLikeBody = {
+export type TPostLikeBody = {
   collection: 'posts' | 'comments';
   id: string;
   flag: boolean;
 };
-export type TSaveLikeResponse = void;
+export type TPostLikeResponse = void;
 export async function postLike(
-  body: TSaveLikeBody,
-): Promise<TSaveLikeResponse> {
+  body: TPostLikeBody,
+): Promise<TPostLikeResponse> {
   fetch(`${BASE_URL}/likes`, {
     method: 'post',
     body: JSON.stringify(body),

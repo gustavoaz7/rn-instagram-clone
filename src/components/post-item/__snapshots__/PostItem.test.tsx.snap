@@ -230,16 +230,32 @@ exports[`components - PostItem matches snapshot 1`] = `
           ]
         }
       >
-        <SvgMock
-          color="#262626"
-          style={
-            Array [
-              Object {
-                "marginRight": 15,
-              },
-            ]
-          }
-        />
+        <View
+          accessible={true}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+        >
+          <SvgMock
+            color="#262626"
+            fill="none"
+            style={
+              Array [
+                Object {
+                  "marginRight": 15,
+                },
+              ]
+            }
+            testID="PostItem-Heart"
+          />
+        </View>
         <SvgMock
           color="#262626"
           style={

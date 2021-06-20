@@ -1,11 +1,12 @@
 import React, { memo, useCallback, useState } from 'react';
-import styled, { css } from 'styled-components/native';
+import styled, { css, useTheme } from 'styled-components/native';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   TextLayoutEventData,
   ViewProps,
   StyleSheet,
+  Pressable,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -24,6 +25,8 @@ import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
 import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
+import { postsActions } from '../../redux/posts';
+import { useAppDispatch } from '../../redux/hooks';
 
 type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
@@ -32,6 +35,7 @@ export const PostItem = memo(function PostItem({
   ...post
 }: TPostItemProps): JSX.Element {
   const {
+    id,
     owner,
     createdAt,
     medias,
@@ -39,11 +43,15 @@ export const PostItem = memo(function PostItem({
     previewLikes,
     previewComments,
     location,
+    viewerHasLiked,
   } = post;
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<THomeStackNavigationProps>();
+  const theme = useTheme();
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isLiked, setIsLiked] = useState(viewerHasLiked);
   const handleCaptionLayout = useCallback(
     (e: NativeSyntheticEvent<TextLayoutEventData>) => {
       setCaptionLines(e.nativeEvent.lines.length);
@@ -66,6 +74,27 @@ export const PostItem = memo(function PostItem({
     const newMediaIndex = Math.round(contentOffset.x / viewSize.width);
     setCurrentMediaIndex(newMediaIndex);
   }, []);
+
+  const dispatchPostLike = useCallback(
+    (flag: boolean) => {
+      dispatch(
+        postsActions.likePost({
+          collection: 'posts',
+          flag,
+          id,
+        }),
+      );
+    },
+    [dispatch, id],
+  );
+
+  const handleLike = useCallback(async () => {
+    setIsLiked(prevIsLiked => {
+      dispatchPostLike(!prevIsLiked);
+      return !prevIsLiked;
+    });
+  }, [dispatchPostLike]);
+
   const isMultiImage = medias.length > 1;
 
   return (
@@ -112,7 +141,13 @@ export const PostItem = memo(function PostItem({
       <Footer>
         <ActionsRow>
           <Row>
-            <HeartIcon />
+            <Pressable onPress={handleLike}>
+              <HeartIcon
+                color={isLiked ? theme.color.red : theme.color.black}
+                fill={isLiked ? theme.color.red : 'none'}
+                testID="PostItem-Heart"
+              />
+            </Pressable>
             <CommentIcon />
             <DirectIcon />
           </Row>
@@ -231,9 +266,7 @@ const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
   color: theme.color.black,
 }))``;
 
-const HeartIcon = styled(HeartSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
-}))`
+const HeartIcon = styled(HeartSvg)`
   ${actionsSvgStyle};
 `;
 

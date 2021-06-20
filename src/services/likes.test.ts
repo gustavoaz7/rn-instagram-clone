@@ -1,9 +1,9 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL } from '../constants';
-import { postLike, TSaveLikeBody } from './likes';
+import { postLike, TPostLikeBody } from './likes';
 
 describe('services - likes', () => {
-  const params: TSaveLikeBody = {
+  const params: TPostLikeBody = {
     collection: 'posts',
     id: `${Math.random()}`,
     flag: true,

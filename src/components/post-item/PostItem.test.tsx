@@ -11,6 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
+import * as reduxHooks from '../../redux/hooks';
+import * as reduxPosts from '../../redux/posts';
 import {
   generateMockPost,
   generateMockPostMedia,
@@ -18,6 +20,7 @@ import {
   generateMockComment,
 } from '../../data';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
+import { theme } from '../../styles/theme';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -25,6 +28,14 @@ jest.mock('@react-navigation/native', () => ({
 const useNavigationMock = useNavigation as jest.Mock;
 
 describe('components - PostItem', () => {
+  const dispatchMock = jest.fn();
+  const useDispatchSpy = jest
+    .spyOn(reduxHooks, 'useAppDispatch')
+    .mockReturnValue(dispatchMock);
+  const usePostsSelectorSpy = jest
+    .spyOn(reduxPosts, 'usePostsSelector')
+    .mockReturnValue(reduxPosts.initialState);
+  const likePostSpy = jest.spyOn(reduxPosts.postsActions, 'likePost');
   const post = generateMockPost();
   const multiCommentPost = {
     ...post,
@@ -34,6 +45,12 @@ describe('components - PostItem', () => {
     },
   };
   const options: RenderOptions = { wrapper: Providers };
+
+  afterAll(() => {
+    dispatchMock.mockRestore();
+    useDispatchSpy.mockRestore();
+    likePostSpy.mockRestore();
+  });
 
   it('renders', () => {
     render(<PostItem {...post} />, options);
@@ -92,6 +109,57 @@ describe('components - PostItem', () => {
       );
 
       expect(getByText('2 likes')).toBeTruthy();
+    });
+
+    describe('when user has liked the post', () => {
+      it('renders red heart', () => {
+        const { getByTestId } = render(
+          <PostItem {...post} viewerHasLiked />,
+          options,
+        );
+
+        const heartIcon = getByTestId('PostItem-Heart');
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+    });
+
+    describe('when user likes the post', () => {
+      it('dispatches likePost action', async () => {
+        const action = Math.random();
+        likePostSpy.mockReturnValueOnce(action as any);
+        const { getByTestId } = render(<PostItem {...post} />, options);
+
+        act(() => {
+          fireEvent.press(getByTestId('PostItem-Heart'));
+        });
+
+        expect(likePostSpy).toHaveBeenCalledTimes(1);
+        expect(likePostSpy).toHaveBeenCalledWith({
+          id: post.id,
+          collection: 'posts',
+          flag: true,
+        });
+        expect(dispatchMock).toHaveBeenCalledTimes(1);
+        expect(dispatchMock).toHaveBeenCalledWith(action);
+      });
+
+      it('changes heart from outline black to filled red', () => {
+        const { getByTestId } = render(<PostItem {...post} />, options);
+
+        const heartIcon = getByTestId('PostItem-Heart');
+
+        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.fill).toBe('none');
+
+        act(() => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
     });
   });
 

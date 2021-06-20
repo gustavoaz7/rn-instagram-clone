@@ -1,6 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
+import Toast from 'react-native-root-toast';
 import { fetchPosts, TFetchPostsParams } from '../services/posts';
 import { Providers } from '../Providers';
 import {
@@ -9,9 +10,12 @@ import {
   postsReducer,
   usePostsSelector,
 } from './posts';
+import { postLike, TPostLikeBody } from '../services/likes';
 
 jest.mock('../services/posts');
 const fetchPostsMock = fetchPosts as jest.Mock;
+jest.mock('../services/likes');
+const postLikeMock = postLike as jest.Mock;
 
 describe('redux - posts', () => {
   describe('getPosts', () => {
@@ -123,6 +127,64 @@ describe('redux - posts', () => {
         ...initialState,
         loading: false,
         error: error.message,
+      });
+    });
+  });
+
+  describe('likePost', () => {
+    const toastSpy = jest.spyOn(Toast, 'show');
+    const body: TPostLikeBody = {
+      id: `${Math.random()}`,
+      collection: 'posts',
+      flag: true,
+    };
+
+    beforeEach(() => {
+      postLikeMock.mockClear();
+      toastSpy.mockClear();
+    });
+
+    it('calls postLike with provided body', () => {
+      const store = configureStore({ reducer: postsReducer });
+      store.dispatch(postsActions.likePost(body));
+
+      expect(postLikeMock).toHaveBeenCalledWith(body);
+    });
+
+    describe('when request succeeds', () => {
+      const store = configureStore({ reducer: postsReducer });
+
+      it('does not change state', async () => {
+        postLikeMock.mockResolvedValueOnce(null);
+
+        expect(store.getState()).toEqual(initialState);
+
+        const action = store.dispatch(postsActions.likePost(body));
+
+        expect(store.getState()).toEqual(initialState);
+
+        await action;
+
+        expect(store.getState()).toEqual(initialState);
+        expect(toastSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when request fails', () => {
+      it('keeps state & shows toast', async () => {
+        const store = configureStore({ reducer: postsReducer });
+        const error = new Error('failed liking post');
+        postLikeMock.mockRejectedValueOnce(error);
+
+        expect(store.getState()).toEqual(initialState);
+
+        await store.dispatch(postsActions.likePost(body));
+
+        expect(store.getState()).toEqual(initialState);
+        expect(toastSpy).toHaveBeenCalledTimes(1);
+        expect(toastSpy).toHaveBeenCalledWith('Failed to like post.', {
+          position: Toast.positions.CENTER,
+        });
       });
     });
   });

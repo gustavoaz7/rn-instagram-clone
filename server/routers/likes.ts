@@ -1,8 +1,8 @@
 import faker from 'faker';
 import { Router } from 'express';
 import type {
-  TSaveLikeResponse,
-  TSaveLikeBody,
+  TPostLikeResponse,
+  TPostLikeBody,
 } from '../../src/services/likes';
 import { database } from '../database';
 import { session } from '../session';
@@ -11,8 +11,8 @@ import { convertUserToOwner } from '../utils';
 
 export const likesRouter = Router();
 
-type TGetLikesRes = TSaveLikeResponse;
-likesRouter.post<null, TGetLikesRes, TSaveLikeBody>('/', (req, res) => {
+type TGetLikesRes = TPostLikeResponse;
+likesRouter.post<null, TGetLikesRes, TPostLikeBody>('/', (req, res) => {
   const { collection, id, flag } = req.body;
 
   if (flag) {

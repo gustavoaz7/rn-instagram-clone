@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import Toast from 'react-native-root-toast';
+import { postLike, TPostLikeBody, TPostLikeResponse } from '../services/likes';
 import {
   fetchPosts,
   TFetchPostsParams,
@@ -24,11 +26,23 @@ export const initialState: TPostsState = {
 };
 
 const getPosts = createAsyncThunk<TPostsResponse, TFetchPostsParams>(
-  SLICE_NAME,
+  `${SLICE_NAME}/getPosts`,
   async (params, { rejectWithValue }) => {
     try {
       const posts = await fetchPosts(params);
       return posts;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+const likePost = createAsyncThunk<TPostLikeResponse, TPostLikeBody>(
+  `${SLICE_NAME}/likePost`,
+  // eslint-disable-next-line consistent-return
+  async (body, { rejectWithValue }) => {
+    try {
+      await postLike(body);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -58,12 +72,34 @@ export const postsSlice = createSlice({
           ? action.payload.posts
           : [...state.posts, ...action.payload.posts];
       });
+    builder
+      .addCase(likePost.pending, state => state)
+      .addCase(likePost.rejected, () => {
+        Toast.show('Failed to like post.', {
+          position: Toast.positions.CENTER,
+        });
+      })
+      .addCase(likePost.fulfilled, (state, action) => {
+        state.posts = state.posts.map(post =>
+          action.meta.arg.id === post.id
+            ? {
+                ...post,
+                viewerHasLiked: action.meta.arg.flag,
+                previewLikes: {
+                  ...post.previewLikes,
+                  count:
+                    post.previewLikes.count + (action.meta.arg.flag ? 1 : -1),
+                },
+              }
+            : post,
+        );
+      });
   },
 });
 /* eslint-enable no-param-reassign */
 
 export const postsReducer = postsSlice.reducer;
 
-export const postsActions = { ...postsSlice.actions, getPosts };
+export const postsActions = { ...postsSlice.actions, getPosts, likePost };
 
 export const usePostsSelector = () => useAppSelector(state => state.posts);
