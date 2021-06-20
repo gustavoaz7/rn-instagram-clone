@@ -39,7 +39,14 @@ postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
   const postsDBWithNext = postsIds
     .map(postId => database.posts.get(postId)!)
     .sort(sortByCreatedAt)
-    .slice(offset, offset + limit + 1);
+    .slice(offset, offset + limit + 1)
+    .map(post => ({
+      ...post,
+      viewerHasLiked: post.likesIds.some(
+        likeId =>
+          database.likes.get(likeId)!.owner.username === currentUser.username,
+      ),
+    }));
   const canFetchMorePosts = postsDBWithNext.length > limit;
 
   const posts = postsDBWithNext.slice(0, -1).map(transformPost);

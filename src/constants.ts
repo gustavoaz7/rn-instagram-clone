@@ -5,7 +5,7 @@ const { manifest } = Constants;
 
 export const BASE_URL = `http://${manifest.debuggerHost?.split(':')[0]}:8000`;
 
-export const STATIC_USER_DATA: Partial<TUser> = {
+export const STATIC_USER_DATA: Pick<TUser, 'username' | 'profilePicUrl'> = {
   username: 'gustavoaz7',
   profilePicUrl: 'https://avatars.githubusercontent.com/u/28453820?v=4',
 };
