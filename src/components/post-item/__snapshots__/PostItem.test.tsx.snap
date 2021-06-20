@@ -178,6 +178,9 @@ exports[`components - PostItem matches snapshot 1`] = `
     }
   >
     <Image
+      collapsable={false}
+      onGestureHandlerEvent={[Function]}
+      onGestureHandlerStateChange={[Function]}
       source={
         Object {
           "uri": "http://placeimg.com/640/480/cats?0",

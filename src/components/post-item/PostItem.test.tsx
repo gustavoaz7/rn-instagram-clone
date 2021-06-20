@@ -9,6 +9,7 @@ import {
 import faker from 'faker';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
+import { TapGestureHandler, State } from 'react-native-gesture-handler';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import * as reduxHooks from '../../redux/hooks';
@@ -21,6 +22,11 @@ import {
 } from '../../data';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { theme } from '../../styles/theme';
+import {
+  timeTravel,
+  setupTimeTravel,
+  destroyTimeTravel,
+} from '../../test/time-travel';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -159,6 +165,95 @@ describe('components - PostItem', () => {
 
         expect(heartIcon.props.color).toBe(theme.color.red);
         expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+    });
+
+    describe('when user likes by double-tapping the post', () => {
+      it('dispatches likePost action', async () => {
+        const action = Math.random();
+        likePostSpy.mockReturnValueOnce(action as any);
+        const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
+
+        act(() => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(likePostSpy).toHaveBeenCalledTimes(1);
+        expect(likePostSpy).toHaveBeenCalledWith({
+          id: post.id,
+          collection: 'posts',
+          flag: true,
+        });
+        expect(dispatchMock).toHaveBeenCalledTimes(1);
+        expect(dispatchMock).toHaveBeenCalledWith(action);
+      });
+
+      describe('when double-taps once more', () => {
+        it('does not dispatch another likePost action', async () => {
+          const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
+
+          act(() => {
+            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+              nativeEvent: { state: State.ACTIVE },
+            });
+          });
+
+          expect(likePostSpy).toHaveBeenCalledTimes(1);
+
+          act(() => {
+            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+              nativeEvent: { state: State.ACTIVE },
+            });
+          });
+
+          expect(likePostSpy).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      it('changes heart from outline black to filled red', () => {
+        const { getByTestId, UNSAFE_getByType } = render(
+          <PostItem {...post} />,
+          options,
+        );
+
+        const heartIcon = getByTestId('PostItem-Heart');
+
+        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.fill).toBe('none');
+
+        act(() => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+
+      it('renders heart overlay and then hides it', () => {
+        setupTimeTravel();
+        const { queryByTestId, UNSAFE_getByType } = render(
+          <PostItem {...post} />,
+          options,
+        );
+
+        expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
+
+        act(() => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(queryByTestId('PostItem-HeartOverlay')).not.toBe(null);
+
+        timeTravel(2000);
+
+        expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
+        destroyTimeTravel();
       });
     });
   });
