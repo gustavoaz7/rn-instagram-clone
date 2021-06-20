@@ -153,7 +153,7 @@ export const generatePost = (
     }),
     // 20% -> has location
     ...(Math.random() < 0.2 && { location: faker.address.city() }),
-
+    viewerHasLiked: false,
     commentsIds: [],
     likesIds: [],
     ...partialPost,

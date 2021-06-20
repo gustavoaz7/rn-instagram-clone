@@ -178,6 +178,9 @@ exports[`components - PostItem matches snapshot 1`] = `
     }
   >
     <Image
+      collapsable={false}
+      onGestureHandlerEvent={[Function]}
+      onGestureHandlerStateChange={[Function]}
       source={
         Object {
           "uri": "http://placeimg.com/640/480/cats?0",
@@ -230,8 +233,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           ]
         }
       >
-        <SvgMock
-          color="#262626"
+        <View
           style={
             Array [
               Object {
@@ -239,7 +241,36 @@ exports[`components - PostItem matches snapshot 1`] = `
               },
             ]
           }
-        />
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "transform": Array [
+                  Object {
+                    "scale": 1,
+                  },
+                ],
+              }
+            }
+          >
+            <SvgMock
+              color="#262626"
+              fill="none"
+              testID="PostItem-Heart"
+            />
+          </View>
+        </View>
         <SvgMock
           color="#262626"
           style={

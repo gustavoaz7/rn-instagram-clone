@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import type { TFetchCommentsParams, TCommentsResponse } from '../../src/api';
+import type {
+  TFetchCommentsParams,
+  TCommentsResponse,
+} from '../../src/services/comments';
 import { database } from '../database';
 import { tranformComment } from '../transformations';
 import { generateComment, sortByCreatedAt } from '../utils';

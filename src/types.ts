@@ -53,6 +53,7 @@ export type TPost = {
   previewLikes: TPreviewLikes;
   previewComments: TPreviewComments;
   location?: string;
+  viewerHasLiked: boolean;
 };
 
 export type TUser = {

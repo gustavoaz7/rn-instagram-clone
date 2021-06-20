@@ -1,14 +1,23 @@
-import React, { memo, useCallback, useState } from 'react';
-import styled, { css } from 'styled-components/native';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import styled, { css, useTheme } from 'styled-components/native';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
+  View,
   TextLayoutEventData,
   ViewProps,
   StyleSheet,
+  Pressable,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {
+  ScrollView,
+  TapGestureHandler,
+  State,
+  HandlerStateChangeEvent,
+  TapGestureHandlerEventPayload,
+} from 'react-native-gesture-handler';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -24,6 +33,19 @@ import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
 import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
+import { postsActions } from '../../redux/posts';
+import { useAppDispatch } from '../../redux/hooks';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const INITIAL_OVERLAY_OPACITY = 0.5;
+const INITIAL_HEART_SCALE = 0.3;
+const SPRING_SCALE_CONFIG: Animated.SpringAnimationConfig = {
+  toValue: 1,
+  useNativeDriver: true,
+  velocity: 5,
+  tension: 100,
+  friction: 5,
+};
 
 type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
@@ -32,6 +54,7 @@ export const PostItem = memo(function PostItem({
   ...post
 }: TPostItemProps): JSX.Element {
   const {
+    id,
     owner,
     createdAt,
     medias,
@@ -39,20 +62,38 @@ export const PostItem = memo(function PostItem({
     previewLikes,
     previewComments,
     location,
+    viewerHasLiked,
   } = post;
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<THomeStackNavigationProps>();
+  const theme = useTheme();
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isLiked, setIsLiked] = useState(viewerHasLiked);
+  const heartScale = useMemo(() => new Animated.Value(1), []);
+  const [showHeartOverlay, setShowHeartOverlay] = useState(false);
+  const doubleTapRef = useRef(null);
+  const heartOverlayOpacity = useMemo(
+    () => new Animated.Value(INITIAL_OVERLAY_OPACITY),
+    [],
+  );
+  const heartOverlayScale = useMemo(
+    () => new Animated.Value(INITIAL_HEART_SCALE),
+    [],
+  );
+
   const handleCaptionLayout = useCallback(
     (e: NativeSyntheticEvent<TextLayoutEventData>) => {
       setCaptionLines(e.nativeEvent.lines.length);
     },
     [],
   );
+
   const handleCaptionExpand = useCallback(() => {
     setCaptionExpanded(true);
   }, []);
+
   const handleSeeAllCommentsPress = useCallback(() => {
     navigation.navigate(ROOT_STACK_SCREENS.COMMENTS, { post });
   }, [navigation, post]);
@@ -66,6 +107,73 @@ export const PostItem = memo(function PostItem({
     const newMediaIndex = Math.round(contentOffset.x / viewSize.width);
     setCurrentMediaIndex(newMediaIndex);
   }, []);
+
+  const dispatchPostLike = useCallback(
+    (flag: boolean) => {
+      dispatch(
+        postsActions.likePost({
+          collection: 'posts',
+          flag,
+          id,
+        }),
+      );
+    },
+    [dispatch, id],
+  );
+
+  const handleLike = useCallback(async () => {
+    setIsLiked(prevIsLiked => {
+      dispatchPostLike(!prevIsLiked);
+      heartScale.setValue(INITIAL_HEART_SCALE);
+      Animated.spring(heartScale, SPRING_SCALE_CONFIG).start();
+      return !prevIsLiked;
+    });
+  }, [dispatchPostLike, heartScale]);
+
+  const onDoubleTapMedia = useCallback(
+    (e: HandlerStateChangeEvent<TapGestureHandlerEventPayload>) => {
+      if (e.nativeEvent.state !== State.ACTIVE) return;
+      setShowHeartOverlay(true);
+
+      if (!isLiked) {
+        setIsLiked(true);
+        dispatchPostLike(true);
+      }
+
+      heartOverlayOpacity.setValue(INITIAL_OVERLAY_OPACITY);
+      heartOverlayScale.setValue(INITIAL_HEART_SCALE);
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(heartOverlayOpacity, {
+            toValue: 1,
+            duration: theme.animation.timingFast,
+            useNativeDriver: true,
+          }),
+          Animated.spring(heartOverlayScale, SPRING_SCALE_CONFIG),
+          Animated.spring(heartScale, SPRING_SCALE_CONFIG),
+        ]),
+        Animated.timing(heartOverlayOpacity, {
+          toValue: 0,
+          duration: theme.animation.timingFast,
+          delay: theme.animation.timingBase,
+          useNativeDriver: true,
+        }),
+      ]).start(({ finished }) => {
+        if (finished) {
+          setShowHeartOverlay(false);
+        }
+      });
+    },
+    [
+      heartOverlayOpacity,
+      heartOverlayScale,
+      heartScale,
+      isLiked,
+      dispatchPostLike,
+      theme.animation,
+    ],
+  );
+
   const isMultiImage = medias.length > 1;
 
   return (
@@ -85,34 +193,68 @@ export const PostItem = memo(function PostItem({
         <MenuVerticalIcon />
       </Header>
       <ImageContainer>
-        {isMultiImage ? (
-          <>
-            <SliderPageIndicator
-              current={currentMediaIndex + 1}
-              total={medias.length}
-            />
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              bounces={false}
-              overScrollMode="never"
-              pagingEnabled
-              onScroll={handleScroll}
-              testID="PostItem-Slider"
+        {showHeartOverlay ? (
+          <HeartOverlayContainer testID="PostItem-HeartOverlay">
+            <AnimatedHeartOverlay
+              style={{
+                transform: [{ scale: heartOverlayScale }],
+                opacity: heartOverlayOpacity,
+              }}
             >
-              {medias.map(media => (
-                <Image key={media.id} source={{ uri: media.url }} />
-              ))}
-            </ScrollView>
-          </>
-        ) : (
-          <Image source={{ uri: medias[0].url }} />
-        )}
+              <HeartSvg
+                color={theme.color.white}
+                fill={theme.color.white}
+                width={SCREEN_WIDTH / 3}
+                height={SCREEN_WIDTH / 3}
+              />
+            </AnimatedHeartOverlay>
+          </HeartOverlayContainer>
+        ) : null}
+        <TapGestureHandler
+          ref={doubleTapRef}
+          numberOfTaps={2}
+          onHandlerStateChange={onDoubleTapMedia}
+        >
+          {isMultiImage ? (
+            <View>
+              <SliderPageIndicator
+                current={currentMediaIndex + 1}
+                total={medias.length}
+              />
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                bounces={false}
+                overScrollMode="never"
+                pagingEnabled
+                onScroll={handleScroll}
+                testID="PostItem-Slider"
+              >
+                {medias.map(media => (
+                  <Image key={media.id} source={{ uri: media.url }} />
+                ))}
+              </ScrollView>
+            </View>
+          ) : (
+            <Image source={{ uri: medias[0].url }} />
+          )}
+        </TapGestureHandler>
       </ImageContainer>
       <Footer>
         <ActionsRow>
           <Row>
-            <HeartIcon />
+            <HeartContainer>
+              <AnimatedPressable
+                onPress={handleLike}
+                style={{ transform: [{ scale: heartScale }] }}
+              >
+                <HeartSvg
+                  color={isLiked ? theme.color.red : theme.color.black}
+                  fill={isLiked ? theme.color.red : 'none'}
+                  testID="PostItem-Heart"
+                />
+              </AnimatedPressable>
+            </HeartContainer>
             <CommentIcon />
             <DirectIcon />
           </Row>
@@ -207,6 +349,18 @@ const ImageContainer = styled.View`
   position: relative;
 `;
 
+const HeartOverlayContainer = styled.View`
+  ${StyleSheet.absoluteFill};
+  z-index: 2;
+`;
+
+const AnimatedHeartOverlay = styled(Animated.View)`
+  width: ${SCREEN_WIDTH}px;
+  height: ${SCREEN_WIDTH}px;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Image = styled.Image`
   width: ${SCREEN_WIDTH}px;
   height: ${SCREEN_WIDTH}px;
@@ -231,9 +385,7 @@ const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
   color: theme.color.black,
 }))``;
 
-const HeartIcon = styled(HeartSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
-}))`
+const HeartContainer = styled.View`
   ${actionsSvgStyle};
 `;
 

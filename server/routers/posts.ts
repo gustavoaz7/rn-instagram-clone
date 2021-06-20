@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import faker from 'faker';
-import type { TFetchPostsParams, TPostsResponse } from '../../src/api';
+import type {
+  TFetchPostsParams,
+  TPostsResponse,
+} from '../../src/services/posts';
 import { database } from '../database';
 import { session } from '../session';
 import { transformPost } from '../transformations';
@@ -36,7 +39,14 @@ postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
   const postsDBWithNext = postsIds
     .map(postId => database.posts.get(postId)!)
     .sort(sortByCreatedAt)
-    .slice(offset, offset + limit + 1);
+    .slice(offset, offset + limit + 1)
+    .map(post => ({
+      ...post,
+      viewerHasLiked: post.likesIds.some(
+        likeId =>
+          database.likes.get(likeId)!.owner.username === currentUser.username,
+      ),
+    }));
   const canFetchMorePosts = postsDBWithNext.length > limit;
 
   const posts = postsDBWithNext.slice(0, -1).map(transformPost);
