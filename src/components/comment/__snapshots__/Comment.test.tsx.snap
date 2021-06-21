@@ -205,18 +205,43 @@ exports[`components - Comment matches snapshot 1`] = `
       </Text>
     </View>
   </View>
-  <SvgMock
-    color="#8e8e8e"
-    height={16}
+  <View
+    accessible={true}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "marginTop": 12,
-        },
-      ]
+      Object {
+        "transform": Array [
+          Object {
+            "scale": 1,
+          },
+        ],
+      }
     }
-    width={16}
-  />
+  >
+    <SvgMock
+      color="#8e8e8e"
+      fill="none"
+      height={16}
+      style={
+        Array [
+          Object {
+            "marginTop": 12,
+          },
+        ]
+      }
+      testID="Comment-Heart"
+      width={16}
+    />
+  </View>
 </View>
 `;
 
