@@ -1,3 +1,13 @@
+import type { Animated } from 'react-native';
+
+const HEART_SPRING_SCALE_CONFIG: Animated.SpringAnimationConfig = {
+  toValue: 1,
+  useNativeDriver: true,
+  velocity: 5,
+  tension: 100,
+  friction: 5,
+};
+
 export const theme = {
   spacing: {
     xs: '5px',
@@ -31,6 +41,11 @@ export const theme = {
     timingFast: 150,
     timingBase: 300,
     timingSlow: 500,
+
+    heart: {
+      initialScale: 0.3,
+      springConfig: HEART_SPRING_SCALE_CONFIG,
+    },
   },
 };
 

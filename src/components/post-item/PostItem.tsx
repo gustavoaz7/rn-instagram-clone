@@ -35,17 +35,10 @@ import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
 import { postsActions } from '../../redux/posts';
 import { useAppDispatch } from '../../redux/hooks';
+import { commentsActions } from '../../redux/comments';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const INITIAL_OVERLAY_OPACITY = 0.5;
-const INITIAL_HEART_SCALE = 0.3;
-const SPRING_SCALE_CONFIG: Animated.SpringAnimationConfig = {
-  toValue: 1,
-  useNativeDriver: true,
-  velocity: 5,
-  tension: 100,
-  friction: 5,
-};
 
 type TPostItemProps = TPost & { style?: ViewProps['style'] };
 
@@ -70,8 +63,12 @@ export const PostItem = memo(function PostItem({
   const [captionLines, setCaptionLines] = useState(0);
   const [captionExpanded, setCaptionExpanded] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isCommentLiked, setIsCommentLiked] = useState(
+    previewComments.comments[0]?.viewerHasLiked,
+  );
   const [isLiked, setIsLiked] = useState(viewerHasLiked);
   const heartScale = useMemo(() => new Animated.Value(1), []);
+  const heartCommentScale = useMemo(() => new Animated.Value(1), []);
   const [showHeartOverlay, setShowHeartOverlay] = useState(false);
   const doubleTapRef = useRef(null);
   const heartOverlayOpacity = useMemo(
@@ -79,8 +76,8 @@ export const PostItem = memo(function PostItem({
     [],
   );
   const heartOverlayScale = useMemo(
-    () => new Animated.Value(INITIAL_HEART_SCALE),
-    [],
+    () => new Animated.Value(theme.animation.heart.initialScale),
+    [theme.animation.heart.initialScale],
   );
 
   const handleCaptionLayout = useCallback(
@@ -110,25 +107,31 @@ export const PostItem = memo(function PostItem({
 
   const dispatchPostLike = useCallback(
     (flag: boolean) => {
+      dispatch(postsActions.likePost({ flag, id }));
+    },
+    [dispatch, id],
+  );
+
+  const dispatchCommentLike = useCallback(
+    (flag: boolean) => {
       dispatch(
-        postsActions.likePost({
-          collection: 'posts',
+        commentsActions.likeComment({
           flag,
-          id,
+          id: previewComments.comments[0].id,
         }),
       );
     },
-    [dispatch, id],
+    [dispatch, previewComments.comments],
   );
 
   const handleLike = useCallback(async () => {
     setIsLiked(prevIsLiked => {
       dispatchPostLike(!prevIsLiked);
-      heartScale.setValue(INITIAL_HEART_SCALE);
-      Animated.spring(heartScale, SPRING_SCALE_CONFIG).start();
+      heartScale.setValue(theme.animation.heart.initialScale);
+      Animated.spring(heartScale, theme.animation.heart.springConfig).start();
       return !prevIsLiked;
     });
-  }, [dispatchPostLike, heartScale]);
+  }, [dispatchPostLike, heartScale, theme.animation.heart]);
 
   const onDoubleTapMedia = useCallback(
     (e: HandlerStateChangeEvent<TapGestureHandlerEventPayload>) => {
@@ -141,7 +144,7 @@ export const PostItem = memo(function PostItem({
       }
 
       heartOverlayOpacity.setValue(INITIAL_OVERLAY_OPACITY);
-      heartOverlayScale.setValue(INITIAL_HEART_SCALE);
+      heartOverlayScale.setValue(theme.animation.heart.initialScale);
       Animated.sequence([
         Animated.parallel([
           Animated.timing(heartOverlayOpacity, {
@@ -149,8 +152,11 @@ export const PostItem = memo(function PostItem({
             duration: theme.animation.timingFast,
             useNativeDriver: true,
           }),
-          Animated.spring(heartOverlayScale, SPRING_SCALE_CONFIG),
-          Animated.spring(heartScale, SPRING_SCALE_CONFIG),
+          Animated.spring(
+            heartOverlayScale,
+            theme.animation.heart.springConfig,
+          ),
+          Animated.spring(heartScale, theme.animation.heart.springConfig),
         ]),
         Animated.timing(heartOverlayOpacity, {
           toValue: 0,
@@ -173,6 +179,18 @@ export const PostItem = memo(function PostItem({
       theme.animation,
     ],
   );
+
+  const handleLikeComment = useCallback(() => {
+    setIsCommentLiked(prevIsLiked => {
+      dispatchCommentLike(!prevIsLiked);
+      heartCommentScale.setValue(theme.animation.heart.initialScale);
+      Animated.spring(
+        heartCommentScale,
+        theme.animation.heart.springConfig,
+      ).start();
+      return !prevIsLiked;
+    });
+  }, [dispatchCommentLike, heartCommentScale, theme.animation.heart]);
 
   const isMultiImage = medias.length > 1;
 
@@ -301,7 +319,16 @@ export const PostItem = memo(function PostItem({
                   </BoldText>
                   {previewComments.comments[0].text}
                 </Comment>
-                <CommentLike />
+                <AnimatedPressable
+                  onPress={handleLikeComment}
+                  style={{ transform: [{ scale: heartCommentScale }] }}
+                >
+                  <CommentLike
+                    color={isCommentLiked ? theme.color.red : theme.color.gray}
+                    fill={isCommentLiked ? theme.color.red : 'none'}
+                    testID="PostItem-CommentHeart"
+                  />
+                </AnimatedPressable>
               </CommentContainer>
             ) : null}
           </>
@@ -427,8 +454,7 @@ const Comment = styled(Text).attrs({
   margin-right: ${({ theme }) => theme.spacing.xs};
 `;
 
-const CommentLike = styled(HeartSvg).attrs(({ theme }) => ({
-  color: theme.color.gray,
+const CommentLike = styled(HeartSvg).attrs(() => ({
   width: 16,
   height: 16,
 }))``;

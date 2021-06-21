@@ -10,7 +10,7 @@ import {
   postsReducer,
   usePostsSelector,
 } from './posts';
-import { postLike, TPostLikeBody } from '../services/likes';
+import { postLike } from '../services/likes';
 
 jest.mock('../services/posts');
 const fetchPostsMock = fetchPosts as jest.Mock;
@@ -133,9 +133,8 @@ describe('redux - posts', () => {
 
   describe('likePost', () => {
     const toastSpy = jest.spyOn(Toast, 'show');
-    const body: TPostLikeBody = {
+    const body = {
       id: `${Math.random()}`,
-      collection: 'posts',
       flag: true,
     };
 
@@ -144,11 +143,14 @@ describe('redux - posts', () => {
       toastSpy.mockClear();
     });
 
-    it('calls postLike with provided body', () => {
+    it('calls postLike with provided body + collection', () => {
       const store = configureStore({ reducer: postsReducer });
       store.dispatch(postsActions.likePost(body));
 
-      expect(postLikeMock).toHaveBeenCalledWith(body);
+      expect(postLikeMock).toHaveBeenCalledWith({
+        ...body,
+        collection: 'posts',
+      });
     });
 
     describe('when request succeeds', () => {

@@ -109,6 +109,7 @@ export function CommentsScreen(): JSX.Element {
               previewLikes: post.previewLikes,
               createdAt: post.createdAt,
               text: post.caption,
+              viewerHasLiked: false,
             }}
             interactable={false}
           />

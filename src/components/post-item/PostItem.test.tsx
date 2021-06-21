@@ -14,6 +14,7 @@ import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
 import * as reduxHooks from '../../redux/hooks';
 import * as reduxPosts from '../../redux/posts';
+import * as reduxComments from '../../redux/comments';
 import {
   generateMockPost,
   generateMockPostMedia,
@@ -38,10 +39,11 @@ describe('components - PostItem', () => {
   const useDispatchSpy = jest
     .spyOn(reduxHooks, 'useAppDispatch')
     .mockReturnValue(dispatchMock);
-  const usePostsSelectorSpy = jest
-    .spyOn(reduxPosts, 'usePostsSelector')
-    .mockReturnValue(reduxPosts.initialState);
   const likePostSpy = jest.spyOn(reduxPosts.postsActions, 'likePost');
+  const likeCommentSpy = jest.spyOn(
+    reduxComments.commentsActions,
+    'likeComment',
+  );
   const post = generateMockPost();
   const multiCommentPost = {
     ...post,
@@ -129,10 +131,33 @@ describe('components - PostItem', () => {
         expect(heartIcon.props.color).toBe(theme.color.red);
         expect(heartIcon.props.fill).toBe(theme.color.red);
       });
+
+      describe('when user press heart icon', () => {
+        it('dispatches likePost action with flag as `false`', async () => {
+          const action = Math.random();
+          likePostSpy.mockReturnValueOnce(action as any);
+          const { getByTestId } = render(
+            <PostItem {...post} viewerHasLiked />,
+            options,
+          );
+
+          act(() => {
+            fireEvent.press(getByTestId('PostItem-Heart'));
+          });
+
+          expect(likePostSpy).toHaveBeenCalledTimes(1);
+          expect(likePostSpy).toHaveBeenCalledWith({
+            id: post.id,
+            flag: false,
+          });
+          expect(dispatchMock).toHaveBeenCalledTimes(1);
+          expect(dispatchMock).toHaveBeenCalledWith(action);
+        });
+      });
     });
 
-    describe('when user likes the post', () => {
-      it('dispatches likePost action', async () => {
+    describe('when user press heart icon', () => {
+      it('dispatches likePost action with flag as `true`', async () => {
         const action = Math.random();
         likePostSpy.mockReturnValueOnce(action as any);
         const { getByTestId } = render(<PostItem {...post} />, options);
@@ -144,7 +169,6 @@ describe('components - PostItem', () => {
         expect(likePostSpy).toHaveBeenCalledTimes(1);
         expect(likePostSpy).toHaveBeenCalledWith({
           id: post.id,
-          collection: 'posts',
           flag: true,
         });
         expect(dispatchMock).toHaveBeenCalledTimes(1);
@@ -168,7 +192,7 @@ describe('components - PostItem', () => {
       });
     });
 
-    describe('when user likes by double-tapping the post', () => {
+    describe('when user double-taps post media', () => {
       it('dispatches likePost action', async () => {
         const action = Math.random();
         likePostSpy.mockReturnValueOnce(action as any);
@@ -183,7 +207,6 @@ describe('components - PostItem', () => {
         expect(likePostSpy).toHaveBeenCalledTimes(1);
         expect(likePostSpy).toHaveBeenCalledWith({
           id: post.id,
-          collection: 'posts',
           flag: true,
         });
         expect(dispatchMock).toHaveBeenCalledTimes(1);
@@ -250,7 +273,9 @@ describe('components - PostItem', () => {
 
         expect(queryByTestId('PostItem-HeartOverlay')).not.toBe(null);
 
-        timeTravel(2000);
+        act(() => {
+          timeTravel(2000);
+        });
 
         expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
         destroyTimeTravel();
@@ -364,6 +389,89 @@ describe('components - PostItem', () => {
         expect(navigateSpy).toHaveBeenCalledWith(ROOT_STACK_SCREENS.COMMENTS, {
           post: multiCommentPost,
         });
+      });
+    });
+
+    describe('when user has liked the first comment', () => {
+      const postWithLikedComment = {
+        ...post,
+        previewComments: {
+          ...post.previewComments,
+          comments: [
+            { ...post.previewComments.comments[0], viewerHasLiked: true },
+          ],
+        },
+      };
+
+      it('renders filled comment heart', () => {
+        const { getByTestId } = render(
+          <PostItem {...postWithLikedComment} />,
+          options,
+        );
+
+        const heartIcon = getByTestId('PostItem-CommentHeart');
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+
+      describe('when user press heart icon', () => {
+        it('dispatches likeComment action with flag as `false`', async () => {
+          const action = Math.random();
+          likeCommentSpy.mockReturnValueOnce(action as any);
+          const { getByTestId } = render(
+            <PostItem {...postWithLikedComment} />,
+            options,
+          );
+
+          act(() => {
+            fireEvent.press(getByTestId('PostItem-CommentHeart'));
+          });
+
+          expect(likeCommentSpy).toHaveBeenCalledTimes(1);
+          expect(likeCommentSpy).toHaveBeenCalledWith({
+            id: post.previewComments.comments[0].id,
+            flag: false,
+          });
+          expect(dispatchMock).toHaveBeenCalledTimes(1);
+          expect(dispatchMock).toHaveBeenCalledWith(action);
+        });
+      });
+    });
+
+    describe('when user likes the first comment', () => {
+      it('dispatches likeComment action with flag as `true`', async () => {
+        const action = Math.random();
+        likeCommentSpy.mockReturnValueOnce(action as any);
+        const { getByTestId } = render(<PostItem {...post} />, options);
+
+        act(() => {
+          fireEvent.press(getByTestId('PostItem-CommentHeart'));
+        });
+
+        expect(likeCommentSpy).toHaveBeenCalledTimes(1);
+        expect(likeCommentSpy).toHaveBeenCalledWith({
+          id: post.previewComments.comments[0].id,
+          flag: true,
+        });
+        expect(dispatchMock).toHaveBeenCalledTimes(1);
+        expect(dispatchMock).toHaveBeenCalledWith(action);
+      });
+
+      it('changes heart from outline gray to filled red', () => {
+        const { getByTestId } = render(<PostItem {...post} />, options);
+
+        const heartIcon = getByTestId('PostItem-CommentHeart');
+
+        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.fill).toBe('none');
+
+        act(() => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
       });
     });
   });
