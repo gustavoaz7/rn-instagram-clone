@@ -407,16 +407,41 @@ exports[`components - PostItem matches snapshot 1`] = `
         </Text>
         Aspernatur quod ea unde repellendus magni nihil sunt.
       </Text>
-      <SvgMock
-        color="#8e8e8e"
-        height={16}
+      <View
+        accessible={true}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
         style={
-          Array [
-            Object {},
-          ]
+          Object {
+            "transform": Array [
+              Object {
+                "scale": 1,
+              },
+            ],
+          }
         }
-        width={16}
-      />
+      >
+        <SvgMock
+          color="#8e8e8e"
+          fill="none"
+          height={16}
+          style={
+            Array [
+              Object {},
+            ]
+          }
+          testID="PostItem-CommentHeart"
+          width={16}
+        />
+      </View>
     </View>
     <Text
       style={

@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import Toast from 'react-native-root-toast';
 import {
   fetchComments,
   TFetchCommentsParams,
   TCommentsResponse,
 } from '../services/comments';
+import { postLike, TPostLikeBody, TPostLikeResponse } from '../services/likes';
 import { TComment } from '../types';
 import { useAppSelector } from './hooks';
 
@@ -25,11 +27,26 @@ export const initialState: TCommentsState = {
 
 export type TGetCommentsThunkArg = TFetchCommentsParams & { postId: string };
 const getComments = createAsyncThunk<TCommentsResponse, TGetCommentsThunkArg>(
-  SLICE_NAME,
+  `${SLICE_NAME}/getComments`,
   async ({ postId, ...params }, { rejectWithValue }) => {
     try {
       const comments = await fetchComments(postId, params);
       return comments;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+const likeComment = createAsyncThunk<
+  TPostLikeResponse,
+  Omit<TPostLikeBody, 'collection'>
+>(
+  `${SLICE_NAME}/likePost`,
+  // eslint-disable-next-line consistent-return
+  async (body, { rejectWithValue }) => {
+    try {
+      await postLike({ ...body, collection: 'comments' });
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -61,13 +78,40 @@ export const commentsSlice = createSlice({
           ? action.payload.comments
           : [...state.comments, ...action.payload.comments];
       });
+    builder
+      .addCase(likeComment.pending, state => state)
+      .addCase(likeComment.rejected, () => {
+        Toast.show('Failed to like comment.', {
+          position: Toast.positions.CENTER,
+        });
+      })
+      .addCase(likeComment.fulfilled, (state, action) => {
+        state.comments = state.comments.map(comment =>
+          action.meta.arg.id === comment.id
+            ? {
+                ...comment,
+                viewerHasLiked: action.meta.arg.flag,
+                previewLikes: {
+                  ...comment.previewLikes,
+                  count:
+                    comment.previewLikes.count +
+                    (action.meta.arg.flag ? 1 : -1),
+                },
+              }
+            : comment,
+        );
+      });
   },
 });
 /* eslint-enable no-param-reassign */
 
 export const commentsReducer = commentsSlice.reducer;
 
-export const commentsActions = { ...commentsSlice.actions, getComments };
+export const commentsActions = {
+  ...commentsSlice.actions,
+  getComments,
+  likeComment,
+};
 
 export const useCommentsSelector = () =>
   useAppSelector(state => state.comments);

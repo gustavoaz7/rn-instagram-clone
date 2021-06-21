@@ -37,12 +37,15 @@ const getPosts = createAsyncThunk<TPostsResponse, TFetchPostsParams>(
   },
 );
 
-const likePost = createAsyncThunk<TPostLikeResponse, TPostLikeBody>(
+const likePost = createAsyncThunk<
+  TPostLikeResponse,
+  Omit<TPostLikeBody, 'collection'>
+>(
   `${SLICE_NAME}/likePost`,
   // eslint-disable-next-line consistent-return
   async (body, { rejectWithValue }) => {
     try {
-      await postLike(body);
+      await postLike({ ...body, collection: 'posts' });
     } catch (error) {
       return rejectWithValue(error.message);
     }

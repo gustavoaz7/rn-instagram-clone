@@ -33,6 +33,7 @@ export const generateMockComment = (likesQty = 1): TComment => ({
     count: likesQty,
     likes: [...Array(likesQty)].map(generateMockLike),
   },
+  viewerHasLiked: false,
 });
 
 export const generateMockPostMedia = ({ index = 0 } = {}): TPostMedia => ({
@@ -62,6 +63,7 @@ export const generateMockPost = ({
     comments: [...Array(commentsQty)].map(generateMockComment),
   },
   location: 'Daronville',
+  viewerHasLiked: false,
 });
 
 export const generateMockStoryMedia = ({
