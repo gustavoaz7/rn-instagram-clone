@@ -4,6 +4,7 @@ import type {
   TCommentsResponse,
 } from '../../src/services/comments';
 import { database } from '../database';
+import { session } from '../session';
 import { tranformComment } from '../transformations';
 import { generateComment, sortByCreatedAt } from '../utils';
 
@@ -23,6 +24,7 @@ commentsRouter.get<
   const limit = Number(req.query.limit);
   const refresh = Boolean(req.query.refresh);
 
+  const currentUser = database.users.get(session.getUsername())!;
   const post = database.posts.get(postId)!;
 
   if (refresh) {
@@ -37,7 +39,14 @@ commentsRouter.get<
   const commentsDBWithNext = post.commentsIds
     .map(commentId => database.comments.get(commentId)!)
     .sort(sortByCreatedAt)
-    .slice(offset, offset + limit + 1);
+    .slice(offset, offset + limit + 1)
+    .map(comment => ({
+      ...comment,
+      viewerHasLiked: comment.likesIds.some(
+        likeId =>
+          database.likes.get(likeId)!.owner.username === currentUser.username,
+      ),
+    }));
   const canFetchMoreComments = commentsDBWithNext.length > limit;
   const comments = commentsDBWithNext.slice(0, -1).map(tranformComment);
 

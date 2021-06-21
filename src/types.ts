@@ -31,12 +31,14 @@ export type TPreviewLikes = {
   count: number;
   likes: TLike[];
 };
+
 export type TComment = {
   id: string;
   owner: TOwner;
   createdAt: number;
   text: string;
   previewLikes: TPreviewLikes;
+  viewerHasLiked: boolean;
 };
 
 export type TPreviewComments = {

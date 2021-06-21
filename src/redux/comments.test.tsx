@@ -1,6 +1,7 @@
 import React from 'react';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { renderHook } from '@testing-library/react-hooks';
+import Toast from 'react-native-root-toast';
 import { fetchComments } from '../services/comments';
 import { Providers } from '../Providers';
 import {
@@ -10,9 +11,12 @@ import {
   useCommentsSelector,
   TGetCommentsThunkArg,
 } from './comments';
+import { postLike } from '../services/likes';
 
 jest.mock('../services/comments');
 const fetchCommentsMock = fetchComments as jest.Mock;
+jest.mock('../services/likes');
+const postLikeMock = postLike as jest.Mock;
 
 describe('redux - comments', () => {
   describe('getComments', () => {
@@ -153,6 +157,66 @@ describe('redux - comments', () => {
       store.dispatch(commentsActions.clearComments());
 
       expect(store.getState()).toEqual(initialState);
+    });
+  });
+
+  describe('likeComment', () => {
+    const toastSpy = jest.spyOn(Toast, 'show');
+    const body = {
+      id: `${Math.random()}`,
+      flag: true,
+    };
+
+    beforeEach(() => {
+      postLikeMock.mockClear();
+      toastSpy.mockClear();
+    });
+
+    it('calls postLike with provided body + collection', () => {
+      const store = configureStore({ reducer: commentsReducer });
+      store.dispatch(commentsActions.likeComment(body));
+
+      expect(postLikeMock).toHaveBeenCalledWith({
+        ...body,
+        collection: 'comments',
+      });
+    });
+
+    describe('when request succeeds', () => {
+      const store = configureStore({ reducer: commentsReducer });
+
+      it('does not change state', async () => {
+        postLikeMock.mockResolvedValueOnce(null);
+
+        expect(store.getState()).toEqual(initialState);
+
+        const action = store.dispatch(commentsActions.likeComment(body));
+
+        expect(store.getState()).toEqual(initialState);
+
+        await action;
+
+        expect(store.getState()).toEqual(initialState);
+        expect(toastSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when request fails', () => {
+      it('keeps state & shows toast', async () => {
+        const store = configureStore({ reducer: commentsReducer });
+        const error = new Error('failed liking comment');
+        postLikeMock.mockRejectedValueOnce(error);
+
+        expect(store.getState()).toEqual(initialState);
+
+        await store.dispatch(commentsActions.likeComment(body));
+
+        expect(store.getState()).toEqual(initialState);
+        expect(toastSpy).toHaveBeenCalledTimes(1);
+        expect(toastSpy).toHaveBeenCalledWith('Failed to like comment.', {
+          position: Toast.positions.CENTER,
+        });
+      });
     });
   });
 

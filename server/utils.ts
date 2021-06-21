@@ -79,6 +79,7 @@ export const generateComment = (
   createdAt: faker.date.recent(180).getTime(),
   text: faker.lorem.sentence(),
   likesIds: [],
+  viewerHasLiked: false,
   ...partialComment,
 });
 
