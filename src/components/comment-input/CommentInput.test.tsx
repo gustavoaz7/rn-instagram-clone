@@ -5,8 +5,9 @@ import {
   RenderOptions,
   fireEvent,
 } from '@testing-library/react-native';
-import { CommentInput, EMOJIS } from './CommentInput';
+import { CommentInput } from './CommentInput';
 import { Providers } from '../../Providers';
+import { EMOJIS } from '../../constants';
 
 describe('components - CommentInput', () => {
   const submitSpy = jest.fn();

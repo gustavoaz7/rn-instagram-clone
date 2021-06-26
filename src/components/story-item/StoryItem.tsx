@@ -1,12 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components/native';
-import { GestureResponderEvent, Animated, Easing } from 'react-native';
+import {
+  GestureResponderEvent,
+  Animated,
+  Easing,
+  StyleSheet,
+  FlatList,
+  ListRenderItem,
+} from 'react-native';
 import DirectSvg from '../../../assets/svg/direct.svg';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../utils/dimensions';
 import { TStory } from '../../types';
 import { Text } from '../text';
 import { dateToString } from '../../utils/date';
+import { EMOJIS } from '../../constants';
 
 export const STORY_TIMEOUT = 5000;
 
@@ -29,6 +37,7 @@ export const StoryItem = ({
 }: TStoryItemProps) => {
   const [mediaIndex, setMediaIndex] = useState(initialMediaIndex);
   const [isAnimationPaused, setIsAnimationPaused] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const [text, setText] = useState('');
   const handleTextChange = useCallback(newText => {
     setText(newText);
@@ -101,6 +110,16 @@ export const StoryItem = ({
     });
   }, [mediaIndex, progressBars, goToNextMedia]);
 
+  const handleStartReplying = useCallback(() => {
+    setIsReplying(true);
+    stopProgressAnimation();
+  }, [stopProgressAnimation]);
+
+  const handleStopReplying = useCallback(() => {
+    setIsReplying(false);
+    startProgressAnimation();
+  }, [startProgressAnimation]);
+
   useEffect(() => {
     if (isCurrentStory && !shouldPauseAnimations) {
       startProgressAnimation();
@@ -136,53 +155,99 @@ export const StoryItem = ({
     setIsAnimationPaused(false);
   }, [setIsAnimationPaused, isAnimationPaused, startProgressAnimation]);
 
+  const ReactionsHeader = useCallback(
+    () => <ReactionsTitle>Quick reactions</ReactionsTitle>,
+    [],
+  );
+  const keyExtractor = useCallback((k: string) => k, []);
+  const ReactionsRenderItem = useCallback<ListRenderItem<string>>(
+    ({ item }) => (
+      <EmojiContainer
+        onPress={() => {
+          handleStopReplying();
+        }}
+      >
+        <Emoji>{item}</Emoji>
+      </EmojiContainer>
+    ),
+    [handleStopReplying],
+  );
+
   const currentMedia = story.medias[mediaIndex];
 
   return (
-    <Container
-      onPress={handlePress}
-      onLongPress={handleLongPress}
-      onPressOut={handlePressOut}
-      delayLongPress={200}
-      testID="StoryItem"
-    >
-      <Image testID="StoryItem-Image" source={{ uri: currentMedia.url }} />
-      <ProgressBarContainer testID="StoryItem-ProgressBar">
-        {story.medias.map((_, i) => (
-          <ProgressBarItem
-            // eslint-disable-next-line react/no-array-index-key
-            key={`bar-${i}`}
-          >
-            <ProgressBarItemAnimated
-              style={{
-                width: progressBars[i].interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                  extrapolate: 'clamp',
-                }),
-              }}
+    <>
+      <Container
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+        onPressOut={handlePressOut}
+        delayLongPress={200}
+        testID="StoryItem"
+      >
+        <Image testID="StoryItem-Image" source={{ uri: currentMedia.url }} />
+        <ProgressBarContainer testID="StoryItem-ProgressBar">
+          {story.medias.map((_, i) => (
+            <ProgressBarItem
+              // eslint-disable-next-line react/no-array-index-key
+              key={`bar-${i}`}
+            >
+              <ProgressBarItemAnimated
+                style={{
+                  width: progressBars[i].interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0%', '100%'],
+                    extrapolate: 'clamp',
+                  }),
+                }}
+              />
+            </ProgressBarItem>
+          ))}
+        </ProgressBarContainer>
+        <Header>
+          <AvatarContainer>
+            <Avatar source={{ uri: story.owner.profilePicUrl }} />
+            <Username>{story.owner.username}</Username>
+            <Time>{dateToString(new Date(currentMedia.takenAt), true)}</Time>
+          </AvatarContainer>
+          <MenuVerticalIcon />
+        </Header>
+      </Container>
+      {isReplying ? (
+        <ReplyContainer>
+          {!text ? (
+            <FlatList
+              data={EMOJIS}
+              ListHeaderComponent={ReactionsHeader}
+              renderItem={ReactionsRenderItem}
+              keyExtractor={keyExtractor}
+              contentContainerStyle={styles.reactionsList}
+              numColumns={4}
+              keyboardShouldPersistTaps="handled"
             />
-          </ProgressBarItem>
-        ))}
-      </ProgressBarContainer>
-      <Header>
-        <AvatarContainer>
-          <Avatar source={{ uri: story.owner.profilePicUrl }} />
-          <Username>{story.owner.username}</Username>
-          <Time>{dateToString(new Date(currentMedia.takenAt), true)}</Time>
-        </AvatarContainer>
-        <MenuVerticalIcon />
-      </Header>
+          ) : null}
+        </ReplyContainer>
+      ) : null}
       <Footer>
-        <Input
-          value={text}
-          onChangeText={handleTextChange}
-          onFocus={stopProgressAnimation}
-          onBlur={startProgressAnimation}
-        />
-        <DirectIcon />
+        {!isReplying ? (
+          <>
+            <FakeInput
+              onPress={handleStartReplying}
+              testID="StoryItem-FakeInput"
+            >
+              <FakePlaceholder>Send message</FakePlaceholder>
+            </FakeInput>
+            <DirectIcon />
+          </>
+        ) : (
+          <Input
+            value={text}
+            autoFocus
+            onChangeText={handleTextChange}
+            onBlur={handleStopReplying}
+          />
+        )}
       </Footer>
-    </Container>
+    </>
   );
 };
 
@@ -239,7 +304,23 @@ const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
 `;
 
 const Footer = styled(CenteredRow)`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
+`;
+
+const FakeInput = styled.Pressable`
+  flex: 1;
+  border-radius: 25px;
+  padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.color.white}80;
+`;
+
+const FakePlaceholder = styled(Text)`
+  color: ${({ theme }) => theme.color.white};
 `;
 
 const Input = styled.TextInput.attrs(({ theme }) => ({
@@ -247,6 +328,7 @@ const Input = styled.TextInput.attrs(({ theme }) => ({
   placeholderTextColor: theme.color.white,
   multiline: true,
 }))`
+  z-index: 1;
   flex: 1;
   border-radius: 25px;
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
@@ -287,3 +369,34 @@ const ProgressBarItemAnimated = styled(Animated.View)`
   ${progressBarItemClass};
   background-color: ${({ theme }) => theme.color.white};
 `;
+
+const ReplyContainer = styled.View`
+  ${StyleSheet.absoluteFill};
+  background-color: ${({ theme }) => theme.color.black}80;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ReactionsTitle = styled(Text)`
+  color: ${({ theme }) => theme.color.white};
+  opacity: 0.7;
+  align-self: center;
+`;
+
+const EmojiContainer = styled.Pressable`
+  flex: 1;
+  align-items: center;
+  margin-top: ${({ theme }) => theme.spacing.s};
+  z-index: 9;
+`;
+
+const Emoji = styled(Text)`
+  font-size: ${(SCREEN_WIDTH * 0.6) / EMOJIS.length}px;
+`;
+
+const styles = StyleSheet.create({
+  reactionsList: {
+    alignSelf: 'center',
+    width: '60%',
+  },
+});

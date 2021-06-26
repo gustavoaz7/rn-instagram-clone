@@ -1,12 +1,11 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
+import { EMOJIS } from '../../constants';
 import { useUserSelector } from '../../redux/user';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import { AvatarWithRing } from '../avatar-with-ring';
 import { Text } from '../text';
-
-export const EMOJIS = ['❤️', '🙌', '🔥', '👏', '😢', '😍', '😮', '😂'];
 
 export type TCommentInputProps = {
   onSubmit: (text: string) => void;
