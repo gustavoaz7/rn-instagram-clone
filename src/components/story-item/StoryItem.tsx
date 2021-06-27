@@ -14,6 +14,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../utils/dimensions';
 import { TStory } from '../../types';
 import { Text } from '../text';
 import { dateToString } from '../../utils/date';
+import { StoryReactionAnimation } from '../story-reaction-animation';
 import { EMOJIS } from '../../constants';
 
 export const STORY_TIMEOUT = 5000;
@@ -42,6 +43,8 @@ export const StoryItem = ({
   const handleTextChange = useCallback(newText => {
     setText(newText);
   }, []);
+  const [reactionEmoji, setReactionEmoji] = useState<string>('');
+  const [isReacting, setIsReacting] = useState(false);
 
   const progressBars = useRef<Animated.Value[]>(
     story.medias.map(
@@ -121,6 +124,12 @@ export const StoryItem = ({
   }, [startProgressAnimation]);
 
   useEffect(() => {
+    if (!isReplying && reactionEmoji) {
+      setIsReacting(true);
+    }
+  }, [isReplying, reactionEmoji]);
+
+  useEffect(() => {
     if (isCurrentStory && !shouldPauseAnimations) {
       startProgressAnimation();
     } else {
@@ -155,6 +164,11 @@ export const StoryItem = ({
     setIsAnimationPaused(false);
   }, [setIsAnimationPaused, isAnimationPaused, startProgressAnimation]);
 
+  const handleEmojiAnimationEnd = useCallback(() => {
+    setReactionEmoji('');
+    setIsReacting(false);
+  }, []);
+
   const ReactionsHeader = useCallback(
     () => <ReactionsTitle>Quick reactions</ReactionsTitle>,
     [],
@@ -164,6 +178,7 @@ export const StoryItem = ({
     ({ item }) => (
       <EmojiContainer
         onPress={() => {
+          setReactionEmoji(item);
           handleStopReplying();
         }}
       >
@@ -211,6 +226,12 @@ export const StoryItem = ({
           </AvatarContainer>
           <MenuVerticalIcon />
         </Header>
+        {isReacting ? (
+          <StoryReactionAnimation
+            onAnimationComplete={handleEmojiAnimationEnd}
+            emoji={reactionEmoji}
+          />
+        ) : null}
       </Container>
       {isReplying ? (
         <ReplyContainer>
