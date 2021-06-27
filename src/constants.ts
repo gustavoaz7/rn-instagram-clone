@@ -11,3 +11,5 @@ export const STATIC_USER_DATA: Pick<TUser, 'username' | 'profilePicUrl'> = {
 };
 
 export const FRAME_TIME = 10;
+
+export const EMOJIS = ['❤️', '🙌', '🔥', '👏', '😢', '😍', '😮', '😂'];

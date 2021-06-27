@@ -16,6 +16,7 @@ import {
   timeTravel,
 } from '../../test/time-travel';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
+import { EMOJIS } from '../../constants';
 
 const story = generateMockStory();
 
@@ -46,6 +47,16 @@ describe('components - StoryItem', () => {
     const { toJSON } = render(<StoryItem {...defaultProps} />, options);
 
     expect(toJSON()).toMatchSnapshot();
+  });
+
+  it('renders fake-input instead of real one', () => {
+    const { getByTestId, UNSAFE_queryByType } = render(
+      <StoryItem {...defaultProps} />,
+      options,
+    );
+
+    expect(getByTestId('StoryItem-FakeInput')).toBeTruthy();
+    expect(UNSAFE_queryByType(TextInput)).toBeFalsy();
   });
 
   it('starts all progress bars at 0', () => {
@@ -310,46 +321,104 @@ describe('components - StoryItem', () => {
     );
   });
 
-  it('pauses progress when input is focused and resumes on blur', () => {
-    const { getByTestId, UNSAFE_getByType } = render(
-      <StoryItem {...defaultProps} />,
-      options,
-    );
+  describe('when fake-input is pressed', () => {
+    it('pauses progress when fake-input is pressed', () => {
+      const { getByTestId } = render(<StoryItem {...defaultProps} />, options);
 
-    const input = UNSAFE_getByType(TextInput);
-    const progressBarProps = getByTestId('StoryItem-ProgressBar').findAllByType(
-      Animated.View,
-    )[0].props;
+      const progressBarProps = getByTestId(
+        'StoryItem-ProgressBar',
+      ).findAllByType(Animated.View)[0].props;
 
-    fireEvent(input, 'onFocus');
+      fireEvent.press(getByTestId('StoryItem-FakeInput'));
 
-    act(() => {
-      timeTravel(STORY_TIMEOUT);
+      act(() => {
+        timeTravel(STORY_TIMEOUT);
+      });
+
+      expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+        Object {
+          "width": "0%",
+        }
+      `);
+      expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
+        story.medias[0].url,
+      );
     });
 
-    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
-      Object {
-        "width": "0%",
-      }
-    `);
-    expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
-      story.medias[0].url,
-    );
+    it('renders real input instead of fake one', () => {
+      const { getByTestId, queryByTestId, UNSAFE_queryByType } = render(
+        <StoryItem {...defaultProps} />,
+        options,
+      );
+      fireEvent.press(getByTestId('StoryItem-FakeInput'));
 
-    fireEvent(input, 'onBlur');
-
-    act(() => {
-      timeTravel(STORY_TIMEOUT);
+      expect(UNSAFE_queryByType(TextInput)).toBeTruthy();
+      expect(queryByTestId('StoryItem-FakeInput')).toBeFalsy();
     });
 
-    expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
-      Object {
-        "width": "100%",
-      }
-    `);
-    expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
-      story.medias[1].url,
-    );
+    it('renders emojis list', () => {
+      const { getByTestId, getByText } = render(
+        <StoryItem {...defaultProps} />,
+        options,
+      );
+      fireEvent.press(getByTestId('StoryItem-FakeInput'));
+
+      EMOJIS.forEach(emoji => {
+        expect(getByText(emoji)).toBeTruthy();
+      });
+    });
+
+    describe('when input is not empty', () => {
+      it('hides emojis list', () => {
+        const { getByTestId, queryByText, UNSAFE_getByType } = render(
+          <StoryItem {...defaultProps} />,
+          options,
+        );
+        fireEvent.press(getByTestId('StoryItem-FakeInput'));
+
+        fireEvent.changeText(UNSAFE_getByType(TextInput), 'text');
+
+        EMOJIS.forEach(emoji => {
+          expect(queryByText(emoji)).toBeFalsy();
+        });
+      });
+    });
+
+    describe('when input is blurred', () => {
+      it('resumes previous state', () => {
+        const {
+          getByTestId,
+          queryByTestId,
+          UNSAFE_getByType,
+          UNSAFE_queryByType,
+          queryByText,
+        } = render(<StoryItem {...defaultProps} />, options);
+        const progressBarProps = getByTestId(
+          'StoryItem-ProgressBar',
+        ).findAllByType(Animated.View)[0].props;
+
+        fireEvent.press(getByTestId('StoryItem-FakeInput'));
+        fireEvent(UNSAFE_getByType(TextInput), 'onBlur');
+
+        act(() => {
+          timeTravel(STORY_TIMEOUT);
+        });
+
+        expect(progressBarProps.style[1]).toMatchInlineSnapshot(`
+          Object {
+            "width": "100%",
+          }
+        `);
+        expect(getByTestId('StoryItem-Image').props.source.uri).toBe(
+          story.medias[1].url,
+        );
+        expect(UNSAFE_queryByType(TextInput)).toBeFalsy();
+        expect(queryByTestId('StoryItem-FakeInput')).toBeTruthy();
+        EMOJIS.forEach(emoji => {
+          expect(queryByText(emoji)).toBeFalsy();
+        });
+      });
+    });
   });
 
   describe('when at an intermediary media', () => {

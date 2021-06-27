@@ -100,6 +100,7 @@ export const StoriesSlider = ({
       initialNumToRender={3}
       maxToRenderPerBatch={3}
       windowSize={3}
+      keyboardShouldPersistTaps="handled"
     />
   );
 };
