@@ -1,14 +1,15 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled, { useTheme } from 'styled-components/native';
 import { ViewProps, Animated, Pressable } from 'react-native';
+import Toast from 'react-native-root-toast';
 import { Text } from '../text';
 import { AvatarWithRing } from '../avatar-with-ring';
 import HeartSvg from '../../../assets/svg/heart.svg';
 import { TComment } from '../../types';
 import { pluralizeWithS } from '../../utils/string';
 import { dateToString } from '../../utils/date';
-import { useAppDispatch } from '../../redux/hooks';
-import { commentsActions } from '../../redux/comments';
+import { postLike } from '../../services/likes';
+import { isFail } from '../../utils/remote-data';
 
 export const AVATAR_SIZE = 40;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -28,31 +29,34 @@ export const Comment = memo(function Comment({
   interactable = true,
   style,
 }: TCommentProps): JSX.Element {
-  const dispatch = useAppDispatch();
   const theme = useTheme();
   const [isLiked, setIsLiked] = useState(viewerHasLiked);
   const heartScale = useMemo(() => new Animated.Value(1), []);
+  const [isLikeDisabled, setIsLikeDisabled] = useState(false);
 
-  const dispatchLike = useCallback(
-    (flag: boolean) => {
-      dispatch(
-        commentsActions.likeComment({
-          flag,
-          id,
-        }),
-      );
+  const likeComment = useCallback(
+    async (flag: boolean) => {
+      setIsLikeDisabled(true);
+      const result = await postLike({ flag, id, collection: 'comments' });
+      if (isFail(result)) {
+        Toast.show('Failed to like comment.', {
+          position: Toast.positions.CENTER,
+        });
+        setIsLiked(prevIsLiked => !prevIsLiked);
+      }
+      setIsLikeDisabled(false);
     },
-    [dispatch, id],
+    [id],
   );
 
   const handleLikeComment = useCallback(() => {
     setIsLiked(prevIsLiked => {
-      dispatchLike(!prevIsLiked);
+      likeComment(!prevIsLiked);
       heartScale.setValue(theme.animation.heart.initialScale);
       Animated.spring(heartScale, theme.animation.heart.springConfig).start();
       return !prevIsLiked;
     });
-  }, [dispatchLike, heartScale, theme.animation.heart]);
+  }, [likeComment, heartScale, theme.animation.heart]);
 
   return (
     <Container testID="Comment" style={style}>
@@ -83,6 +87,7 @@ export const Comment = memo(function Comment({
       </CommentContainer>
       {interactable ? (
         <AnimatedPressable
+          disabled={isLikeDisabled}
           onPress={handleLikeComment}
           style={{ transform: [{ scale: heartScale }] }}
         >

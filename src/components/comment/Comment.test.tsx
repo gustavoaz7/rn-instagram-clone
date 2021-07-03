@@ -1,28 +1,25 @@
 import React from 'react';
 import { fireEvent, render, act } from '@testing-library/react-native';
+import Toast from 'react-native-root-toast';
 import { generateMockComment } from '../../data';
 import { Comment } from './Comment';
 import { Providers } from '../../Providers';
-import * as reduxHooks from '../../redux/hooks';
-import * as reduxComments from '../../redux/comments';
 import { theme } from '../../styles/theme';
+import { postLike } from '../../services/likes';
+import { flushPromises } from '../../test/flush-promises';
+import { makeFail, makeSuccess } from '../../utils/remote-data';
+
+jest.mock('../../services/likes');
+const postLikeMock = postLike as jest.MockedFunction<typeof postLike>;
 
 describe('components - Comment', () => {
-  const dispatchMock = jest.fn();
-  const useDispatchSpy = jest
-    .spyOn(reduxHooks, 'useAppDispatch')
-    .mockReturnValue(dispatchMock);
-  const likeCommentSpy = jest.spyOn(
-    reduxComments.commentsActions,
-    'likeComment',
-  );
   const options = { wrapper: Providers };
   const comment = generateMockComment(3);
+  const toastSpy = jest.spyOn(Toast, 'show');
 
   afterAll(() => {
-    dispatchMock.mockRestore();
-    useDispatchSpy.mockRestore();
-    likeCommentSpy.mockRestore();
+    postLikeMock.mockClear();
+    toastSpy.mockRestore();
   });
 
   it('renders', () => {
@@ -87,46 +84,42 @@ describe('components - Comment', () => {
       });
 
       describe('when user press heart icon', () => {
-        it('dispatches likeComment action with flag as `false`', async () => {
-          const action = Math.random();
-          likeCommentSpy.mockReturnValueOnce(action as any);
+        it('calls postLike service with flag as `false`', async () => {
           const { getByTestId } = render(
             <Comment {...comment} viewerHasLiked />,
             options,
           );
 
-          act(() => {
+          await act(async () => {
             fireEvent.press(getByTestId('Comment-Heart'));
+            await flushPromises();
           });
 
-          expect(likeCommentSpy).toHaveBeenCalledTimes(1);
-          expect(likeCommentSpy).toHaveBeenCalledWith({
+          expect(postLikeMock).toHaveBeenCalledTimes(1);
+          expect(postLikeMock).toHaveBeenCalledWith({
             id: comment.id,
             flag: false,
+            collection: 'comments',
           });
-          expect(dispatchMock).toHaveBeenCalledTimes(1);
-          expect(dispatchMock).toHaveBeenCalledWith(action);
         });
       });
     });
 
     describe('when user press heart icon', () => {
-      it('dispatches likePost action with flag as `true`', async () => {
-        const action = Math.random();
-        likeCommentSpy.mockReturnValueOnce(action as any);
+      it('calls postLike service with flag as `true`', async () => {
         const { getByTestId } = render(<Comment {...comment} />, options);
 
-        act(() => {
+        await act(async () => {
           fireEvent.press(getByTestId('Comment-Heart'));
+          await flushPromises();
         });
 
-        expect(likeCommentSpy).toHaveBeenCalledTimes(1);
-        expect(likeCommentSpy).toHaveBeenCalledWith({
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(postLikeMock).toHaveBeenCalledWith({
           id: comment.id,
           flag: true,
+          collection: 'comments',
         });
-        expect(dispatchMock).toHaveBeenCalledTimes(1);
-        expect(dispatchMock).toHaveBeenCalledWith(action);
       });
 
       it('changes heart from outline black to filled red', () => {
@@ -143,6 +136,60 @@ describe('components - Comment', () => {
 
         expect(heartIcon.props.color).toBe(theme.color.red);
         expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+
+      it('disables press until request is completed', async () => {
+        postLikeMock.mockResolvedValue(makeSuccess(undefined));
+        const { getByTestId } = render(<Comment {...comment} />, options);
+
+        const heartIcon = getByTestId('Comment-Heart');
+
+        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.fill).toBe('none');
+
+        act(() => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(2);
+        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.fill).toBe('none');
+      });
+
+      describe('when request fails', () => {
+        beforeEach(() => {
+          postLikeMock.mockResolvedValueOnce(makeFail(new Error('')));
+        });
+
+        it('shows toast', async () => {
+          const { getByTestId } = render(<Comment {...comment} />, options);
+
+          await act(async () => {
+            fireEvent.press(getByTestId('Comment-Heart'));
+            await flushPromises();
+          });
+
+          expect(toastSpy).toHaveBeenCalledTimes(1);
+          expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+            position: Toast.positions.CENTER,
+          });
+        });
       });
     });
   });
