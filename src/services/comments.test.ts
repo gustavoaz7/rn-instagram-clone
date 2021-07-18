@@ -45,7 +45,7 @@ describe('services - comments', () => {
     });
 
     it('returns failed remote with error', async () => {
-      const error = new Error('failed');
+      const error = new Error(`failed ${Math.random()}`);
       fetch.mockRejectOnce(error);
       const result = await fetchComments(postId, params);
 

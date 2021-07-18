@@ -1,5 +1,6 @@
 import { BASE_URL } from '../constants';
 import type { TPost } from '../types';
+import { makeFail, makeSuccess, RemoteData } from '../utils/remote-data';
 
 export type TFetchPostsParams = {
   offset: number;
@@ -10,9 +11,10 @@ export type TPostsResponse = {
   posts: TPost[];
   canFetchMorePosts: boolean;
 };
+export type TRemotePosts = RemoteData<TPostsResponse, Error>;
 export async function fetchPosts(
   params: TFetchPostsParams,
-): Promise<TPostsResponse> {
+): Promise<TRemotePosts> {
   const searchParams = new URLSearchParams(
     Object.entries(params).reduce(
       (acc, [key, value]) => ({ ...acc, [key]: `${value}` }),
@@ -20,5 +22,12 @@ export async function fetchPosts(
     ),
   );
 
-  return fetch(`${BASE_URL}/posts?${searchParams}`).then(res => res.json());
+  try {
+    const posts = await fetch(`${BASE_URL}/posts?${searchParams}`).then(res =>
+      res.json(),
+    );
+    return makeSuccess(posts);
+  } catch (e) {
+    return makeFail(e);
+  }
 }
