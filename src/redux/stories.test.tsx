@@ -9,6 +9,7 @@ import {
   storiesReducer,
   useStoriesSelector,
 } from './stories';
+import { makeFail, makeSuccess } from '../utils/remote-data';
 
 jest.mock('../services/stories');
 const fetchStoriesMock = fetchStories as jest.Mock;
@@ -24,7 +25,7 @@ describe('redux - stories', () => {
       const response = [{ fake1: 'story1' }];
 
       it('adds response stories to state', async () => {
-        fetchStoriesMock.mockResolvedValueOnce(response);
+        fetchStoriesMock.mockResolvedValueOnce(makeSuccess(response));
 
         expect(store.getState()).toEqual(initialState);
 
@@ -49,7 +50,7 @@ describe('redux - stories', () => {
     it('handles reject case correctly', async () => {
       const store = configureStore({ reducer: storiesReducer });
       const error = new Error('failed fetching stories');
-      fetchStoriesMock.mockRejectedValueOnce(error);
+      fetchStoriesMock.mockResolvedValueOnce(makeFail(error));
 
       expect(store.getState()).toEqual(initialState);
 

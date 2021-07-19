@@ -1,5 +1,6 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL, STATIC_USER_DATA } from '../constants';
+import { isFail, isSuccess } from '../utils/remote-data';
 import { fakeLogin } from './user';
 
 describe('services - user', () => {
@@ -22,17 +23,22 @@ describe('services - user', () => {
       ]);
     });
 
-    it('returns response json', async () => {
+    it('returns success remote with parsed data', async () => {
       const expected = 'hello world';
       fetch.mockResponseOnce(JSON.stringify(expected));
+      const result = await fakeLogin();
 
-      expect(await fakeLogin()).toEqual(expected);
+      expect(isSuccess(result)).toBe(true);
+      expect(result.data).toEqual(expected);
     });
 
-    it('does not handle error', () => {
-      fetch.mockRejectOnce(new Error(''));
+    it('returns failed remote with error', async () => {
+      const error = new Error(`failed ${Math.random()}`);
+      fetch.mockRejectOnce(error);
+      const result = await fakeLogin();
 
-      expect(fakeLogin()).rejects.toThrow();
+      expect(isFail(result)).toBe(true);
+      expect(result.error).toBe(error);
     });
   });
 });

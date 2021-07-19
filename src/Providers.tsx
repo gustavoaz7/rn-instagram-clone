@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { ThemeProvider } from 'styled-components/native';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { Provider, ProviderProps } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { RootSiblingParent } from 'react-native-root-siblings'; // dep of rn-root-toast
 import { theme as stylesTheme } from './styles/theme';
@@ -9,7 +8,7 @@ import { store as reduxStore } from './redux/store';
 
 type TProvidersProps = {
   children?: ReactNode;
-  store?: ReturnType<typeof configureStore>;
+  store?: ProviderProps['store'];
   theme?: typeof stylesTheme;
 };
 

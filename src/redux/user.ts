@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fakeLogin } from '../services/user';
+import { fakeLogin, TFakeLoginResponse } from '../services/user';
 import { TUser } from '../types';
+import { isFail } from '../utils/remote-data';
 import { useAppSelector } from './hooks';
 
 const SLICE_NAME = '@@USER';
@@ -17,13 +18,15 @@ export const initialState: TUserState = {
   error: null,
 };
 
-const login = createAsyncThunk(SLICE_NAME, async (_, { rejectWithValue }) => {
-  try {
-    const user = await fakeLogin();
-    return user;
-  } catch (error) {
-    return rejectWithValue(error.message);
-  }
+const login = createAsyncThunk<
+  TFakeLoginResponse,
+  void,
+  { rejectValue: string }
+>(SLICE_NAME, async (_, { rejectWithValue }) => {
+  const user = await fakeLogin();
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return isFail(user) ? rejectWithValue(user.error.message) : user.data!;
 });
 
 /* eslint-disable no-param-reassign */
@@ -38,7 +41,7 @@ export const userSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;

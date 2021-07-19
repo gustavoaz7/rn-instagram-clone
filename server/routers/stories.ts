@@ -3,10 +3,11 @@ import { database } from '../database';
 import { session } from '../session';
 import { TStory } from '../types';
 import { convertUserToOwner } from '../utils';
+import type { TStoriesResponse } from '../../src/services/stories';
 
 export const storiesRouter = Router();
 
-storiesRouter.get('/', (req, res) => {
+storiesRouter.get<null, TStoriesResponse>('/', (req, res) => {
   const currentUser = database.users.get(session.getUsername())!;
 
   const stories = currentUser.following.map<TStory>(username => {

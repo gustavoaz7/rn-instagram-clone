@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchStories } from '../services/stories';
+import { fetchStories, TStoriesResponse } from '../services/stories';
 import { TStory } from '../types';
+import { isFail } from '../utils/remote-data';
 import { useAppSelector } from './hooks';
 
 const SLICE_NAME = '@@STORIES';
@@ -17,17 +18,18 @@ export const initialState: TStoriesState = {
   error: null,
 };
 
-const getStories = createAsyncThunk(
-  SLICE_NAME,
-  async (_, { rejectWithValue }) => {
-    try {
-      const stories = await fetchStories();
-      return stories;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
+const getStories = createAsyncThunk<
+  TStoriesResponse,
+  void,
+  { rejectValue: string }
+>(SLICE_NAME, async (_, { rejectWithValue }) => {
+  const stories = await fetchStories();
+
+  return isFail(stories)
+    ? rejectWithValue(stories.error.message)
+    : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      stories.data!;
+});
 
 /* eslint-disable no-param-reassign */
 export const storiesSlice = createSlice({
@@ -41,7 +43,7 @@ export const storiesSlice = createSlice({
       })
       .addCase(getStories.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || null;
       })
       .addCase(getStories.fulfilled, (state, action) => {
         state.loading = false;
