@@ -18,6 +18,7 @@ import {
   HandlerStateChangeEvent,
   TapGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
+import Toast from 'react-native-root-toast';
 import { Text } from '../text';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
 import MenuVerticalSvg from '../../../assets/svg/menu-vertical.svg';
@@ -33,9 +34,8 @@ import { AvatarWithRing } from '../avatar-with-ring';
 import { pluralizeWithS } from '../../utils/string';
 import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
-import { postsActions } from '../../redux/posts';
-import { useAppDispatch } from '../../redux/hooks';
-import { commentsActions } from '../../redux/comments';
+import { postLike } from '../../services/likes';
+import { isFail } from '../../utils/remote-data';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const INITIAL_OVERLAY_OPACITY = 0.5;
@@ -57,7 +57,6 @@ export const PostItem = memo(function PostItem({
     location,
     viewerHasLiked,
   } = post;
-  const dispatch = useAppDispatch();
   const navigation = useNavigation<THomeStackNavigationProps>();
   const theme = useTheme();
   const [captionLines, setCaptionLines] = useState(0);
@@ -66,7 +65,9 @@ export const PostItem = memo(function PostItem({
   const [isCommentLiked, setIsCommentLiked] = useState(
     previewComments.comments[0]?.viewerHasLiked,
   );
+  const [isCommentLikeDisabled, setIsCommentLikeDisabled] = useState(false);
   const [isLiked, setIsLiked] = useState(viewerHasLiked);
+  const [isLikeDisabled, setIsLikeDisabled] = useState(false);
   const heartScale = useMemo(() => new Animated.Value(1), []);
   const heartCommentScale = useMemo(() => new Animated.Value(1), []);
   const [showHeartOverlay, setShowHeartOverlay] = useState(false);
@@ -105,42 +106,59 @@ export const PostItem = memo(function PostItem({
     setCurrentMediaIndex(newMediaIndex);
   }, []);
 
-  const dispatchPostLike = useCallback(
-    (flag: boolean) => {
-      dispatch(postsActions.likePost({ flag, id }));
+  const likePost = useCallback(
+    async (flag: boolean) => {
+      setIsLikeDisabled(true);
+      const result = await postLike({ flag, id, collection: 'posts' });
+
+      if (isFail(result)) {
+        Toast.show('Failed to like post.', {
+          position: Toast.positions.CENTER,
+        });
+        setIsLiked(prevIsLiked => !prevIsLiked);
+      }
+      setIsLikeDisabled(false);
     },
-    [dispatch, id],
+    [id],
   );
 
-  const dispatchCommentLike = useCallback(
-    (flag: boolean) => {
-      dispatch(
-        commentsActions.likeComment({
-          flag,
-          id: previewComments.comments[0].id,
-        }),
-      );
+  const likeComment = useCallback(
+    async (flag: boolean) => {
+      setIsCommentLikeDisabled(true);
+      const result = await postLike({
+        flag,
+        id: previewComments.comments[0].id,
+        collection: 'comments',
+      });
+
+      if (isFail(result)) {
+        Toast.show('Failed to like comment.', {
+          position: Toast.positions.CENTER,
+        });
+        setIsCommentLiked(prevIsLiked => !prevIsLiked);
+      }
+      setIsCommentLikeDisabled(false);
     },
-    [dispatch, previewComments.comments],
+    [previewComments.comments],
   );
 
   const handleLike = useCallback(async () => {
     setIsLiked(prevIsLiked => {
-      dispatchPostLike(!prevIsLiked);
+      likePost(!prevIsLiked);
       heartScale.setValue(theme.animation.heart.initialScale);
       Animated.spring(heartScale, theme.animation.heart.springConfig).start();
       return !prevIsLiked;
     });
-  }, [dispatchPostLike, heartScale, theme.animation.heart]);
+  }, [likePost, heartScale, theme.animation.heart]);
 
   const onDoubleTapMedia = useCallback(
     (e: HandlerStateChangeEvent<TapGestureHandlerEventPayload>) => {
-      if (e.nativeEvent.state !== State.ACTIVE) return;
+      if (e.nativeEvent.state !== State.ACTIVE || isLikeDisabled) return;
       setShowHeartOverlay(true);
 
       if (!isLiked) {
         setIsLiked(true);
-        dispatchPostLike(true);
+        likePost(true);
       }
 
       heartOverlayOpacity.setValue(INITIAL_OVERLAY_OPACITY);
@@ -175,14 +193,15 @@ export const PostItem = memo(function PostItem({
       heartOverlayScale,
       heartScale,
       isLiked,
-      dispatchPostLike,
+      likePost,
       theme.animation,
+      isLikeDisabled,
     ],
   );
 
   const handleLikeComment = useCallback(() => {
     setIsCommentLiked(prevIsLiked => {
-      dispatchCommentLike(!prevIsLiked);
+      likeComment(!prevIsLiked);
       heartCommentScale.setValue(theme.animation.heart.initialScale);
       Animated.spring(
         heartCommentScale,
@@ -190,7 +209,7 @@ export const PostItem = memo(function PostItem({
       ).start();
       return !prevIsLiked;
     });
-  }, [dispatchCommentLike, heartCommentScale, theme.animation.heart]);
+  }, [likeComment, heartCommentScale, theme.animation.heart]);
 
   const isMultiImage = medias.length > 1;
 
@@ -263,6 +282,7 @@ export const PostItem = memo(function PostItem({
           <Row>
             <HeartContainer>
               <AnimatedPressable
+                disabled={isLikeDisabled}
                 onPress={handleLike}
                 style={{ transform: [{ scale: heartScale }] }}
               >
@@ -320,6 +340,7 @@ export const PostItem = memo(function PostItem({
                   {previewComments.comments[0].text}
                 </Comment>
                 <AnimatedPressable
+                  disabled={isCommentLikeDisabled}
                   onPress={handleLikeComment}
                   style={{ transform: [{ scale: heartCommentScale }] }}
                 >

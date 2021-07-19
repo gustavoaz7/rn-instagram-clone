@@ -10,11 +10,9 @@ import faker from 'faker';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
+import Toast from 'react-native-root-toast';
 import { PostItem } from './PostItem';
 import { Providers } from '../../Providers';
-import * as reduxHooks from '../../redux/hooks';
-import * as reduxPosts from '../../redux/posts';
-import * as reduxComments from '../../redux/comments';
 import {
   generateMockPost,
   generateMockPostMedia,
@@ -28,22 +26,19 @@ import {
   setupTimeTravel,
   destroyTimeTravel,
 } from '../../test/time-travel';
+import { postLike } from '../../services/likes';
+import { makeFail, makeSuccess } from '../../utils/remote-data';
+import { flushPromises } from '../../test/flush-promises';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
 }));
 const useNavigationMock = useNavigation as jest.Mock;
+jest.mock('../../services/likes');
+const postLikeMock = postLike as jest.MockedFunction<typeof postLike>;
 
 describe('components - PostItem', () => {
-  const dispatchMock = jest.fn();
-  const useDispatchSpy = jest
-    .spyOn(reduxHooks, 'useAppDispatch')
-    .mockReturnValue(dispatchMock);
-  const likePostSpy = jest.spyOn(reduxPosts.postsActions, 'likePost');
-  const likeCommentSpy = jest.spyOn(
-    reduxComments.commentsActions,
-    'likeComment',
-  );
+  const toastSpy = jest.spyOn(Toast, 'show');
   const post = generateMockPost();
   const multiCommentPost = {
     ...post,
@@ -55,9 +50,7 @@ describe('components - PostItem', () => {
   const options: RenderOptions = { wrapper: Providers };
 
   afterAll(() => {
-    dispatchMock.mockRestore();
-    useDispatchSpy.mockRestore();
-    likePostSpy.mockRestore();
+    toastSpy.mockRestore();
   });
 
   it('renders', () => {
@@ -133,9 +126,7 @@ describe('components - PostItem', () => {
       });
 
       describe('when user press heart icon', () => {
-        it('dispatches likePost action with flag as `false`', async () => {
-          const action = Math.random();
-          likePostSpy.mockReturnValueOnce(action as any);
+        it('calls postLike with flag as `false`', async () => {
           const { getByTestId } = render(
             <PostItem {...post} viewerHasLiked />,
             options,
@@ -145,34 +136,30 @@ describe('components - PostItem', () => {
             fireEvent.press(getByTestId('PostItem-Heart'));
           });
 
-          expect(likePostSpy).toHaveBeenCalledTimes(1);
-          expect(likePostSpy).toHaveBeenCalledWith({
+          expect(postLikeMock).toHaveBeenCalledTimes(1);
+          expect(postLikeMock).toHaveBeenCalledWith({
             id: post.id,
             flag: false,
+            collection: 'posts',
           });
-          expect(dispatchMock).toHaveBeenCalledTimes(1);
-          expect(dispatchMock).toHaveBeenCalledWith(action);
         });
       });
     });
 
     describe('when user press heart icon', () => {
-      it('dispatches likePost action with flag as `true`', async () => {
-        const action = Math.random();
-        likePostSpy.mockReturnValueOnce(action as any);
+      it('calls postLike with flag as `true`', async () => {
         const { getByTestId } = render(<PostItem {...post} />, options);
 
         act(() => {
           fireEvent.press(getByTestId('PostItem-Heart'));
         });
 
-        expect(likePostSpy).toHaveBeenCalledTimes(1);
-        expect(likePostSpy).toHaveBeenCalledWith({
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(postLikeMock).toHaveBeenCalledWith({
           id: post.id,
           flag: true,
+          collection: 'posts',
         });
-        expect(dispatchMock).toHaveBeenCalledTimes(1);
-        expect(dispatchMock).toHaveBeenCalledWith(action);
       });
 
       it('changes heart from outline black to filled red', () => {
@@ -190,56 +177,10 @@ describe('components - PostItem', () => {
         expect(heartIcon.props.color).toBe(theme.color.red);
         expect(heartIcon.props.fill).toBe(theme.color.red);
       });
-    });
 
-    describe('when user double-taps post media', () => {
-      it('dispatches likePost action', async () => {
-        const action = Math.random();
-        likePostSpy.mockReturnValueOnce(action as any);
-        const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
-
-        act(() => {
-          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
-            nativeEvent: { state: State.ACTIVE },
-          });
-        });
-
-        expect(likePostSpy).toHaveBeenCalledTimes(1);
-        expect(likePostSpy).toHaveBeenCalledWith({
-          id: post.id,
-          flag: true,
-        });
-        expect(dispatchMock).toHaveBeenCalledTimes(1);
-        expect(dispatchMock).toHaveBeenCalledWith(action);
-      });
-
-      describe('when double-taps once more', () => {
-        it('does not dispatch another likePost action', async () => {
-          const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
-
-          act(() => {
-            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
-              nativeEvent: { state: State.ACTIVE },
-            });
-          });
-
-          expect(likePostSpy).toHaveBeenCalledTimes(1);
-
-          act(() => {
-            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
-              nativeEvent: { state: State.ACTIVE },
-            });
-          });
-
-          expect(likePostSpy).toHaveBeenCalledTimes(1);
-        });
-      });
-
-      it('changes heart from outline black to filled red', () => {
-        const { getByTestId, UNSAFE_getByType } = render(
-          <PostItem {...post} />,
-          options,
-        );
+      it('disables press until request is completed', async () => {
+        postLikeMock.mockResolvedValue(makeSuccess(undefined));
+        const { getByTestId } = render(<PostItem {...post} />, options);
 
         const heartIcon = getByTestId('PostItem-Heart');
 
@@ -247,23 +188,56 @@ describe('components - PostItem', () => {
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(2);
+        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.fill).toBe('none');
+      });
+    });
+
+    describe('when user double-taps post media', () => {
+      it('calls postLike', async () => {
+        const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
+
+        await act(async () => {
           UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
             nativeEvent: { state: State.ACTIVE },
           });
         });
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(postLikeMock).toHaveBeenCalledWith({
+          id: post.id,
+          flag: true,
+          collection: 'posts',
+        });
       });
 
-      it('renders heart overlay and then hides it', () => {
+      it('disables double-tap until request is completed', async () => {
+        postLikeMock.mockResolvedValue(makeSuccess(undefined));
         setupTimeTravel();
         const { queryByTestId, UNSAFE_getByType } = render(
           <PostItem {...post} />,
           options,
         );
-
-        expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
 
         act(() => {
           UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
@@ -274,6 +248,87 @@ describe('components - PostItem', () => {
         expect(queryByTestId('PostItem-HeartOverlay')).not.toBe(null);
 
         act(() => {
+          timeTravel(2000);
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
+
+        await act(async () => {
+          await flushPromises();
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(queryByTestId('PostItem-HeartOverlay')).not.toBe(null);
+
+        destroyTimeTravel();
+      });
+
+      describe('when double-taps once more', () => {
+        it('does not call postLike again', async () => {
+          const { UNSAFE_getByType } = render(<PostItem {...post} />, options);
+
+          await act(async () => {
+            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+              nativeEvent: { state: State.ACTIVE },
+            });
+          });
+
+          expect(postLikeMock).toHaveBeenCalledTimes(1);
+
+          await act(async () => {
+            UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+              nativeEvent: { state: State.ACTIVE },
+            });
+          });
+
+          expect(postLikeMock).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      it('changes heart from outline black to filled red', async () => {
+        const { getByTestId, UNSAFE_getByType } = render(
+          <PostItem {...post} />,
+          options,
+        );
+
+        const heartIcon = getByTestId('PostItem-Heart');
+
+        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.fill).toBe('none');
+
+        await act(async () => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+
+      it('renders heart overlay and then hides it', async () => {
+        setupTimeTravel();
+        const { queryByTestId, UNSAFE_getByType } = render(
+          <PostItem {...post} />,
+          options,
+        );
+
+        expect(queryByTestId('PostItem-HeartOverlay')).toBe(null);
+
+        await act(async () => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(queryByTestId('PostItem-HeartOverlay')).not.toBe(null);
+
+        await act(async () => {
           timeTravel(2000);
         });
 
@@ -416,49 +471,60 @@ describe('components - PostItem', () => {
       });
 
       describe('when user press heart icon', () => {
-        it('dispatches likeComment action with flag as `false`', async () => {
-          const action = Math.random();
-          likeCommentSpy.mockReturnValueOnce(action as any);
+        it('calls postLike service with flag as `false`', async () => {
           const { getByTestId } = render(
             <PostItem {...postWithLikedComment} />,
             options,
           );
 
-          act(() => {
+          await act(async () => {
             fireEvent.press(getByTestId('PostItem-CommentHeart'));
           });
 
-          expect(likeCommentSpy).toHaveBeenCalledTimes(1);
-          expect(likeCommentSpy).toHaveBeenCalledWith({
+          expect(postLikeMock).toHaveBeenCalledTimes(1);
+          expect(postLikeMock).toHaveBeenCalledWith({
             id: post.previewComments.comments[0].id,
             flag: false,
+            collection: 'comments',
           });
-          expect(dispatchMock).toHaveBeenCalledTimes(1);
-          expect(dispatchMock).toHaveBeenCalledWith(action);
         });
       });
     });
 
     describe('when user likes the first comment', () => {
-      it('dispatches likeComment action with flag as `true`', async () => {
-        const action = Math.random();
-        likeCommentSpy.mockReturnValueOnce(action as any);
+      it('calls postLike service with flag as `true`', async () => {
         const { getByTestId } = render(<PostItem {...post} />, options);
 
-        act(() => {
+        await act(async () => {
           fireEvent.press(getByTestId('PostItem-CommentHeart'));
         });
 
-        expect(likeCommentSpy).toHaveBeenCalledTimes(1);
-        expect(likeCommentSpy).toHaveBeenCalledWith({
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(postLikeMock).toHaveBeenCalledWith({
           id: post.previewComments.comments[0].id,
           flag: true,
+          collection: 'comments',
         });
-        expect(dispatchMock).toHaveBeenCalledTimes(1);
-        expect(dispatchMock).toHaveBeenCalledWith(action);
       });
 
-      it('changes heart from outline gray to filled red', () => {
+      it('changes heart from outline gray to filled red', async () => {
+        const { getByTestId } = render(<PostItem {...post} />, options);
+
+        const heartIcon = getByTestId('PostItem-CommentHeart');
+
+        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.fill).toBe('none');
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+      });
+
+      it('disables press until request is completed', async () => {
+        postLikeMock.mockResolvedValue(makeSuccess(undefined));
         const { getByTestId } = render(<PostItem {...post} />, options);
 
         const heartIcon = getByTestId('PostItem-CommentHeart');
@@ -470,8 +536,45 @@ describe('components - PostItem', () => {
           fireEvent.press(heartIcon);
         });
 
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
         expect(heartIcon.props.color).toBe(theme.color.red);
         expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(1);
+        expect(heartIcon.props.color).toBe(theme.color.red);
+        expect(heartIcon.props.fill).toBe(theme.color.red);
+
+        await act(async () => {
+          fireEvent.press(heartIcon);
+        });
+
+        expect(postLikeMock).toHaveBeenCalledTimes(2);
+        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.fill).toBe('none');
+      });
+
+      describe('when request fails', () => {
+        beforeEach(() => {
+          postLikeMock.mockResolvedValueOnce(makeFail(new Error('')));
+        });
+
+        it('shows toast', async () => {
+          const { getByTestId } = render(<PostItem {...post} />, options);
+
+          await act(async () => {
+            fireEvent.press(getByTestId('PostItem-CommentHeart'));
+            await flushPromises();
+          });
+
+          expect(toastSpy).toHaveBeenCalledTimes(1);
+          expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+            position: Toast.positions.CENTER,
+          });
+        });
       });
     });
   });

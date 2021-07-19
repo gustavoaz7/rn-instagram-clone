@@ -6,10 +6,11 @@ import Toast from 'react-native-root-toast';
 import { CommentsScreen, COMMENTS_LIMIT } from './CommentsScreen';
 import { Providers } from '../../Providers';
 import { generateMockPost, generateMockComment } from '../../data';
-import * as reduxComments from '../../redux/comments';
-import * as reduxHooks from '../../redux/hooks';
 import { FakeNavigator } from '../../test/fake-navigator';
 import { theme } from '../../styles/theme';
+import { fetchComments } from '../../services/comments';
+import { makeFail, makeSuccess } from '../../utils/remote-data';
+import { flushPromises } from '../../test/flush-promises';
 
 jest.mock('@react-navigation/native', () => {
   const actual = jest.requireActual('@react-navigation/native');
@@ -18,26 +19,15 @@ jest.mock('@react-navigation/native', () => {
     useRoute: jest.fn(actual.useRoute),
   };
 });
+jest.mock('../../services/comments');
+const fetchCommentsMock = fetchComments as jest.MockedFunction<
+  typeof fetchComments
+>;
 
 describe('screens - CommentsScreen', () => {
   const post = generateMockPost();
   const options = { wrapper: Providers };
   const useRouteSpy = useRoute as jest.Mock;
-  const dispatchMock = jest.fn();
-  const useDispatchSpy = jest
-    .spyOn(reduxHooks, 'useAppDispatch')
-    .mockReturnValue(dispatchMock);
-  const useSelectorSpy = jest
-    .spyOn(reduxComments, 'useCommentsSelector')
-    .mockReturnValue(reduxComments.initialState);
-  const getCommentsSpy = jest.spyOn(
-    reduxComments.commentsActions,
-    'getComments',
-  );
-  const clearCommentsSpy = jest.spyOn(
-    reduxComments.commentsActions,
-    'clearComments',
-  );
   const toastSpy = jest.spyOn(Toast, 'show');
 
   beforeEach(() => {
@@ -45,9 +35,6 @@ describe('screens - CommentsScreen', () => {
   });
 
   afterAll(() => {
-    useDispatchSpy.mockRestore();
-    useSelectorSpy.mockRestore();
-    getCommentsSpy.mockRestore();
     toastSpy.mockRestore();
   });
 
@@ -82,160 +69,175 @@ describe('screens - CommentsScreen', () => {
     });
   });
 
-  it('dispatches get comments action', () => {
-    const action = Math.random();
-    getCommentsSpy.mockReturnValueOnce(action as any);
+  it('calls fetchComments service', () => {
     render(<FakeNavigator component={CommentsScreen} />, options);
 
-    expect(getCommentsSpy).toHaveBeenCalledTimes(1);
-    expect(getCommentsSpy).toHaveBeenCalledWith({
-      postId: post.id,
+    expect(fetchCommentsMock).toHaveBeenCalledTimes(1);
+    expect(fetchCommentsMock).toHaveBeenCalledWith(post.id, {
       offset: 0,
       limit: COMMENTS_LIMIT,
+      refresh: false,
     });
-    expect(dispatchMock).toHaveBeenCalledTimes(1);
-    expect(dispatchMock).toHaveBeenCalledWith(action);
   });
 
   describe('when comments are loading', () => {
-    beforeEach(() => {
-      useSelectorSpy.mockReturnValue({
-        ...reduxComments.initialState,
-        loading: true,
-      });
-    });
-
     it('renders loading', () => {
-      const { queryByTestId } = render(
+      const { queryByTestId, queryAllByTestId } = render(
         <FakeNavigator component={CommentsScreen} />,
         options,
       );
 
       expect(queryByTestId('LoadingComments')).toBeTruthy();
+      expect(queryAllByTestId('Comment')).toHaveLength(1); // caption
     });
   });
 
   describe('when comments succeeds', () => {
     const comments = [generateMockComment(), generateMockComment()];
+    const comments2 = [generateMockComment(), generateMockComment()];
 
     beforeEach(() => {
-      useSelectorSpy.mockReturnValue({
-        ...reduxComments.initialState,
-        comments,
-      });
+      fetchCommentsMock
+        .mockResolvedValueOnce(
+          makeSuccess({ comments, canFetchMoreComments: true }),
+        )
+        .mockResolvedValueOnce(
+          makeSuccess({ comments: comments2, canFetchMoreComments: true }),
+        );
     });
 
-    it('renders comments', () => {
+    it('renders comments', async () => {
       const { getAllByTestId } = render(
         <FakeNavigator component={CommentsScreen} />,
         options,
       );
+      await act(async () => {
+        await flushPromises();
+      });
 
       expect(getAllByTestId('Comment')).toHaveLength(comments.length + 1);
     });
 
     describe('when reaches the end of list', () => {
-      beforeEach(() => {
-        useSelectorSpy.mockReturnValue({
-          ...reduxComments.initialState,
-          loading: true,
-          comments,
-        });
-      });
-
-      it('dispatches a second get comments action', () => {
-        useSelectorSpy.mockReturnValue({
-          ...reduxComments.initialState,
-          comments,
-        });
+      it('calls fetchComments service a second time', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={CommentsScreen} />,
           options,
         );
-
-        expect(getCommentsSpy).toHaveBeenCalledTimes(1);
-        getCommentsSpy.mockReset();
-
-        act(() => {
-          UNSAFE_getByType(FlatList).props.onEndReached();
+        await act(async () => {
+          await flushPromises();
         });
 
-        expect(getCommentsSpy).toHaveBeenCalledTimes(1);
-        expect(getCommentsSpy).toHaveBeenCalledWith({
-          postId: post.id,
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+          await flushPromises();
+        });
+
+        expect(fetchCommentsMock).toHaveBeenCalledTimes(2);
+        expect(fetchCommentsMock).toHaveBeenNthCalledWith(2, post.id, {
           offset: COMMENTS_LIMIT,
           limit: COMMENTS_LIMIT,
+          refresh: false,
         });
       });
 
-      it('does not dispatches get comments when alerady loading', () => {
+      it('does not calls fetchComments when alerady loading', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={CommentsScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         act(() => {
           UNSAFE_getByType(FlatList).props.onEndReached();
         });
 
-        expect(getCommentsSpy).not.toHaveBeenCalled();
+        expect(fetchCommentsMock).toHaveBeenCalledTimes(2);
+
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(fetchCommentsMock).toHaveBeenCalledTimes(2);
       });
 
-      it('rendes loading', async () => {
-        const { queryByTestId } = render(
+      it('rendes previous comments and loading spinner', async () => {
+        const { UNSAFE_getByType, queryByTestId, queryAllByTestId } = render(
           <FakeNavigator component={CommentsScreen} />,
           options,
         );
-
-        expect(queryByTestId('LoadingComments')).toBeTruthy();
-      });
-
-      describe('and there is no more comments to fetch', () => {
-        beforeEach(() => {
-          useSelectorSpy.mockReturnValue({
-            ...reduxComments.initialState,
-            comments,
-            canFetchMoreComments: false,
-          });
+        await act(async () => {
+          await flushPromises();
         });
 
-        it('does not dispatches another get comments action', () => {
+        act(() => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(queryAllByTestId('Comment')).toHaveLength(comments.length + 1); // caption
+        expect(queryByTestId('LoadingComments')).toBeTruthy();
+        await act(async () => {
+          await flushPromises();
+        });
+      });
+
+      it('rendes old and new comments', async () => {
+        const { UNSAFE_getByType, queryByText } = render(
+          <FakeNavigator component={CommentsScreen} />,
+          options,
+        );
+        await act(async () => {
+          await flushPromises();
+        });
+
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        const allComments = [...comments, ...comments2];
+        allComments.forEach(comment => {
+          queryByText(comment.text);
+        });
+      });
+
+      describe('and there are no more comments to fetch', () => {
+        beforeEach(() => {
+          fetchCommentsMock
+            .mockReset()
+            .mockResolvedValueOnce(
+              makeSuccess({ comments, canFetchMoreComments: false }),
+            );
+        });
+
+        it('does not request for more comments', async () => {
           const { UNSAFE_getByType } = render(
             <FakeNavigator component={CommentsScreen} />,
             options,
           );
+          await act(async () => {
+            await flushPromises();
+          });
 
-          act(() => {
+          await act(async () => {
             UNSAFE_getByType(FlatList).props.onEndReached();
           });
 
-          expect(getCommentsSpy).not.toHaveBeenCalled();
+          expect(fetchCommentsMock).toHaveBeenCalledTimes(1);
         });
       });
     });
 
-    describe('when screen is unmounted', () => {
-      it('dispatches clear comments action', () => {
-        const action = Math.random();
-        clearCommentsSpy.mockReturnValueOnce(action as any);
-        const { unmount } = render(
-          <FakeNavigator component={CommentsScreen} />,
-          options,
-        );
-
-        unmount();
-
-        expect(clearCommentsSpy).toHaveBeenCalledTimes(1);
-        expect(dispatchMock).toHaveBeenLastCalledWith(action);
-      });
-    });
-
     describe('on pull to refresh', () => {
-      it('dispatches get comments action with "refresh" param', async () => {
+      it('calls fetchComments service with "refresh" param', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={CommentsScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
@@ -243,19 +245,43 @@ describe('screens - CommentsScreen', () => {
           await refreshControl.props.onRefresh();
         });
 
-        expect(getCommentsSpy).toHaveBeenLastCalledWith({
+        expect(fetchCommentsMock).toHaveBeenCalledTimes(2);
+        expect(fetchCommentsMock).toHaveBeenNthCalledWith(2, post.id, {
           offset: 0,
           limit: COMMENTS_LIMIT,
-          postId: post.id,
           refresh: true,
         });
       });
 
-      it('has gray color', () => {
+      it('removes previous comments and renders only loading', async () => {
+        const { UNSAFE_getByType, queryAllByTestId, queryByTestId } = render(
+          <FakeNavigator component={CommentsScreen} />,
+          options,
+        );
+        await act(async () => {
+          await flushPromises();
+        });
+
+        act(() => {
+          UNSAFE_getByType(FlatList).props.refreshControl.props.onRefresh();
+        });
+
+        expect(queryAllByTestId('Comment')).toHaveLength(1); // caption
+        expect(queryByTestId('LoadingComments')).toBeTruthy();
+        await act(async () => {
+          await flushPromises();
+        });
+      });
+
+      it('has gray color', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={CommentsScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
+
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
         expect(refreshControl.props.tintColor).toBe(theme.color.gray);
@@ -266,17 +292,19 @@ describe('screens - CommentsScreen', () => {
 
   describe('when posts fails', () => {
     beforeEach(() => {
-      useSelectorSpy.mockReturnValueOnce({
-        ...reduxComments.initialState,
-        error: 'fail',
-      });
+      fetchCommentsMock
+        .mockReset()
+        .mockResolvedValueOnce(makeFail(new Error('')));
     });
 
-    it('shows toast', () => {
+    it('shows toast', async () => {
       render(<FakeNavigator component={CommentsScreen} />, options);
+      await act(async () => {
+        await flushPromises();
+      });
 
       expect(toastSpy).toHaveBeenCalledTimes(1);
-      expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+      expect(toastSpy).toHaveBeenCalledWith('Failed fetching comments.', {
         position: Toast.positions.CENTER,
       });
     });

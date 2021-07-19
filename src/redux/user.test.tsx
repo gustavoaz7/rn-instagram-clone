@@ -9,6 +9,7 @@ import {
   userReducer,
   useUserSelector,
 } from './user';
+import { makeFail, makeSuccess } from '../utils/remote-data';
 
 jest.mock('../services/user');
 const fakeLoginMock = fakeLogin as jest.Mock;
@@ -18,7 +19,7 @@ describe('redux - user', () => {
     it('handles success case correctly', async () => {
       const store = configureStore({ reducer: userReducer });
       const user = { name: 'me' };
-      fakeLoginMock.mockResolvedValueOnce(user);
+      fakeLoginMock.mockResolvedValueOnce(makeSuccess(user));
 
       expect(store.getState()).toEqual(initialState);
 
@@ -42,7 +43,7 @@ describe('redux - user', () => {
     it('handles reject case correctly', async () => {
       const store = configureStore({ reducer: userReducer });
       const error = new Error('login failed');
-      fakeLoginMock.mockRejectedValueOnce(error);
+      fakeLoginMock.mockResolvedValueOnce(makeFail(error));
 
       expect(store.getState()).toEqual(initialState);
 

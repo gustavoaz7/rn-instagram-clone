@@ -1,5 +1,6 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL } from '../constants';
+import { isFail, isSuccess } from '../utils/remote-data';
 import { fetchComments, TFetchCommentsParams } from './comments';
 
 describe('services - comments', () => {
@@ -34,17 +35,22 @@ describe('services - comments', () => {
       });
     });
 
-    it('returns response json', async () => {
+    it('returns success remote with parsed data', async () => {
       const expected = 'hello world';
       fetch.mockResponseOnce(JSON.stringify(expected));
+      const result = await fetchComments(postId, params);
 
-      expect(await fetchComments(postId, params)).toEqual(expected);
+      expect(isSuccess(result)).toBe(true);
+      expect(result.data).toEqual(expected);
     });
 
-    it('does not handle error', () => {
-      fetch.mockRejectOnce(new Error(''));
+    it('returns failed remote with error', async () => {
+      const error = new Error(`failed ${Math.random()}`);
+      fetch.mockRejectOnce(error);
+      const result = await fetchComments(postId, params);
 
-      expect(fetchComments(postId, params)).rejects.toThrow();
+      expect(isFail(result)).toBe(true);
+      expect(result.error).toBe(error);
     });
   });
 });

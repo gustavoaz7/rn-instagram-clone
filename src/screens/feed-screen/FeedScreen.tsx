@@ -9,32 +9,70 @@ import styled, { useTheme } from 'styled-components/native';
 import Toast from 'react-native-root-toast';
 import { PostItem } from '../../components/post-item';
 import { useAppDispatch } from '../../redux/hooks';
-import { postsActions, usePostsSelector } from '../../redux/posts';
 import { TPost } from '../../types';
 import { storiesActions, useStoriesSelector } from '../../redux/stories';
 import { StoryPreviewItem } from '../../components/story-preview-item';
+import {
+  isSuccess,
+  isPending,
+  makePending,
+  makeUninitialized,
+} from '../../utils/remote-data';
+import { TRemotePosts, fetchPosts } from '../../services/posts';
 
 export const POSTS_LIMIT = 20;
 
 export function FeedScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const theme = useTheme();
+  const [canFetchPosts, setCanFetchPosts] = useState(true);
+  const [remotePosts, setRemotePosts] = useState<TRemotePosts>(
+    makeUninitialized(),
+  );
   const [offset, setOffset] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    posts,
-    loading: loadingPosts,
-    error: errorPosts,
-    canFetchMorePosts,
-  } = usePostsSelector();
+  const getPosts = useCallback(
+    async (refresh = false) => {
+      const actualOffset = refresh ? 0 : offset;
+      setRemotePosts(makePending(refresh ? null : remotePosts.data));
+      const remote = await fetchPosts({
+        offset: actualOffset,
+        limit: POSTS_LIMIT,
+        refresh,
+      });
 
-  const getPosts = useCallback(() => {
-    if (canFetchMorePosts && !loadingPosts) {
-      dispatch(postsActions.getPosts({ offset, limit: POSTS_LIMIT }));
-      setOffset(offset + POSTS_LIMIT);
+      if (isSuccess(remote)) {
+        setRemotePosts(prevRemote =>
+          refresh
+            ? remote
+            : {
+                ...remote,
+                data: {
+                  ...remote.data,
+                  posts: [
+                    ...(prevRemote.data?.posts || []),
+                    ...remote.data.posts,
+                  ],
+                },
+              },
+        );
+        setCanFetchPosts(remote.data.canFetchMorePosts);
+        setOffset(actualOffset + POSTS_LIMIT);
+      } else {
+        Toast.show('Failed fetching posts.', {
+          position: Toast.positions.CENTER,
+        });
+      }
+    },
+    [remotePosts, offset],
+  );
+
+  const getMorePosts = useCallback(async () => {
+    if (canFetchPosts && !isPending(remotePosts)) {
+      getPosts();
     }
-  }, [canFetchMorePosts, loadingPosts, dispatch, offset]);
+  }, [canFetchPosts, remotePosts, getPosts]);
 
   const {
     stories,
@@ -48,16 +86,16 @@ export function FeedScreen(): JSX.Element {
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    setOffset(0);
-    await dispatch(
-      postsActions.getPosts({ offset: 0, limit: POSTS_LIMIT, refresh: true }),
-    );
+    await getPosts(true);
     setRefreshing(false);
-  }, [dispatch]);
+  }, [getPosts]);
 
-  const LoadingMorePosts = useCallback(
-    () => (loadingPosts ? <Loading testID="loadingMorePosts" /> : null),
-    [loadingPosts],
+  const LoadingPosts = useCallback(
+    () =>
+      isPending(remotePosts) && !loadingStories ? (
+        <Loading testID="loadingPosts" />
+      ) : null,
+    [remotePosts, loadingStories],
   );
 
   useEffect(() => {
@@ -67,17 +105,12 @@ export function FeedScreen(): JSX.Element {
   }, []); // didMount
 
   useEffect(() => {
-    if (errorPosts) {
-      Toast.show('Failed fetching posts.', {
-        position: Toast.positions.CENTER,
-      });
-    }
     if (errorStories) {
       Toast.show('Failed fetching stories.', {
         position: Toast.positions.CENTER,
       });
     }
-  }, [errorPosts, errorStories]);
+  }, [errorStories]);
 
   const renderItem = useCallback<ListRenderItem<TPost>>(
     ({ item }) => <StyledPost {...item} />,
@@ -104,27 +137,25 @@ export function FeedScreen(): JSX.Element {
 
   return (
     <Container>
-      {loadingPosts && !posts.length ? <Loading testID="loadingPosts" /> : null}
-      {posts.length ? (
-        <FlatList
-          data={posts}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          maxToRenderPerBatch={4}
-          onEndReached={getPosts}
-          onEndReachedThreshold={2}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={theme.color.gray}
-              colors={[theme.color.gray]}
-            />
-          }
-          ListFooterComponent={LoadingMorePosts}
-          ListHeaderComponent={ListHeaderComponent}
-        />
-      ) : null}
+      <FlatList
+        data={remotePosts.data?.posts || []}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        maxToRenderPerBatch={4}
+        onEndReached={getMorePosts}
+        onEndReachedThreshold={2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.color.gray}
+            colors={[theme.color.gray]}
+          />
+        }
+        ListFooterComponent={LoadingPosts}
+        ListHeaderComponent={ListHeaderComponent}
+        showsVerticalScrollIndicator={false}
+      />
     </Container>
   );
 }
@@ -137,7 +168,9 @@ const Container = styled.View`
 const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
   size: 'large',
   color: theme.color.gray,
-}))``;
+}))`
+  padding: ${({ theme }) => theme.spacing.s};
+`;
 
 const StyledPost = styled(PostItem)`
   margin-bottom: ${({ theme }) => theme.spacing.l};

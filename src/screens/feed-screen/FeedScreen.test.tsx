@@ -4,12 +4,17 @@ import Toast from 'react-native-root-toast';
 import { FlatList } from 'react-native';
 import { FeedScreen, POSTS_LIMIT } from './FeedScreen';
 import { Providers } from '../../Providers';
-import * as reduxPosts from '../../redux/posts';
 import * as reduxStories from '../../redux/stories';
 import * as reduxHooks from '../../redux/hooks';
 import { generateMockPost, generateMockStory } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
 import { theme } from '../../styles/theme';
+import { fetchPosts } from '../../services/posts';
+import { makeFail, makeSuccess } from '../../utils/remote-data';
+import { flushPromises } from '../../test/flush-promises';
+
+jest.mock('../../services/posts');
+const fetchPostsMock = fetchPosts as jest.MockedFunction<typeof fetchPosts>;
 
 describe('screens - FeedScreen', () => {
   const options = { wrapper: Providers };
@@ -17,10 +22,6 @@ describe('screens - FeedScreen', () => {
   const useDispatchSpy = jest
     .spyOn(reduxHooks, 'useAppDispatch')
     .mockReturnValue(dispatchMock);
-  const usePostsSelectorSpy = jest
-    .spyOn(reduxPosts, 'usePostsSelector')
-    .mockReturnValue(reduxPosts.initialState);
-  const getPostsSpy = jest.spyOn(reduxPosts.postsActions, 'getPosts');
   const useStoriesSelectorSpy = jest
     .spyOn(reduxStories, 'useStoriesSelector')
     .mockReturnValue(reduxStories.initialState);
@@ -29,9 +30,7 @@ describe('screens - FeedScreen', () => {
 
   afterAll(() => {
     useDispatchSpy.mockRestore();
-    usePostsSelectorSpy.mockRestore();
     useStoriesSelectorSpy.mockRestore();
-    getPostsSpy.mockRestore();
     getStoriesSpy.mockRestore();
     toastSpy.mockRestore();
   });
@@ -40,145 +39,180 @@ describe('screens - FeedScreen', () => {
     render(<FakeNavigator component={FeedScreen} />, options);
   });
 
-  it('dispatches get posts and stories actions', () => {
-    const postsAction = Math.random();
+  it('dispatches stories action', () => {
     const storiesAction = Math.random();
-    getPostsSpy.mockReturnValueOnce(postsAction as any);
     getStoriesSpy.mockReturnValueOnce(storiesAction as any);
     render(<FakeNavigator component={FeedScreen} />, options);
 
-    expect(getPostsSpy).toHaveBeenCalledTimes(1);
-    expect(getPostsSpy).toHaveBeenCalledWith({ offset: 0, limit: POSTS_LIMIT });
     expect(getStoriesSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchMock).toHaveBeenCalledTimes(2);
-    expect(dispatchMock).toHaveBeenNthCalledWith(1, postsAction);
-    expect(dispatchMock).toHaveBeenNthCalledWith(2, storiesAction);
+    expect(dispatchMock).toHaveBeenCalledTimes(1);
+    expect(dispatchMock).toHaveBeenNthCalledWith(1, storiesAction);
   });
 
-  describe('when posts are loading', () => {
-    beforeEach(() => {
-      usePostsSelectorSpy.mockReturnValue({
-        ...reduxPosts.initialState,
-        loading: true,
-      });
-    });
+  it('calls fetchPosts service', () => {
+    render(<FakeNavigator component={FeedScreen} />, options);
 
-    it('renders loading', () => {
-      const { queryByTestId } = render(
-        <FakeNavigator component={FeedScreen} />,
-        options,
-      );
-
-      expect(queryByTestId('loadingPosts')).toBeTruthy();
-      expect(queryByTestId('loadingMorePosts')).toBeFalsy();
+    expect(fetchPostsMock).toHaveBeenCalledTimes(1);
+    expect(fetchPostsMock).toHaveBeenCalledWith({
+      offset: 0,
+      limit: POSTS_LIMIT,
+      refresh: false,
     });
+  });
+
+  it('renders loading', () => {
+    const { queryByTestId } = render(
+      <FakeNavigator component={FeedScreen} />,
+      options,
+    );
+
+    expect(queryByTestId('PostItem')).toBeFalsy();
+    expect(queryByTestId('loadingPosts')).toBeTruthy();
   });
 
   describe('when posts succeeds', () => {
     const posts = [generateMockPost(), generateMockPost()];
+    const posts2 = [generateMockPost(), generateMockPost()];
 
     beforeEach(() => {
-      usePostsSelectorSpy.mockReturnValue({
-        ...reduxPosts.initialState,
-        posts,
-      });
+      fetchPostsMock
+        .mockResolvedValueOnce(makeSuccess({ posts, canFetchMorePosts: true }))
+        .mockResolvedValueOnce(
+          makeSuccess({ posts: posts2, canFetchMorePosts: true }),
+        );
     });
 
-    it('renders post items', () => {
+    it('renders post items', async () => {
       const { getAllByTestId } = render(
         <FakeNavigator component={FeedScreen} />,
         options,
       );
+      await act(async () => {
+        await flushPromises();
+      });
 
       expect(getAllByTestId('PostItem')).toHaveLength(posts.length);
     });
 
     describe('when reaches the end of list', () => {
-      beforeEach(() => {
-        usePostsSelectorSpy.mockReturnValue({
-          ...reduxPosts.initialState,
-          loading: true,
-          posts,
-        });
-      });
-
-      it('dispatches a second get posts action', () => {
-        usePostsSelectorSpy.mockReturnValue({
-          ...reduxPosts.initialState,
-          posts,
-        });
+      it('calls fetchComments service a second time', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
-
-        expect(getPostsSpy).toHaveBeenCalledTimes(1);
-        getPostsSpy.mockReset();
-
-        act(() => {
-          UNSAFE_getByType(FlatList).props.onEndReached();
+        await act(async () => {
+          await flushPromises();
         });
 
-        expect(getPostsSpy).toHaveBeenCalledTimes(1);
-        expect(getPostsSpy).toHaveBeenCalledWith({
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+          await flushPromises();
+        });
+
+        expect(fetchPosts).toHaveBeenCalledTimes(2);
+        expect(fetchPosts).toHaveBeenLastCalledWith({
           offset: POSTS_LIMIT,
           limit: POSTS_LIMIT,
+          refresh: false,
         });
       });
 
-      it('does not dispatches get posts when alerady loading', () => {
+      it('does not call fetchPosts when alerady loading', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         act(() => {
           UNSAFE_getByType(FlatList).props.onEndReached();
         });
 
-        expect(getPostsSpy).not.toHaveBeenCalled();
+        expect(fetchPostsMock).toHaveBeenCalledTimes(2);
+
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(fetchPostsMock).toHaveBeenCalledTimes(2);
       });
 
-      it('rendes loading as footer of list', async () => {
-        const { queryByTestId } = render(
+      it('rendes previous posts and loading spinner', async () => {
+        const { queryByTestId, queryAllByTestId, UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
-        expect(queryByTestId('loadingPosts')).toBeFalsy();
-        expect(queryByTestId('loadingMorePosts')).toBeTruthy();
+        act(() => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(queryAllByTestId('PostItem')).toHaveLength(posts.length);
+        expect(queryByTestId('loadingPosts')).toBeTruthy();
+        await act(async () => {
+          await flushPromises();
+        });
+      });
+
+      it('rendes old and new posts', async () => {
+        const { UNSAFE_getByType, queryAllByTestId } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
+        await act(async () => {
+          await flushPromises();
+        });
+
+        await act(async () => {
+          UNSAFE_getByType(FlatList).props.onEndReached();
+        });
+
+        expect(queryAllByTestId('PostItem')).toHaveLength(
+          posts.length + posts2.length,
+        );
       });
 
       describe('and there is no more posts to fetch', () => {
         beforeEach(() => {
-          usePostsSelectorSpy.mockReturnValue({
-            ...reduxPosts.initialState,
-            posts,
-            canFetchMorePosts: false,
-          });
+          fetchPostsMock
+            .mockReset()
+            .mockResolvedValueOnce(
+              makeSuccess({ posts, canFetchMorePosts: false }),
+            );
         });
 
-        it('does not dispatches another get posts action', () => {
+        it('does not request for more posts', async () => {
           const { UNSAFE_getByType } = render(
             <FakeNavigator component={FeedScreen} />,
             options,
           );
+          await act(async () => {
+            await flushPromises();
+          });
 
-          act(() => {
+          await act(async () => {
             UNSAFE_getByType(FlatList).props.onEndReached();
           });
 
-          expect(getPostsSpy).not.toHaveBeenCalled();
+          expect(fetchPostsMock).toHaveBeenCalledTimes(1);
         });
       });
     });
 
     describe('on pull to refresh', () => {
-      it('dispatches get posts action with "refresh" param', async () => {
+      it('calls fetchPosts service with "refresh" param', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
@@ -186,18 +220,42 @@ describe('screens - FeedScreen', () => {
           await refreshControl.props.onRefresh();
         });
 
-        expect(getPostsSpy).toHaveBeenLastCalledWith({
+        expect(fetchPostsMock).toHaveBeenCalledTimes(2);
+        expect(fetchPostsMock).toHaveBeenLastCalledWith({
           offset: 0,
           limit: POSTS_LIMIT,
           refresh: true,
         });
       });
 
-      it('has gray color', () => {
+      it('removes previous comments and renders only loading', async () => {
+        const { UNSAFE_getByType, queryByTestId } = render(
+          <FakeNavigator component={FeedScreen} />,
+          options,
+        );
+        await act(async () => {
+          await flushPromises();
+        });
+
+        act(() => {
+          UNSAFE_getByType(FlatList).props.refreshControl.props.onRefresh();
+        });
+
+        expect(queryByTestId('PostItem')).toBeFalsy();
+        expect(queryByTestId('loadingPosts')).toBeTruthy();
+        await act(async () => {
+          await flushPromises();
+        });
+      });
+
+      it('has gray color', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
         expect(refreshControl.props.tintColor).toBe(theme.color.gray);
@@ -213,11 +271,14 @@ describe('screens - FeedScreen', () => {
         });
       });
 
-      it('renders loading for stories', () => {
+      it('renders loading spinner', async () => {
         const { queryByTestId } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         expect(queryByTestId('loadingStories')).toBeTruthy();
       });
@@ -233,11 +294,14 @@ describe('screens - FeedScreen', () => {
         });
       });
 
-      it('renders story preview items', () => {
+      it('renders story preview items', async () => {
         const { getAllByTestId } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
         );
+        await act(async () => {
+          await flushPromises();
+        });
 
         expect(getAllByTestId('StoryPreviewItem')).toHaveLength(stories.length);
       });
@@ -246,17 +310,17 @@ describe('screens - FeedScreen', () => {
 
   describe('when posts fails', () => {
     beforeEach(() => {
-      usePostsSelectorSpy.mockReturnValueOnce({
-        ...reduxPosts.initialState,
-        error: 'fail',
-      });
+      fetchPostsMock.mockReset().mockResolvedValueOnce(makeFail(new Error('')));
     });
 
-    it('shows toast', () => {
+    it('shows toast', async () => {
       render(<FakeNavigator component={FeedScreen} />, options);
+      await act(async () => {
+        await flushPromises();
+      });
 
       expect(toastSpy).toHaveBeenCalledTimes(1);
-      expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+      expect(toastSpy).toHaveBeenCalledWith('Failed fetching posts.', {
         position: Toast.positions.CENTER,
       });
     });

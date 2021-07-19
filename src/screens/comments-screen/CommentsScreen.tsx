@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import styled, { useTheme } from 'styled-components/native';
 import {
@@ -14,13 +13,13 @@ import { TRootStackParams } from '../../navigation/RootStackNavigator';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { TComment } from '../../types';
 import { CommentInput } from '../../components/comment-input';
-import { useAppDispatch } from '../../redux/hooks';
-import { commentsActions, useCommentsSelector } from '../../redux/comments';
-
-type CommentsScreenNavigationProp = StackNavigationProp<
-  TRootStackParams,
-  ROOT_STACK_SCREENS.COMMENTS
->;
+import { fetchComments, TRemoteComments } from '../../services/comments';
+import {
+  isPending,
+  isSuccess,
+  makePending,
+  makeUninitialized,
+} from '../../utils/remote-data';
 
 export type CommentsScreenRouteProp = RouteProp<
   TRootStackParams,
@@ -32,66 +31,72 @@ export const COMMENTS_LIMIT = 20;
 export function CommentsScreen(): JSX.Element {
   const route = useRoute<CommentsScreenRouteProp>();
   const { post } = route.params;
-  const dispatch = useAppDispatch();
   const theme = useTheme();
+  const [canFetchComments, setCanFetchComments] = useState(true);
+  const [remoteComments, setRemoteComments] = useState<TRemoteComments>(
+    makeUninitialized(),
+  );
   const [offset, setOffset] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    comments,
-    loading: loadingComments,
-    error: errorComments,
-    canFetchMoreComments,
-  } = useCommentsSelector();
+  const getComments = useCallback(
+    async (refresh = false) => {
+      const actualOffset = refresh ? 0 : offset;
+      setRemoteComments(makePending(refresh ? null : remoteComments.data));
+      const remote = await fetchComments(post.id, {
+        offset: actualOffset,
+        limit: COMMENTS_LIMIT,
+        refresh,
+      });
 
-  const getComments = useCallback(() => {
-    if (canFetchMoreComments && !loadingComments) {
-      dispatch(
-        commentsActions.getComments({
-          postId: post.id,
-          offset,
-          limit: COMMENTS_LIMIT,
-        }),
-      );
-      setOffset(offset + COMMENTS_LIMIT);
+      if (isSuccess(remote)) {
+        setRemoteComments(prevRemote =>
+          refresh
+            ? remote
+            : {
+                ...remote,
+                data: {
+                  ...remote.data,
+                  comments: [
+                    ...(prevRemote.data?.comments || []),
+                    ...remote.data.comments,
+                  ],
+                },
+              },
+        );
+        setCanFetchComments(remote.data.canFetchMoreComments);
+        setOffset(actualOffset + COMMENTS_LIMIT);
+      } else {
+        Toast.show('Failed fetching comments.', {
+          position: Toast.positions.CENTER,
+        });
+      }
+    },
+    [remoteComments, offset, post.id],
+  );
+
+  const getMoreComments = useCallback(async () => {
+    if (canFetchComments && !isPending(remoteComments)) {
+      getComments();
     }
-  }, [canFetchMoreComments, loadingComments, dispatch, offset, post.id]);
+  }, [canFetchComments, remoteComments, getComments]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    setOffset(0);
-    await dispatch(
-      commentsActions.getComments({
-        postId: post.id,
-        offset: 0,
-        limit: COMMENTS_LIMIT,
-        refresh: true,
-      }),
-    );
+    await getComments(true);
     setRefreshing(false);
-  }, [dispatch, post.id]);
+  }, [getComments]);
 
   const LoadingComments = useCallback(
-    () => (loadingComments ? <Loading testID="LoadingComments" /> : null),
-    [loadingComments],
+    () =>
+      isPending(remoteComments) ? <Loading testID="LoadingComments" /> : null,
+    [remoteComments],
   );
 
   useEffect(() => {
     getComments();
-
-    return () => {
-      dispatch(commentsActions.clearComments());
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // didMount
-
-  useEffect(() => {
-    if (errorComments) {
-      Toast.show('Failed fetching comments.', {
-        position: Toast.positions.CENTER,
-      });
-    }
-  }, [errorComments]);
 
   const renderItem = useCallback<ListRenderItem<TComment>>(
     ({ item }) => <StyledComment {...item} />,
@@ -121,13 +126,13 @@ export function CommentsScreen(): JSX.Element {
   return (
     <Container>
       <FlatList
-        data={comments}
+        data={remoteComments.data?.comments || []}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={LoadingComments}
         onEndReachedThreshold={2}
-        onEndReached={getComments}
+        onEndReached={getMoreComments}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -163,4 +168,6 @@ const StyledComment = styled(Comment)`
 const Loading = styled.ActivityIndicator.attrs(({ theme }) => ({
   size: 'large',
   color: theme.color.gray,
-}))``;
+}))`
+  padding: ${({ theme }) => theme.spacing.s};
+`;

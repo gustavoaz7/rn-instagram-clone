@@ -22,7 +22,8 @@ commentsRouter.get<
   const postId = req.params.id;
   const offset = Number(req.query.offset);
   const limit = Number(req.query.limit);
-  const refresh = Boolean(req.query.refresh);
+  const refresh =
+    req.query.refresh !== undefined && req.query.refresh !== 'false';
 
   const currentUser = database.users.get(session.getUsername())!;
   const post = database.posts.get(postId)!;

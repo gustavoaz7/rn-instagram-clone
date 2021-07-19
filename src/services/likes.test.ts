@@ -1,5 +1,6 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL } from '../constants';
+import { isFail, isSuccess } from '../utils/remote-data';
 import { postLike, TPostLikeBody } from './likes';
 
 describe('services - likes', () => {
@@ -28,17 +29,21 @@ describe('services - likes', () => {
       ]);
     });
 
-    it('returns nothing', async () => {
-      const expected = 'hello world';
-      fetch.mockResponseOnce(JSON.stringify(expected));
+    it('returns empty success result', async () => {
+      fetch.mockResponseOnce(JSON.stringify({}));
+      const result = await postLike(params);
 
-      expect(await postLike(params)).toBeUndefined();
+      expect(isSuccess(result)).toBe(true);
+      expect(result.data).toBeUndefined();
     });
 
-    it('does not handle error', () => {
-      fetch.mockRejectOnce(new Error(''));
+    it('returns failed result with error', async () => {
+      const error = new Error('failed');
+      fetch.mockRejectOnce(error);
+      const result = await postLike(params);
 
-      expect(postLike(params)).rejects.toThrow();
+      expect(isFail(result)).toBe(true);
+      expect(result.error).toBe(error);
     });
   });
 });
