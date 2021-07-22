@@ -1,7 +1,7 @@
 import fetch from 'jest-fetch-mock';
 import { BASE_URL, STATIC_USER_DATA } from '../constants';
 import { isFail, isSuccess } from '../utils/remote-data';
-import { fakeLogin } from './user';
+import { fakeLogin, fetchProfile } from './user';
 
 describe('services - user', () => {
   beforeEach(() => {
@@ -36,6 +36,37 @@ describe('services - user', () => {
       const error = new Error(`failed ${Math.random()}`);
       fetch.mockRejectOnce(error);
       const result = await fakeLogin();
+
+      expect(isFail(result)).toBe(true);
+      expect(result.error).toBe(error);
+    });
+  });
+
+  describe('fetchProfile', () => {
+    const username = `${Math.random()}`;
+
+    it('makes request correctly', () => {
+      fetchProfile(username);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(fetch.mock.calls[0]).toEqual([
+        `${BASE_URL}/user/${username}/profile`,
+      ]);
+    });
+
+    it('returns success remote with parsed data', async () => {
+      const expected = 'hello world';
+      fetch.mockResponseOnce(JSON.stringify(expected));
+      const result = await fetchProfile(username);
+
+      expect(isSuccess(result)).toBe(true);
+      expect(result.data).toEqual(expected);
+    });
+
+    it('returns failed remote with error', async () => {
+      const error = new Error(`failed ${Math.random()}`);
+      fetch.mockRejectOnce(error);
+      const result = await fetchProfile(username);
 
       expect(isFail(result)).toBe(true);
       expect(result.error).toBe(error);
