@@ -96,3 +96,20 @@ export type TStory = {
   latestMediaAt: number;
   seenAt?: number;
 };
+
+export type TProfile = {
+  username: string;
+  fullName: string;
+  bio?: string;
+  profilePicUrl: string;
+  postsCount: number;
+  followCount: number;
+  followedByCount: number;
+  followedByViewer: boolean;
+  followsViewer: boolean;
+  mutualFollowedBy?: {
+    count: number;
+    previewUsernames: string[];
+  };
+  story?: TStory;
+};
