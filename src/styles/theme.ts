@@ -35,6 +35,8 @@ export const theme = {
   font: {
     size: {
       s: '12px',
+      m: '14px',
+      l: '16px',
     },
   },
   animation: {

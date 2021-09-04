@@ -1,0 +1,242 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - ProfileHeader matches snapshot 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "row",
+        "paddingBottom": 10,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 10,
+        "width": "100%",
+      },
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+  >
+    <View
+      size={90}
+      style={
+        Array [
+          Object {
+            "borderRadius": 90,
+            "height": 90,
+            "overflow": "hidden",
+            "position": "relative",
+            "width": 90,
+          },
+        ]
+      }
+    >
+      <ViewManagerAdapter_ExpoLinearGradient
+        proxiedProperties={
+          Object {
+            "colors": Array [
+              4292948076,
+              4294750021,
+            ],
+            "endPoint": Array [
+              0.3,
+              0.7,
+            ],
+            "locations": undefined,
+            "startPoint": Array [
+              0.7,
+              0.3,
+            ],
+          }
+        }
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "height": "100%",
+              "justifyContent": "center",
+              "width": "100%",
+            },
+          ]
+        }
+      >
+        <View
+          ringWidth={2}
+          size={90}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderRadius": 86,
+                "height": 86,
+                "justifyContent": "center",
+                "width": 86,
+              },
+            ]
+          }
+        >
+          <Image
+            offset={2}
+            ringWidth={2}
+            size={90}
+            source={
+              Object {
+                "uri": "https://avatars.githubusercontent.com/u/28453820?v=4",
+              }
+            }
+            style={
+              Array [
+                Object {
+                  "borderColor": "#26262633",
+                  "borderRadius": 82,
+                  "borderWidth": 2,
+                  "height": 82,
+                  "width": 82,
+                },
+              ]
+            }
+          />
+        </View>
+      </ViewManagerAdapter_ExpoLinearGradient>
+    </View>
+  </View>
+  <View
+    style={
+      Array [
+        Object {
+          "flexBasis": 0,
+          "flexDirection": "row",
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "justifyContent": "space-between",
+          "marginLeft": 20,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "fontSize": 16,
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        20
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+          ]
+        }
+      >
+        Posts
+      </Text>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "fontSize": 16,
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        50
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+          ]
+        }
+      >
+        Followers
+      </Text>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+            Object {
+              "fontSize": 16,
+              "fontWeight": "bold",
+            },
+          ]
+        }
+      >
+        47
+      </Text>
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#262626",
+            },
+          ]
+        }
+      >
+        Following
+      </Text>
+    </View>
+  </View>
+</View>
+`;
