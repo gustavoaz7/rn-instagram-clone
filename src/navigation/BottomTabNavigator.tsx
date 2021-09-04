@@ -1,8 +1,12 @@
 import React, { FC } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigatorScreenParams } from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import { SvgProps } from 'react-native-svg';
 import styled, { DefaultTheme, useTheme } from 'styled-components/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { SearchScreen } from '../screens/SearchScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { NotImplemented } from '../screens/NotImplemented';
@@ -13,10 +17,19 @@ import Shop from '../../assets/svg/shop.svg';
 import { BOTTOM_TAB_SCREENS } from './screens';
 import { HomeStackNavigator, THomeStackParams } from './HomeStackNavigator';
 import { useUserSelector } from '../redux/user';
+import type { THomeSwipeNavigationProps } from './HomeSwipeNavigator';
 
-export type TBottomTabParams = Record<BOTTOM_TAB_SCREENS, undefined> & {
+export type TBottomTabParams = Record<
+  Exclude<BOTTOM_TAB_SCREENS, BOTTOM_TAB_SCREENS.HOME>,
+  undefined
+> & {
   [BOTTOM_TAB_SCREENS.HOME]: NavigatorScreenParams<THomeStackParams>;
 };
+
+export type TBottomTabNavigationProps = CompositeNavigationProp<
+  StackNavigationProp<TBottomTabParams>,
+  THomeSwipeNavigationProps
+>;
 
 type BOTTOM_TAB_SCREENS_WITH_ICON = Exclude<
   BOTTOM_TAB_SCREENS,

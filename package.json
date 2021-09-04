@@ -8,8 +8,9 @@
     "eject": "expo eject",
     "lint": "eslint .",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:update": "jest --updateSnapshot",
-    "test:watch": "jest --watch --coverage=false",
+    "test:coverage": "jest --coverage=true",
     "prepare": "husky install",
     "server": "ts-node server/index.ts"
   },
