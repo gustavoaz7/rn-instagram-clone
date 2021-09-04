@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useRef, useState } from 'react';
 import {
   FlatList,
@@ -20,6 +21,7 @@ export const StoriesSlider = ({
   stories,
   initialStoryIndex = 0,
 }: TStoriesSliderProps): JSX.Element => {
+  const navigation = useNavigation();
   const sliderRef = useRef<FlatList>(null);
   const [storyIndex, setStoryIndex] = useState(initialStoryIndex);
   const [shouldPauseAnimations, setShouldPauseAnimations] = useState(false);
@@ -44,7 +46,7 @@ export const StoriesSlider = ({
   const handleGoToStory = useCallback(
     (nextStoryIndex: number) => {
       if (nextStoryIndex >= stories.length || nextStoryIndex < 0) {
-        // navigate back || close modal
+        navigation.goBack();
         return;
       }
 
@@ -54,7 +56,7 @@ export const StoriesSlider = ({
         animated: true,
       });
     },
-    [stories.length],
+    [navigation, stories.length],
   );
 
   const renderItem = useCallback<ListRenderItem<TStory>>(

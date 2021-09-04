@@ -8,14 +8,14 @@ import {
 import { HomeSwipeNavigator } from './HomeSwipeNavigator';
 import { CommentsScreen } from '../screens/comments-screen';
 import { ROOT_STACK_SCREENS } from './screens';
-import { TPost } from '../types';
+import type { TPost, TStory } from '../types';
 import { ArrowBack } from './ArrowBack';
 import { StoryScreen } from '../screens/StoryScreen';
 
 export type TRootStackParams = {
   [ROOT_STACK_SCREENS.HOME_SWIPE]: undefined;
   [ROOT_STACK_SCREENS.COMMENTS]: { post: TPost };
-  [ROOT_STACK_SCREENS.STORY]: { id: string };
+  [ROOT_STACK_SCREENS.STORY]: { id: string; story?: TStory };
 };
 
 export type THomeStackNavigationProps = StackNavigationProp<TRootStackParams>;
