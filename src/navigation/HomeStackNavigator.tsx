@@ -18,12 +18,11 @@ import {
   HOME_STACK_SCREENS,
   HOME_SWIPE_SCREENS,
 } from './screens';
-import type { THomeSwitchParams } from './HomeSwipeNavigator';
+import type { TBottomTabNavigationProps } from './BottomTabNavigator';
 import { NotImplemented } from '../screens/NotImplemented';
 import { FeedScreen } from '../screens/feed-screen';
 import { ActivityScreen } from '../screens/ActivityScreen';
 import { ArrowBack } from './ArrowBack';
-import { TRootStackParams } from './RootStackNavigator';
 
 export type THomeStackParams = {
   [HOME_STACK_SCREENS.FEED]: undefined;
@@ -33,10 +32,7 @@ export type THomeStackParams = {
 
 export type THomeStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<THomeStackParams>,
-  CompositeNavigationProp<
-    StackNavigationProp<THomeSwitchParams>,
-    StackNavigationProp<TRootStackParams>
-  >
+  TBottomTabNavigationProps
 >;
 
 function nullFn() {

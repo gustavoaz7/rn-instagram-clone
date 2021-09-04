@@ -6,6 +6,7 @@ import type {
   TOwner,
   TStory,
   TStoryMedia,
+  TProfile,
 } from '../types';
 
 export const generateMockOwner = (): TOwner => ({
@@ -94,4 +95,17 @@ export const generateMockStory = ({
   medias: [...Array(mediasQty)].map((_, index) =>
     generateMockStoryMedia({ viewersQty, index }),
   ),
+});
+
+export const generateMockProfile = (): TProfile => ({
+  bio: 'animi eum earum aut explicabo',
+  followCount: 47,
+  followedByCount: 50,
+  followedByViewer: false,
+  followsViewer: false,
+  fullName: 'Gustavo Az',
+  postsCount: 20,
+  profilePicUrl: 'https://avatars.githubusercontent.com/u/28453820?v=4',
+  username: 'gustavoaz7',
+  story: generateMockStory(),
 });

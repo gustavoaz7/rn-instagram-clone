@@ -1,6 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigatorScreenParams } from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import {
   DirectStackNavigator,
   TDirectStackParams,
@@ -14,6 +18,7 @@ import {
 } from './screens';
 import { BottomTabNavigator, TBottomTabParams } from './BottomTabNavigator';
 import { navigationRef } from './navigation-ref';
+import type { TRootStackParams } from './RootStackNavigator';
 
 const SCREENS_ALLOWED_TO_SWIPE = [
   ...Object.values(HOME_SWIPE_SCREENS),
@@ -22,13 +27,18 @@ const SCREENS_ALLOWED_TO_SWIPE = [
   DIRECT_STACK_SCREENS.DIRECT,
 ] as string[];
 
-export type THomeSwitchParams = {
+export type THomeSwipeParams = {
   [HOME_SWIPE_SCREENS.CAMERA]: undefined;
   [HOME_SWIPE_SCREENS.BOTTOM_TAB]: NavigatorScreenParams<TBottomTabParams>;
   [HOME_SWIPE_SCREENS.DIRECT]: NavigatorScreenParams<TDirectStackParams>;
 };
 
-const Tab = createMaterialTopTabNavigator<THomeSwitchParams>();
+export type THomeSwipeNavigationProps = CompositeNavigationProp<
+  StackNavigationProp<THomeSwipeParams>,
+  StackNavigationProp<TRootStackParams>
+>;
+
+const Tab = createMaterialTopTabNavigator<THomeSwipeParams>();
 
 export function HomeSwipeNavigator(): JSX.Element {
   const [swipeEnabled, setSwipeEnabled] = useState(true);

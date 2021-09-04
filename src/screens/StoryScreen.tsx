@@ -14,10 +14,13 @@ export type StoryScreenRouteProp = RouteProp<
 
 export function StoryScreen(): JSX.Element {
   const route = useRoute<StoryScreenRouteProp>();
-  const { id } = route.params;
-  const { stories } = useStoriesSelector();
+  let { stories } = useStoriesSelector();
+  let storyIndex = stories.findIndex(story => story.id === route.params.id);
 
-  const storyIndex = stories.findIndex(story => story.id === id);
+  if (route.params.story) {
+    stories = [route.params.story];
+    storyIndex = 0;
+  }
 
   return (
     <Container>

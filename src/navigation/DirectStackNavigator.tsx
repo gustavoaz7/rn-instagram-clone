@@ -14,14 +14,14 @@ import { NotImplemented } from '../screens/NotImplemented';
 import Video from '../../assets/svg/video.svg';
 import Edit from '../../assets/svg/edit.svg';
 import { DIRECT_STACK_SCREENS } from './screens';
-import type { THomeSwitchParams } from './HomeSwipeNavigator';
+import type { THomeSwipeNavigationProps } from './HomeSwipeNavigator';
 import { ArrowBack } from './ArrowBack';
 
 export type TDirectStackParams = Record<DIRECT_STACK_SCREENS, undefined>;
 
 export type TDirectStackNavigationProps = CompositeNavigationProp<
   StackNavigationProp<TDirectStackParams>,
-  StackNavigationProp<THomeSwitchParams>
+  THomeSwipeNavigationProps
 >;
 
 function HeaderRight() {

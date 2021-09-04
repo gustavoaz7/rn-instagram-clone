@@ -7,7 +7,6 @@ module.exports = {
   transformIgnorePatterns: [
     `/node_modules/(?!${packagesToTranspile.join('|')})`,
   ],
-  collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|svg)$': '<rootDir>/__mocks__/svgMock.js',
