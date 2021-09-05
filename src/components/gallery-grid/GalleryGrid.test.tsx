@@ -19,12 +19,6 @@ describe('components - GalleryGrid', () => {
     render(<GalleryGrid {...props} />, options);
   });
 
-  it('matches snapshot', () => {
-    const { toJSON } = render(<GalleryGrid {...props} />, options);
-
-    expect(toJSON()).toMatchSnapshot();
-  });
-
   it(`renders ${defaultColumns} columns with ${defaultGap} gap by default`, () => {
     const { UNSAFE_getByType, getAllByTestId } = render(
       <GalleryGrid {...props} />,
