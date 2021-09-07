@@ -32,6 +32,16 @@ describe('components - ProfileHeader', () => {
     expect(toJSON()).toMatchSnapshot();
   });
 
+  it('inherits style', () => {
+    const style = { backgroundColor: 'orange' };
+    const { getByTestId } = render(
+      <ProfileHeader {...props} style={style} />,
+      options,
+    );
+
+    expect(getByTestId('ProfileHeader')).toHaveStyle(style);
+  });
+
   it('renders correct profile stats', () => {
     const { queryByText } = render(<ProfileHeader {...props} />, options);
 

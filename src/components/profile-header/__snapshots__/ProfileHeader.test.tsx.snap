@@ -6,14 +6,10 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
     Array [
       Object {
         "flexDirection": "row",
-        "paddingBottom": 10,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 10,
-        "width": "100%",
       },
     ]
   }
+  testID="ProfileHeader"
 >
   <View
     accessible={true}
