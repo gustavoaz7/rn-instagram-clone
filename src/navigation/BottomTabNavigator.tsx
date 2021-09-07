@@ -8,7 +8,6 @@ import { SvgProps } from 'react-native-svg';
 import styled, { DefaultTheme, useTheme } from 'styled-components/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { SearchScreen } from '../screens/SearchScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
 import { NotImplemented } from '../screens/NotImplemented';
 import Home from '../../assets/svg/home.svg';
 import Search from '../../assets/svg/search.svg';
@@ -16,6 +15,7 @@ import Reels from '../../assets/svg/reels.svg';
 import Shop from '../../assets/svg/shop.svg';
 import { BOTTOM_TAB_SCREENS } from './screens';
 import { HomeStackNavigator, THomeStackParams } from './HomeStackNavigator';
+import { ProfileStackNavigator } from './ProfileStackNavigator';
 import { useUserSelector } from '../redux/user';
 import type { THomeSwipeNavigationProps } from './HomeSwipeNavigator';
 
@@ -97,7 +97,7 @@ export function BottomTabNavigator(): JSX.Element {
       />
       <Tab.Screen
         name={BOTTOM_TAB_SCREENS.PROFILE}
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Avatar source={{ uri: user?.profilePicUrl }} focused={focused} />

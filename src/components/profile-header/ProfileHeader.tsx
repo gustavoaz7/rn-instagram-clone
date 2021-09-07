@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable, ViewProps } from 'react-native';
 import { AvatarWithRing } from '../avatar-with-ring';
 import { Text } from '../text';
 import type { TProfile } from '../../types';
@@ -11,7 +11,9 @@ import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 export type TProfileHeaderProps = Pick<
   TProfile,
   'profilePicUrl' | 'postsCount' | 'followCount' | 'followedByCount' | 'story'
->;
+> & {
+  style?: ViewProps['style'];
+};
 
 export const ProfileHeader = ({
   profilePicUrl,
@@ -19,6 +21,7 @@ export const ProfileHeader = ({
   followCount,
   followedByCount,
   story,
+  style,
 }: TProfileHeaderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<THomeStackNavigationProps>();
@@ -32,7 +35,7 @@ export const ProfileHeader = ({
   }, [navigation, story]);
 
   return (
-    <Container>
+    <Row style={style} testID="ProfileHeader">
       <Pressable onPress={handlePress}>
         <AvatarWithRing
           size={90}
@@ -55,17 +58,12 @@ export const ProfileHeader = ({
           <Text>Following</Text>
         </StatsContainer>
       </StatsBar>
-    </Container>
+    </Row>
   );
 };
 
 const Row = styled.View`
   flex-direction: row;
-`;
-
-const Container = styled(Row)`
-  width: 100%;
-  padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.l}`};
 `;
 
 const StatsBar = styled(Row)`

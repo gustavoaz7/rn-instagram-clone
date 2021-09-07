@@ -1,3 +1,7 @@
+export enum PROFILE_STACK_SCREENS {
+  PROFILE = '@Profile-Stack/Profile',
+}
+
 export enum BOTTOM_TAB_SCREENS {
   HOME = '@Bottom-Tab/Home',
   SEARCH = '@Bottom-Tab/Search',
