@@ -3,6 +3,8 @@ import faker from 'faker';
 import type {
   TFetchPostsParams,
   TPostsResponse,
+  TFetchUserPostsParams,
+  TUserPostsResponse,
 } from '../../src/services/posts';
 import { database } from '../database';
 import { session } from '../session';
@@ -38,6 +40,39 @@ postsRouter.get<null, TGetPostsRes, null, TGetPostsQuery>('/', (req, res) => {
     .concat(currentUser.postsIds);
 
   const postsDBWithNext = postsIds
+    .map(postId => database.posts.get(postId)!)
+    .sort(sortByCreatedAt)
+    .slice(offset, offset + limit + 1)
+    .map(post => ({
+      ...post,
+      viewerHasLiked: post.likesIds.some(
+        likeId =>
+          database.likes.get(likeId)!.owner.username === currentUser.username,
+      ),
+    }));
+  const canFetchMorePosts = postsDBWithNext.length > limit;
+
+  const posts = postsDBWithNext.slice(0, -1).map(transformPost);
+
+  return res.send({ posts, canFetchMorePosts });
+});
+
+type TGetUserPostsRes = TUserPostsResponse;
+type TGetUserPostsQuery = TFetchUserPostsParams;
+postsRouter.get<
+  { username: string },
+  TGetUserPostsRes,
+  null,
+  TGetUserPostsQuery
+>('/:username', (req, res) => {
+  const offset = Number(req.query.offset);
+  const limit = Number(req.query.limit);
+  const { username } = req.params;
+
+  const currentUser = database.users.get(session.getUsername())!;
+  const user = database.users.get(username)!;
+
+  const postsDBWithNext = user.postsIds
     .map(postId => database.posts.get(postId)!)
     .sort(sortByCreatedAt)
     .slice(offset, offset + limit + 1)

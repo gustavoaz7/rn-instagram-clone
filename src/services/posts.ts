@@ -31,3 +31,27 @@ export async function fetchPosts(
     return makeFail(e);
   }
 }
+
+export type TFetchUserPostsParams = Omit<TFetchPostsParams, 'refresh'>;
+export type TUserPostsResponse = TPostsResponse;
+export type TRemoteUserPosts = RemoteData<TUserPostsResponse, Error>;
+export async function fetchUserPosts(
+  username: string,
+  params: TFetchPostsParams,
+): Promise<TRemoteUserPosts> {
+  const searchParams = new URLSearchParams(
+    Object.entries(params).reduce(
+      (acc, [key, value]) => ({ ...acc, [key]: `${value}` }),
+      {},
+    ),
+  );
+
+  try {
+    const posts = await fetch(
+      `${BASE_URL}/posts/${username}?${searchParams}`,
+    ).then(res => res.json());
+    return makeSuccess(posts);
+  } catch (e) {
+    return makeFail(e);
+  }
+}

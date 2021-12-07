@@ -22,7 +22,7 @@ export const userRouter = Router();
 userRouter.post<null, TFakeLoginResponse, TFakeLoginBody>(
   '/login',
   (req, res) => {
-    const { username, profilePicUrl } = req.body;
+    const { username, fullName, profilePicUrl } = req.body;
     // Only configure when database is empty (on 1st request)
     if (database.users.size) {
       const user = database.users.get(username)!;
@@ -38,6 +38,7 @@ userRouter.post<null, TFakeLoginResponse, TFakeLoginBody>(
     ].map(() => faker.internet.userName());
     const currentUser = generateUser({
       username,
+      fullName,
       profilePicUrl,
       following,
       followers,
