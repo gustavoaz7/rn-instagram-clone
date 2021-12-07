@@ -1,5 +1,11 @@
 import React, { memo, useCallback, useRef } from 'react';
-import { FlatList, ListRenderItem, StyleProp, ViewStyle } from 'react-native';
+import {
+  FlatList,
+  FlatListProps,
+  ListRenderItem,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import styled from 'styled-components/native';
 import { TPost } from '../../types';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
@@ -9,12 +15,13 @@ export type TGalleryGridProps = {
   posts: TPost[];
   columns?: number;
   gap?: number;
-};
+} & Pick<FlatListProps<TPost>, 'onEndReached'>;
 
 export function GalleryGrid({
   posts,
   columns = 3,
   gap = 2,
+  onEndReached,
 }: TGalleryGridProps): JSX.Element {
   const contentContainerStyle = useRef<StyleProp<ViewStyle>>({
     width: SCREEN_WIDTH,
@@ -33,11 +40,13 @@ export function GalleryGrid({
 
   return (
     <FlatList
+      testID="GalleryGrid"
       data={posts}
       renderItem={renderItem}
       numColumns={columns}
       columnWrapperStyle={columnWrapperStyle}
       contentContainerStyle={contentContainerStyle}
+      onEndReached={onEndReached}
     />
   );
 }
@@ -58,7 +67,7 @@ GalleryGrid.Item = memo(
 
     return (
       <ImageContainer
-        testID="GaleryGridItem"
+        testID="GalleryGridItem"
         columns={columns}
         gap={gap}
         onPress={handlePress}
