@@ -11,12 +11,12 @@ import MenuSvg from '../../assets/svg/menu-hamburger.svg';
 import { PROFILE_STACK_SCREENS } from './screens';
 import type { TBottomTabNavigationProps } from './BottomTabNavigator';
 import { ArrowBack } from './ArrowBack';
-import { ProfileScreen } from '../screens/ProfileScreen';
+import { ProfileScreen } from '../screens/profile-screen';
 import { Text } from '../components/text';
 import { useUserSelector } from '../redux/user';
 
 export type TProfileStackParams = {
-  [PROFILE_STACK_SCREENS.PROFILE]: undefined;
+  [PROFILE_STACK_SCREENS.PROFILE]: { username: string };
 };
 
 export type TProfileStackNavigationProps = CompositeNavigationProp<
@@ -52,6 +52,8 @@ function HeaderRight() {
 const Stack = createStackNavigator<TProfileStackParams>();
 
 export function ProfileStackNavigator(): JSX.Element {
+  const { user } = useUserSelector();
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -66,6 +68,7 @@ export function ProfileStackNavigator(): JSX.Element {
       <Stack.Screen
         name={PROFILE_STACK_SCREENS.PROFILE}
         component={ProfileScreen}
+        initialParams={{ username: user?.username }}
         options={{
           headerTitle: nullFn,
           headerLeft: HeaderLeft,

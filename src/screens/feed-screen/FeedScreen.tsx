@@ -30,7 +30,6 @@ export function FeedScreen(): JSX.Element {
     makeUninitialized(),
   );
   const [offset, setOffset] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
 
   const getPosts = useCallback(
     async (refresh = false) => {
@@ -85,9 +84,7 @@ export function FeedScreen(): JSX.Element {
   }, [dispatch]);
 
   const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await getPosts(true);
-    setRefreshing(false);
+    getPosts(true);
   }, [getPosts]);
 
   const LoadingPosts = useCallback(
@@ -146,7 +143,7 @@ export function FeedScreen(): JSX.Element {
         onEndReachedThreshold={2}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={false}
             onRefresh={handleRefresh}
             tintColor={theme.color.gray}
             colors={[theme.color.gray]}

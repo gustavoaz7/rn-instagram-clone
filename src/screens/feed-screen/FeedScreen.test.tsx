@@ -95,7 +95,7 @@ describe('screens - FeedScreen', () => {
     });
 
     describe('when reaches the end of list', () => {
-      it('calls fetchComments service a second time', async () => {
+      it('calls fetchPosts service a second time', async () => {
         const { UNSAFE_getByType } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
@@ -228,7 +228,7 @@ describe('screens - FeedScreen', () => {
         });
       });
 
-      it('removes previous comments and renders only loading', async () => {
+      it('removes previous posts and renders only loading', async () => {
         const { UNSAFE_getByType, queryByTestId } = render(
           <FakeNavigator component={FeedScreen} />,
           options,
@@ -338,7 +338,7 @@ describe('screens - FeedScreen', () => {
       render(<FakeNavigator component={FeedScreen} />, options);
 
       expect(toastSpy).toHaveBeenCalledTimes(1);
-      expect(toastSpy).toHaveBeenCalledWith(expect.stringContaining(''), {
+      expect(toastSpy).toHaveBeenCalledWith('Failed fetching stories.', {
         position: Toast.positions.CENTER,
       });
     });
