@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import { Image, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import faker from 'faker';
 import { ProfileHeader, TProfileHeaderProps } from './ProfileHeader';
 import { Providers } from '../../Providers';
 import { generateMockProfile } from '../../data';
@@ -142,6 +143,59 @@ describe('components - ProfileHeader', () => {
         });
 
         expect(navigateSpy).toHaveBeenCalledTimes(0);
+      });
+    });
+
+    it('renders full name', () => {
+      const { getByText } = render(<ProfileHeader {...props} />, options);
+
+      expect(getByText(props.fullName)).toBeTruthy();
+    });
+
+    describe('bio', () => {
+      it('renders without caption', () => {
+        render(<ProfileHeader {...props} bio={undefined} />, options);
+      });
+
+      it('renders all bio when short', () => {
+        const bio = faker.lorem.words(2);
+
+        const { getByText, queryByText } = render(
+          <ProfileHeader {...props} bio={bio} />,
+          options,
+        );
+
+        expect(getByText(RegExp(`^${bio}$`))).toBeTruthy();
+        expect(queryByText('more')).toBeFalsy();
+      });
+
+      describe('when bio is long', () => {
+        it('renders clipped bio and expands on "more" click', async () => {
+          const bio = faker.lorem.paragraph();
+
+          const { getByText, queryByText, getByTestId } = render(
+            <ProfileHeader {...props} bio={bio} />,
+            options,
+          );
+
+          expect(queryByText('more')).toBeFalsy();
+          expect(getByTestId('profile-bio').props.numberOfLines).toEqual(2);
+
+          act(() =>
+            getByTestId('profile-bio').props.onTextLayout({
+              nativeEvent: { lines: { length: 5 } },
+            }),
+          );
+
+          const moreText = getByText('more');
+          expect(moreText).toBeTruthy();
+
+          fireEvent.press(moreText);
+
+          expect(
+            getByTestId('profile-bio').props.numberOfLines,
+          ).toBeUndefined();
+        });
       });
     });
   });

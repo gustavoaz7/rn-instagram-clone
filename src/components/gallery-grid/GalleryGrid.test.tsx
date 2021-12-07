@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, Image } from 'react-native';
-import { render } from '@testing-library/react-native';
+import { act, render } from '@testing-library/react-native';
 import { GalleryGrid, TGalleryGridProps } from './GalleryGrid';
 import { Providers } from '../../Providers';
 import { SCREEN_WIDTH } from '../../utils/dimensions';
@@ -29,7 +29,7 @@ describe('components - GalleryGrid', () => {
       numColumns: defaultColumns,
       columnWrapperStyle: { paddingTop: defaultGap },
     });
-    expect(getAllByTestId('GaleryGridItem')[0]).toHaveStyle({
+    expect(getAllByTestId('GalleryGridItem')[0]).toHaveStyle({
       width:
         (SCREEN_WIDTH - defaultGap * (defaultColumns - 1)) / defaultColumns,
     });
@@ -47,7 +47,7 @@ describe('components - GalleryGrid', () => {
       numColumns: columns,
       columnWrapperStyle: { paddingTop: gap },
     });
-    expect(getAllByTestId('GaleryGridItem')[0]).toHaveStyle({
+    expect(getAllByTestId('GalleryGridItem')[0]).toHaveStyle({
       width: (SCREEN_WIDTH - gap * (columns - 1)) / columns,
     });
   });
@@ -82,5 +82,19 @@ describe('components - GalleryGrid', () => {
 
       expect(UNSAFE_queryByType(LayersSvg)).toBeFalsy();
     });
+  });
+
+  it('calls onEndReached prop when ', async () => {
+    const spy = jest.fn();
+    const { UNSAFE_getByType } = render(
+      <GalleryGrid {...props} onEndReached={spy} />,
+      options,
+    );
+
+    act(() => {
+      UNSAFE_getByType(FlatList).props.onEndReached();
+    });
+
+    expect(spy).toBeCalledTimes(1);
   });
 });
