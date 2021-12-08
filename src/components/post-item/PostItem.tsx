@@ -212,6 +212,7 @@ export const PostItem = memo(function PostItem({
   }, [likeComment, heartCommentScale, theme.animation.heart]);
 
   const isMultiImage = medias.length > 1;
+  const isLocallyLiked = !viewerHasLiked && isLiked;
 
   return (
     <Container testID="PostItem" style={style}>
@@ -304,9 +305,10 @@ export const PostItem = memo(function PostItem({
           ) : null}
           <BookmarkIcon />
         </ActionsRow>
-        {previewLikes.count > 0 ? (
+        {previewLikes.count > 0 || isLocallyLiked ? (
           <BoldText>
-            {previewLikes.count} {pluralizeWithS('like', previewLikes.count)}
+            {previewLikes.count + Number(isLocallyLiked)}{' '}
+            {pluralizeWithS('like', previewLikes.count)}
           </BoldText>
         ) : null}
         {caption ? (
