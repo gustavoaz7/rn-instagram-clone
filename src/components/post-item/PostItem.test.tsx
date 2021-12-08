@@ -162,6 +162,23 @@ describe('components - PostItem', () => {
         });
       });
 
+      it('increases like count by 1', async () => {
+        const previewLikes = {
+          count: 2,
+          likes: [...Array(2).map(generateMockLike)],
+        };
+        const { getByTestId, getByText } = render(
+          <PostItem {...post} previewLikes={previewLikes} />,
+          options,
+        );
+
+        act(() => {
+          fireEvent.press(getByTestId('PostItem-Heart'));
+        });
+
+        expect(getByText('3 likes')).toBeTruthy();
+      });
+
       it('changes heart from outline black to filled red', () => {
         const { getByTestId } = render(<PostItem {...post} />, options);
 
@@ -231,6 +248,25 @@ describe('components - PostItem', () => {
         });
       });
 
+      it('increases like count by 1', async () => {
+        const previewLikes = {
+          count: 2,
+          likes: [...Array(2).map(generateMockLike)],
+        };
+        const { UNSAFE_getByType, getByText } = render(
+          <PostItem {...post} previewLikes={previewLikes} />,
+          options,
+        );
+
+        await act(async () => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(getByText('3 likes')).toBeTruthy();
+      });
+
       it('disables double-tap until request is completed', async () => {
         postLikeMock.mockResolvedValue(makeSuccess(undefined));
         setupTimeTravel();
@@ -288,6 +324,33 @@ describe('components - PostItem', () => {
 
           expect(postLikeMock).toHaveBeenCalledTimes(1);
         });
+      });
+
+      it('does not increase like count', async () => {
+        const previewLikes = {
+          count: 2,
+          likes: [...Array(2).map(generateMockLike)],
+        };
+        const { UNSAFE_getByType, getByText } = render(
+          <PostItem {...post} previewLikes={previewLikes} />,
+          options,
+        );
+
+        await act(async () => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(getByText('3 likes')).toBeTruthy();
+
+        await act(async () => {
+          UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(getByText('3 likes')).toBeTruthy();
       });
 
       it('changes heart from outline black to filled red', async () => {
