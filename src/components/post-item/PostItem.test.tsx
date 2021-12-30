@@ -18,6 +18,7 @@ import {
   generateMockPostMedia,
   generateMockLike,
   generateMockComment,
+  generateMockTappableObject,
 } from '../../data';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
 import { theme } from '../../styles/theme';
@@ -29,6 +30,7 @@ import {
 import { postLike } from '../../services/likes';
 import { makeFail, makeSuccess } from '../../utils/remote-data';
 import { flushPromises } from '../../test/flush-promises';
+import { TPost } from '../../types';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -677,6 +679,111 @@ describe('components - PostItem', () => {
       const { getByText } = render(<PostItem {...multiImagePost} />, options);
 
       expect(getByText(`1/${multiImagePost.medias.length}`));
+    });
+  });
+
+  describe.only('mentions - when user single-tap post image', () => {
+    describe('when post has no mentions', () => {
+      it('does nothing', async () => {
+        const mentionlessPost: TPost = {
+          ...post,
+          medias: [
+            {
+              ...post.medias[0],
+              tappableObjects: [],
+            },
+          ],
+        };
+        const { UNSAFE_getAllByType, queryByTestId } = render(
+          <PostItem {...mentionlessPost} />,
+          options,
+        );
+
+        await act(async () => {
+          UNSAFE_getAllByType(TapGestureHandler)[1].props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(queryByTestId('MentionTag')).toBeNull();
+      });
+    });
+
+    describe('when post has mentions', () => {
+      it('renders mention tags', async () => {
+        setupTimeTravel();
+        const mentionedPost: TPost = {
+          ...post,
+          medias: [
+            {
+              ...post.medias[0],
+              tappableObjects: [
+                generateMockTappableObject({ text: `${Math.random()}` }),
+              ],
+            },
+          ],
+        };
+
+        const { UNSAFE_getAllByType, getByTestId, getByText } = render(
+          <PostItem {...mentionedPost} />,
+          options,
+        );
+
+        await act(async () => {
+          UNSAFE_getAllByType(TapGestureHandler)[1].props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        const mentionTag = getByTestId('MentionTag');
+        expect(mentionTag).toBeTruthy();
+        expect(
+          getByText(mentionedPost.medias[0].tappableObjects[0].text),
+        ).not.toBeNull();
+        destroyTimeTravel();
+      });
+    });
+
+    describe('when post has multiple images with mentions', () => {
+      it('renders mention tags of tapped image only', async () => {
+        setupTimeTravel();
+        const mentionedPost: TPost = {
+          ...post,
+          medias: [
+            {
+              ...generateMockPostMedia(),
+              tappableObjects: [
+                generateMockTappableObject({ text: `${Math.random()}` }),
+              ],
+            },
+            {
+              ...generateMockPostMedia(),
+              tappableObjects: [
+                generateMockTappableObject({ text: `${Math.random()}` }),
+              ],
+            },
+          ],
+        };
+
+        const { UNSAFE_getAllByType, getByTestId, queryByText } = render(
+          <PostItem {...mentionedPost} />,
+          options,
+        );
+
+        await act(async () => {
+          UNSAFE_getAllByType(TapGestureHandler)[1].props.onHandlerStateChange({
+            nativeEvent: { state: State.ACTIVE },
+          });
+        });
+
+        expect(
+          queryByText(mentionedPost.medias[0].tappableObjects[0].text),
+        ).not.toBeNull();
+        expect(
+          queryByText(mentionedPost.medias[1].tappableObjects[0].text),
+        ).toBeNull();
+        destroyTimeTravel();
+      });
     });
   });
 });

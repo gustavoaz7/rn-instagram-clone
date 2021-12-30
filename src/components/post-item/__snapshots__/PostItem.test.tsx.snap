@@ -172,29 +172,40 @@ exports[`components - PostItem matches snapshot 1`] = `
     style={
       Array [
         Object {
+          "overflow": "hidden",
           "position": "relative",
         },
       ]
     }
   >
-    <Image
+    <View
       collapsable={false}
       onGestureHandlerEvent={[Function]}
       onGestureHandlerStateChange={[Function]}
-      source={
-        Object {
-          "uri": "http://placeimg.com/640/480/cats?0",
-        }
-      }
-      style={
-        Array [
-          Object {
-            "height": 750,
-            "width": 750,
-          },
-        ]
-      }
-    />
+    >
+      <View
+        collapsable={false}
+        onGestureHandlerEvent={[Function]}
+        onGestureHandlerStateChange={[Function]}
+        testID="PostItemImage"
+      >
+        <Image
+          source={
+            Object {
+              "uri": "http://placeimg.com/640/480/cats?0",
+            }
+          }
+          style={
+            Array [
+              Object {
+                "height": 750,
+                "width": 750,
+              },
+            ]
+          }
+        />
+      </View>
+    </View>
   </View>
   <View
     style={

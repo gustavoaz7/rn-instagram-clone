@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components - PostItemImage matches snapshot 1`] = `
+<View
+  collapsable={false}
+  onGestureHandlerEvent={[Function]}
+  onGestureHandlerStateChange={[Function]}
+  testID="PostItemImage"
+>
+  <Image
+    source={
+      Object {
+        "uri": "http://placeimg.com/640/480/cats?0",
+      }
+    }
+    style={
+      Array [
+        Object {
+          "height": 750,
+          "width": 750,
+        },
+      ]
+    }
+  />
+</View>
+`;

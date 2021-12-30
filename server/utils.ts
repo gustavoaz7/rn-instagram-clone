@@ -108,11 +108,11 @@ export const generateTappableObject = (
     id: uuidv4(),
     type: actualType,
     text,
-    // x only goes up to 80% to avoid content overflow
-    x: faker.datatype.number({ min: 0, max: 0.8, precision: 0.01 }),
-    // y only starts at 10% to avoid content overflow
-    y: faker.datatype.number({ min: 0.1, max: 1, precision: 0.01 }),
-    scale: faker.datatype.number({ min: 0.2, max: 4, precision: 0.1 }),
+    // x only goes up to 70% to avoid content overflow
+    x: faker.datatype.number({ min: 0, max: 0.7, precision: 0.01 }),
+    // y only goes up to 80% to avoid content overflow
+    y: faker.datatype.number({ min: 0, max: 0.8, precision: 0.01 }),
+    scale: faker.datatype.number({ min: 0.5, max: 1.5, precision: 0.1 }),
     // rotates up to 90deg both clock and counter-clockwise
     rotation: faker.datatype.number({ min: 270, max: 450 }),
   };

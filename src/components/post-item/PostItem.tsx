@@ -36,6 +36,7 @@ import { Pagination } from '../pagination';
 import { SliderPageIndicator } from '../slider-page-indicator';
 import { postLike } from '../../services/likes';
 import { isFail } from '../../utils/remote-data';
+import { PostItemImage } from './post-item-image';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const INITIAL_OVERLAY_OPACITY = 0.5;
@@ -253,29 +254,35 @@ export const PostItem = memo(function PostItem({
           numberOfTaps={2}
           onHandlerStateChange={onDoubleTapMedia}
         >
-          {isMultiImage ? (
-            <View>
-              <SliderPageIndicator
-                current={currentMediaIndex + 1}
-                total={medias.length}
-              />
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                bounces={false}
-                overScrollMode="never"
-                pagingEnabled
-                onScroll={handleScroll}
-                testID="PostItem-Slider"
-              >
-                {medias.map(media => (
-                  <Image key={media.id} source={{ uri: media.url }} />
-                ))}
-              </ScrollView>
-            </View>
-          ) : (
-            <Image source={{ uri: medias[0].url }} />
-          )}
+          <View>
+            {isMultiImage ? (
+              <>
+                <SliderPageIndicator
+                  current={currentMediaIndex + 1}
+                  total={medias.length}
+                />
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  bounces={false}
+                  overScrollMode="never"
+                  pagingEnabled
+                  onScroll={handleScroll}
+                  testID="PostItem-Slider"
+                >
+                  {medias.map(media => (
+                    <PostItemImage
+                      key={media.id}
+                      media={media}
+                      waitFor={doubleTapRef}
+                    />
+                  ))}
+                </ScrollView>
+              </>
+            ) : (
+              <PostItemImage media={medias[0]} waitFor={doubleTapRef} />
+            )}
+          </View>
         </TapGestureHandler>
       </ImageContainer>
       <Footer>
@@ -397,6 +404,7 @@ const Footer = styled.View`
 
 const ImageContainer = styled.View`
   position: relative;
+  overflow: hidden;
 `;
 
 const HeartOverlayContainer = styled.View`
@@ -409,11 +417,6 @@ const AnimatedHeartOverlay = styled(Animated.View)`
   height: ${SCREEN_WIDTH}px;
   justify-content: center;
   align-items: center;
-`;
-
-const Image = styled.Image`
-  width: ${SCREEN_WIDTH}px;
-  height: ${SCREEN_WIDTH}px;
 `;
 
 const StyledPagination = styled(Pagination)`
