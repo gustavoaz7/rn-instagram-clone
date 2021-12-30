@@ -7,6 +7,7 @@ import type {
   TStory,
   TStoryMedia,
   TProfile,
+  TTappableObject,
 } from '../types';
 
 export const generateMockOwner = (): TOwner => ({
@@ -35,6 +36,23 @@ export const generateMockComment = (likesQty = 1): TComment => ({
     likes: [...Array(likesQty)].map(generateMockLike),
   },
   viewerHasLiked: false,
+});
+
+export const generateMockTappableObject = ({
+  type = 'mention',
+  text = 'random',
+  x = 0.1,
+  y = 0.2,
+  scale = 1.1,
+  rotation = 300,
+}: Partial<TTappableObject> = {}): TTappableObject => ({
+  id: `${Math.random()}`,
+  type,
+  text,
+  x,
+  y,
+  scale,
+  rotation,
 });
 
 export const generateMockPostMedia = ({ index = 0 } = {}): TPostMedia => ({
