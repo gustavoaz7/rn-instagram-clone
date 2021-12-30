@@ -1,0 +1,1 @@
+export { PostItemImage } from './PostItemImage';
