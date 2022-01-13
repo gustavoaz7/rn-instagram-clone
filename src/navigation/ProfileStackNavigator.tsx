@@ -4,7 +4,10 @@ import {
   createStackNavigator,
   StackNavigationProp,
 } from '@react-navigation/stack';
-import { CompositeNavigationProp } from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from '@react-navigation/native';
 import styled, { useTheme } from 'styled-components/native';
 import PlusRoundSvg from '../../assets/svg/plus-round.svg';
 import MenuSvg from '../../assets/svg/menu-hamburger.svg';
@@ -36,13 +39,18 @@ function HeaderLeft() {
 
 function HeaderRight() {
   const theme = useTheme();
+  const navigation = useNavigation<TProfileStackNavigationProps>();
 
   return (
     <HeaderRightContainer>
       <IconContainer>
         <PlusRoundSvg color={theme.color.black} width={28} height={28} />
       </IconContainer>
-      <IconContainer>
+      <IconContainer
+        onPress={() =>
+          navigation.navigate(ROOT_STACK_SCREENS.SETTINGS_BOTTOM_SHEET)
+        }
+      >
         <MenuSvg color={theme.color.black} width={28} height={28} />
       </IconContainer>
     </HeaderRightContainer>
