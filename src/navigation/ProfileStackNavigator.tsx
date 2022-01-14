@@ -50,7 +50,7 @@ function HeaderRight() {
       </IconContainer>
       <IconContainer
         onPress={() =>
-          navigation.navigate(ROOT_STACK_SCREENS.SETTINGS_BOTTOM_SHEET)
+          navigation.navigate(ROOT_STACK_SCREENS.PROFILE_BOTTOM_SHEET)
         }
       >
         <MenuSvg color={theme.color.black} width={28} height={28} />

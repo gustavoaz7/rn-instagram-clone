@@ -12,17 +12,17 @@ import {
 } from 'react-native-gesture-handler';
 import styled, { useTheme } from 'styled-components/native';
 import { SvgProps } from 'react-native-svg';
-import { Text } from '../components/text';
-import { SCREEN_HEIGHT } from '../utils/dimensions';
-import SettingsSvg from '../../assets/svg/settings.svg';
-import ArchiveSvg from '../../assets/svg/counter-clockwise-clock.svg';
-import ActivitySvg from '../../assets/svg/activity-clock.svg';
-import QRCodeSvg from '../../assets/svg/qrcode-scan.svg';
-import BookmarkSvg from '../../assets/svg/bookmark.svg';
-import CreditCardSvg from '../../assets/svg/credit-card.svg';
-import { PROFILE_STACK_SCREENS } from '../navigation/screens';
+import { Text } from '../../components/text';
+import { SCREEN_HEIGHT } from '../../utils/dimensions';
+import SettingsSvg from '../../../assets/svg/settings.svg';
+import ArchiveSvg from '../../../assets/svg/counter-clockwise-clock.svg';
+import ActivitySvg from '../../../assets/svg/activity-clock.svg';
+import QRCodeSvg from '../../../assets/svg/qrcode-scan.svg';
+import BookmarkSvg from '../../../assets/svg/bookmark.svg';
+import CreditCardSvg from '../../../assets/svg/credit-card.svg';
+import { PROFILE_STACK_SCREENS } from '../../navigation/screens';
 
-export const SettingsBottomSheetScreen = (): JSX.Element => {
+export const ProfileBottomSheetScreen = (): JSX.Element => {
   const theme = useTheme();
   const navigation = useNavigation();
   const bottomSheetOffsetY = React.useMemo(() => new Animated.Value(0), []);

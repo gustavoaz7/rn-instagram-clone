@@ -34,5 +34,5 @@ export enum ROOT_STACK_SCREENS {
   HOME_SWIPE = '@Root-Stack/Home-Swipe',
   COMMENTS = '@Root-Stack/Comments',
   STORY = '@Root-Stack/Story',
-  SETTINGS_BOTTOM_SHEET = '@Root-Stack/Settings-Bottom-Sheet',
+  PROFILE_BOTTOM_SHEET = '@Root-Stack/Profile-Bottom-Sheet',
 }

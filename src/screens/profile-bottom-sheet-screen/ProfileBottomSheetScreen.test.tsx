@@ -6,17 +6,17 @@ import {
   TapGestureHandler,
 } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { Providers } from '../Providers';
-import { FakeNavigator } from '../test/fake-navigator';
-import { SettingsBottomSheetScreen } from './SettingsBottomSheetScreen';
-import { SCREEN_HEIGHT } from '../utils/dimensions';
+import { Providers } from '../../Providers';
+import { FakeNavigator } from '../../test/fake-navigator';
+import { ProfileBottomSheetScreen } from './ProfileBottomSheetScreen';
+import { SCREEN_HEIGHT } from '../../utils/dimensions';
 import {
   setupTimeTravel,
   destroyTimeTravel,
   timeTravel,
-} from '../test/time-travel';
-import { theme } from '../styles/theme';
-import { PROFILE_STACK_SCREENS } from '../navigation/screens';
+} from '../../test/time-travel';
+import { theme } from '../../styles/theme';
+import { PROFILE_STACK_SCREENS } from '../../navigation/screens';
 
 jest.mock('@react-navigation/native', () => {
   const reactNavigation = jest.requireActual('@react-navigation/native');
@@ -27,11 +27,20 @@ jest.mock('@react-navigation/native', () => {
 });
 const useNavigationMock = useNavigation as jest.Mock;
 
-describe('screens - SettingsBottomSheetScreen', () => {
+describe('screens - ProfileBottomSheetScreen', () => {
   const options = { wrapper: Providers };
 
   it('renders', () => {
-    render(<FakeNavigator component={SettingsBottomSheetScreen} />, options);
+    render(<FakeNavigator component={ProfileBottomSheetScreen} />, options);
+  });
+
+  it('matches snapshot', () => {
+    const { toJSON } = render(
+      <FakeNavigator component={ProfileBottomSheetScreen} />,
+      options,
+    );
+
+    expect(toJSON()).toMatchSnapshot();
   });
 
   describe('on single tap', () => {
@@ -40,7 +49,7 @@ describe('screens - SettingsBottomSheetScreen', () => {
       useNavigationMock.mockReturnValueOnce({ goBack: goBackSpy });
       const height = SCREEN_HEIGHT / 2;
       const { getByTestId, UNSAFE_getByType } = render(
-        <FakeNavigator component={SettingsBottomSheetScreen} />,
+        <FakeNavigator component={ProfileBottomSheetScreen} />,
         options,
       );
 
@@ -61,7 +70,7 @@ describe('screens - SettingsBottomSheetScreen', () => {
       useNavigationMock.mockReturnValueOnce({ goBack: goBackSpy });
       const height = SCREEN_HEIGHT / 2;
       const { getByTestId, UNSAFE_getByType } = render(
-        <FakeNavigator component={SettingsBottomSheetScreen} />,
+        <FakeNavigator component={ProfileBottomSheetScreen} />,
         options,
       );
 
@@ -87,7 +96,7 @@ describe('screens - SettingsBottomSheetScreen', () => {
         const height = SCREEN_HEIGHT / 2;
         const translationY = height * 0.21;
         const { getByTestId, UNSAFE_getAllByType } = render(
-          <FakeNavigator component={SettingsBottomSheetScreen} />,
+          <FakeNavigator component={ProfileBottomSheetScreen} />,
           options,
         );
 
@@ -126,7 +135,7 @@ describe('screens - SettingsBottomSheetScreen', () => {
         const height = SCREEN_HEIGHT / 2;
         const translationY = height * 0.19;
         const { getByTestId, UNSAFE_getAllByType } = render(
-          <FakeNavigator component={SettingsBottomSheetScreen} />,
+          <FakeNavigator component={ProfileBottomSheetScreen} />,
           options,
         );
 
@@ -162,7 +171,7 @@ describe('screens - SettingsBottomSheetScreen', () => {
       const navigateSpy = jest.fn();
       useNavigationMock.mockReturnValueOnce({ navigate: navigateSpy });
       const { getByText } = render(
-        <FakeNavigator component={SettingsBottomSheetScreen} />,
+        <FakeNavigator component={ProfileBottomSheetScreen} />,
         options,
       );
 
