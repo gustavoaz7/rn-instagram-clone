@@ -109,6 +109,7 @@ export const SettingsBottomSheetScreen = (): JSX.Element => {
         >
           <FullScreenView>
             <BottomSheet
+              testID="BottomSheet"
               onLayout={handleLayout}
               style={{ transform: [{ translateY: bottomSheetOffsetY }] }}
             >
