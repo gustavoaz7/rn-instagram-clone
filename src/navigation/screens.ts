@@ -1,5 +1,6 @@
 export enum PROFILE_STACK_SCREENS {
   PROFILE = '@Profile-Stack/Profile',
+  SETTINGS = '@Profile-Stack/Settings',
 }
 
 export enum BOTTOM_TAB_SCREENS {

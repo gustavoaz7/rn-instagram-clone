@@ -20,6 +20,7 @@ import ActivitySvg from '../../assets/svg/activity-clock.svg';
 import QRCodeSvg from '../../assets/svg/qrcode-scan.svg';
 import BookmarkSvg from '../../assets/svg/bookmark.svg';
 import CreditCardSvg from '../../assets/svg/credit-card.svg';
+import { PROFILE_STACK_SCREENS } from '../navigation/screens';
 
 export const SettingsBottomSheetScreen = (): JSX.Element => {
   const theme = useTheme();
@@ -92,8 +93,8 @@ export const SettingsBottomSheetScreen = (): JSX.Element => {
   );
 
   const goToSettings = useCallback(() => {
-    // TODO navigate to settings screen
-  }, []);
+    navigation.navigate(PROFILE_STACK_SCREENS.SETTINGS);
+  }, [navigation]);
 
   return (
     <TapGestureHandler
