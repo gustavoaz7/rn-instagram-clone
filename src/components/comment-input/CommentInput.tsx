@@ -44,12 +44,7 @@ export const CommentInput = ({ onSubmit }: TCommentInputProps): JSX.Element => {
           color="transparent"
           imageUrl={user?.profilePicUrl}
         />
-        <Input
-          value={text}
-          onChangeText={handleTextChange}
-          placeholder="Add a comment..."
-          multiline
-        />
+        <Input value={text} onChangeText={handleTextChange} />
         <PostButton disabled={!text.length} onPress={handlePostPress}>
           <PostText>Post</PostText>
         </PostButton>
@@ -119,10 +114,15 @@ const Emoji = styled(Text)`
   font-size: ${SCREEN_WIDTH / (EMOJIS.length * 2)}px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled.TextInput.attrs(({ theme }) => ({
+  placeholder: 'Add a comment...',
+  placeholderTextColor: theme.color.foreground,
+  multiline: true,
+}))`
   flex: 1;
   padding: 0 ${({ theme }) => theme.spacing.m};
   max-height: 120px;
+  color: ${({ theme }) => theme.color.foreground};
 `;
 
 const PostButton = styled.Pressable`

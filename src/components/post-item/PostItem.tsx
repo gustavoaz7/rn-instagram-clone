@@ -295,7 +295,7 @@ export const PostItem = memo(function PostItem({
                 style={{ transform: [{ scale: heartScale }] }}
               >
                 <HeartSvg
-                  color={isLiked ? theme.color.red : theme.color.black}
+                  color={isLiked ? theme.color.red : theme.color.foreground}
                   fill={isLiked ? theme.color.red : 'none'}
                   testID="PostItem-Heart"
                 />
@@ -435,7 +435,7 @@ const actionsSvgStyle = css`
 `;
 
 const MenuVerticalIcon = styled(MenuVerticalSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
+  color: theme.color.foreground,
 }))``;
 
 const HeartContainer = styled.View`
@@ -443,19 +443,19 @@ const HeartContainer = styled.View`
 `;
 
 const CommentIcon = styled(CommentSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
+  color: theme.color.foreground,
 }))`
   ${actionsSvgStyle};
 `;
 
 const DirectIcon = styled(DirectSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
+  color: theme.color.foreground,
 }))`
   ${actionsSvgStyle};
 `;
 
 const BookmarkIcon = styled(BookmarkSvg).attrs(({ theme }) => ({
-  color: theme.color.black,
+  color: theme.color.foreground,
 }))``;
 
 const WeakText = styled(Text)`

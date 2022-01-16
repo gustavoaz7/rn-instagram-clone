@@ -7,7 +7,6 @@ import {
 import { SvgProps } from 'react-native-svg';
 import styled, { DefaultTheme, useTheme } from 'styled-components/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { SearchScreen } from '../screens/SearchScreen';
 import { NotImplemented } from '../screens/NotImplemented';
 import Home from '../../assets/svg/home.svg';
 import Search from '../../assets/svg/search.svg';
@@ -49,7 +48,7 @@ function createTabBarIcon(
   { color }: DefaultTheme,
 ): JSX.Element {
   const Icon = SCREEN_ICON_MAP[screen];
-  return <Icon color={focused ? color.black : color.gray} />;
+  return <Icon color={focused ? color.foreground : color.gray} />;
 }
 
 const Tab = createBottomTabNavigator<TBottomTabParams>();
@@ -73,7 +72,7 @@ export function BottomTabNavigator(): JSX.Element {
       />
       <Tab.Screen
         name={BOTTOM_TAB_SCREENS.SEARCH}
-        component={SearchScreen}
+        component={NotImplemented}
         options={{
           tabBarIcon: ({ focused }) =>
             createTabBarIcon(BOTTOM_TAB_SCREENS.SEARCH, focused, theme),
@@ -114,5 +113,5 @@ const Avatar = styled.Image<{ focused: boolean }>`
   border-radius: 24px;
   border-width: 2px;
   border-color: ${({ theme, focused }) =>
-    focused ? theme.color.black : 'transparent'};
+    focused ? theme.color.foreground : 'transparent'};
 `;

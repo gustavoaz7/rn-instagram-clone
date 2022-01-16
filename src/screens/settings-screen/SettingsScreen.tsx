@@ -11,6 +11,7 @@ import HelpSvg from '../../../assets/svg/help.svg';
 import AboutSvg from '../../../assets/svg/info-circle.svg';
 import ThemeSvg from '../../../assets/svg/paint-palette.svg';
 import { Text } from '../../components/text';
+import { addAlphaToHEX } from '../../utils/color';
 
 export const SettingsScreen = (): JSX.Element => {
   const theme = useTheme();
@@ -19,9 +20,9 @@ export const SettingsScreen = (): JSX.Element => {
     () => ({
       width: 28,
       height: 28,
-      color: theme.color.black,
+      color: theme.color.foreground,
     }),
-    [theme.color.black],
+    [theme.color.foreground],
   );
 
   const goToTheme = useCallback(() => {
@@ -83,7 +84,7 @@ export const SettingsScreen = (): JSX.Element => {
 };
 
 const ItemTouchable = styled.TouchableHighlight.attrs(({ theme }) => ({
-  underlayColor: `${theme.color.black}1A`,
+  underlayColor: addAlphaToHEX(theme.color.foreground, 0.1),
 }))``;
 
 const Item = styled.View`

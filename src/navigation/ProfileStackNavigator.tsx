@@ -48,14 +48,14 @@ function HeaderRight() {
   return (
     <HeaderRightContainer>
       <IconContainer>
-        <PlusRoundSvg color={theme.color.black} width={28} height={28} />
+        <PlusRoundSvg color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
       <IconContainer
         onPress={() =>
           navigation.navigate(ROOT_STACK_SCREENS.PROFILE_BOTTOM_SHEET)
         }
       >
-        <MenuSvg color={theme.color.black} width={28} height={28} />
+        <MenuSvg color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
     </HeaderRightContainer>
   );

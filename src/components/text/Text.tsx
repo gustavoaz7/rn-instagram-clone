@@ -11,5 +11,5 @@ export function Text({ children, ...props }: TextProps): JSX.Element {
 }
 
 const StyledText = styled(RNText)`
-  color: ${({ theme }) => theme.color.black};
+  color: ${({ theme }) => theme.color.foreground};
 `;
