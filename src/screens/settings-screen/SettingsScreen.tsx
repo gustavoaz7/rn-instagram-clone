@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { ScrollView } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 import styled, { useTheme } from 'styled-components/native';
+import { useNavigation } from '@react-navigation/native';
 import UserPlusSvg from '../../../assets/svg/user-plus.svg';
 import BellSvg from '../../../assets/svg/bell.svg';
 import LockSvg from '../../../assets/svg/lock.svg';
@@ -11,10 +12,12 @@ import HelpSvg from '../../../assets/svg/help.svg';
 import AboutSvg from '../../../assets/svg/info-circle.svg';
 import ThemeSvg from '../../../assets/svg/paint-palette.svg';
 import { Text } from '../../components/text';
+import { PROFILE_STACK_SCREENS } from '../../navigation/screens';
 import { addAlphaToHEX } from '../../utils/color';
 
 export const SettingsScreen = (): JSX.Element => {
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const sharedSvgProps: SvgProps = useMemo(
     () => ({
@@ -26,8 +29,8 @@ export const SettingsScreen = (): JSX.Element => {
   );
 
   const goToTheme = useCallback(() => {
-    // TODO - navigate to themes screen
-  }, []);
+    navigation.navigate(PROFILE_STACK_SCREENS.THEME);
+  }, [navigation]);
 
   return (
     <ScrollView>
