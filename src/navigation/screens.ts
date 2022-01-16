@@ -1,5 +1,6 @@
 export enum PROFILE_STACK_SCREENS {
   PROFILE = '@Profile-Stack/Profile',
+  SETTINGS = '@Profile-Stack/Settings',
 }
 
 export enum BOTTOM_TAB_SCREENS {
@@ -33,4 +34,5 @@ export enum ROOT_STACK_SCREENS {
   HOME_SWIPE = '@Root-Stack/Home-Swipe',
   COMMENTS = '@Root-Stack/Comments',
   STORY = '@Root-Stack/Story',
+  PROFILE_BOTTOM_SHEET = '@Root-Stack/Profile-Bottom-Sheet',
 }
