@@ -18,10 +18,12 @@ import { ProfileScreen } from '../screens/profile-screen';
 import { Text } from '../components/text';
 import { useUserSelector } from '../redux/user';
 import { SettingsScreen } from '../screens/settings-screen';
+import { ThemeScreen } from '../screens/theme-screen';
 
 export type TProfileStackParams = {
   [PROFILE_STACK_SCREENS.PROFILE]: { username: string };
   [PROFILE_STACK_SCREENS.SETTINGS]: undefined;
+  [PROFILE_STACK_SCREENS.THEME]: undefined;
 };
 
 export type TProfileStackNavigationProps = CompositeNavigationProp<
@@ -90,6 +92,13 @@ export function ProfileStackNavigator(): JSX.Element {
         component={SettingsScreen}
         options={{
           headerTitle: 'Settings',
+        }}
+      />
+      <Stack.Screen
+        name={PROFILE_STACK_SCREENS.THEME}
+        component={ThemeScreen}
+        options={{
+          headerTitle: 'Set Theme',
         }}
       />
     </Stack.Navigator>
