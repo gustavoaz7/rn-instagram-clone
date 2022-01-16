@@ -682,7 +682,7 @@ describe('components - PostItem', () => {
     });
   });
 
-  describe.only('mentions - when user single-tap post image', () => {
+  describe('mentions - when user single-tap post image', () => {
     describe('when post has no mentions', () => {
       it('does nothing', async () => {
         const mentionlessPost: TPost = {
