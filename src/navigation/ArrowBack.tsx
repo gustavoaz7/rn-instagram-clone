@@ -9,7 +9,7 @@ export function ArrowBack(): JSX.Element {
 
   return (
     <ArrowContainer onPress={navigation.goBack}>
-      <ArrowLeft color={theme.color.black} />
+      <ArrowLeft color={theme.color.foreground} />
     </ArrowContainer>
   );
 }

@@ -33,12 +33,12 @@ function HeaderRight() {
       <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.VIDEO)}
       >
-        <Video color={theme.color.black} />
+        <Video color={theme.color.foreground} />
       </RightIconContainer>
       <RightIconContainer
         onPress={() => navigation.navigate(DIRECT_STACK_SCREENS.MESSAGE)}
       >
-        <Edit color={theme.color.black} />
+        <Edit color={theme.color.foreground} />
       </RightIconContainer>
     </HeaderRightContainer>
   );

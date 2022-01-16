@@ -15,7 +15,7 @@ import {
   destroyTimeTravel,
   timeTravel,
 } from '../../test/time-travel';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import { PROFILE_STACK_SCREENS } from '../../navigation/screens';
 
 jest.mock('@react-navigation/native', () => {
@@ -117,7 +117,7 @@ describe('screens - ProfileBottomSheetScreen', () => {
         ]);
         expect(goBackSpy).not.toBeCalled();
 
-        timeTravel(theme.animation.timingFast);
+        timeTravel(defaultTheme.animation.timingFast);
 
         expect(getByTestId('BottomSheet').props.style.transform).toEqual([
           { translateY: height },

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text } from 'react-native';
 import styled from 'styled-components/native';
+import { Text } from '../components/text';
 
 export function NotImplemented(): JSX.Element {
   return (

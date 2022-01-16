@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ViewProps, Animated } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
+import { addAlphaToHEX } from '../../utils/color';
 
 export type TSliderPageCounterProps = {
   total: number;
@@ -63,6 +64,6 @@ const MediaCounterTag = styled(Animated.Text)`
     padding: ${spacing.xs} ${spacing.s};
     border-radius: 99px;
     color: ${color.white};
-    background-color: ${color.black}E6;
+    background-color: ${addAlphaToHEX(color.black, 0.9)};
   `}
 `;

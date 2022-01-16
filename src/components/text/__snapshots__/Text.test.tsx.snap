@@ -5,7 +5,7 @@ exports[`components - Text matches snapshot 1`] = `
   style={
     Array [
       Object {
-        "color": "#262626",
+        "color": "#020202",
       },
     ]
   }

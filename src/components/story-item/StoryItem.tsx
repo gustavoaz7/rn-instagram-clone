@@ -16,6 +16,7 @@ import { Text } from '../text';
 import { dateToString } from '../../utils/date';
 import { StoryReactionAnimation } from '../story-reaction-animation';
 import { EMOJIS } from '../../constants';
+import { addAlphaToHEX } from '../../utils/color';
 
 export const STORY_TIMEOUT = 5000;
 
@@ -314,7 +315,7 @@ const Username = styled(Text)`
 `;
 
 const Time = styled(Text)`
-  color: ${({ theme }) => theme.color.white}CC;
+  color: ${({ theme }) => addAlphaToHEX(theme.color.white, 0.8)};
   margin-left: ${({ theme }) => theme.spacing.s};
 `;
 
@@ -337,7 +338,7 @@ const FakeInput = styled.Pressable`
   border-radius: 25px;
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.white}80;
+  border-color: ${({ theme }) => addAlphaToHEX(theme.color.white, 0.5)};
 `;
 
 const FakePlaceholder = styled(Text)`
@@ -355,7 +356,7 @@ const Input = styled.TextInput.attrs(({ theme }) => ({
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
   max-height: 100px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.white}80;
+  border-color: ${({ theme }) => addAlphaToHEX(theme.color.white, 0.5)};
   color: ${({ theme }) => theme.color.white};
 `;
 
@@ -383,7 +384,7 @@ const progressBarItemClass = css`
 const ProgressBarItem = styled.View`
   ${progressBarItemClass};
   margin: 0 2px;
-  background-color: ${({ theme }) => theme.color.white}80;
+  background-color: ${({ theme }) => addAlphaToHEX(theme.color.white, 0.5)};
 `;
 
 const ProgressBarItemAnimated = styled(Animated.View)`
@@ -393,7 +394,7 @@ const ProgressBarItemAnimated = styled(Animated.View)`
 
 const ReplyContainer = styled.View`
   ${StyleSheet.absoluteFill};
-  background-color: ${({ theme }) => theme.color.black}80;
+  background-color: ${({ theme }) => addAlphaToHEX(theme.color.black, 0.5)};
   flex-direction: row;
   align-items: center;
 `;

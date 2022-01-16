@@ -72,7 +72,7 @@ exports[`components - AvatarWithRing matches snapshot 1`] = `
         style={
           Array [
             Object {
-              "borderColor": "#26262633",
+              "borderColor": "#02020233",
               "borderRadius": 62,
               "borderWidth": 2,
               "height": 62,
@@ -158,7 +158,7 @@ exports[`components - AvatarWithRing matches snapshot for custom ringWidth and o
         style={
           Array [
             Object {
-              "borderColor": "#26262633",
+              "borderColor": "#02020233",
               "borderRadius": 58,
               "borderWidth": 2,
               "height": 58,
@@ -297,7 +297,7 @@ exports[`components - AvatarWithRing matches snapshot for loading case 1`] = `
         style={
           Array [
             Object {
-              "borderColor": "#26262633",
+              "borderColor": "#02020233",
               "borderRadius": 62,
               "borderWidth": 2,
               "height": 62,

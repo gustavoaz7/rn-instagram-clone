@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Animated, Easing, StyleSheet } from 'react-native';
 import styled, { css, useTheme } from 'styled-components/native';
 import Svg, { Circle } from 'react-native-svg';
+import { addAlphaToHEX } from '../../utils/color';
 
 export type TAvatarWithRingProps = {
   size: number;
@@ -68,7 +69,7 @@ export const AvatarWithRing = memo(function AvatarWithRing({
               cy={size / 2}
               r={size / 2}
               fill="none"
-              stroke={theme.color.white}
+              stroke={theme.color.background}
               strokeWidth={ringWidth * 2}
               strokeDasharray={(Math.PI * size) / DASHES_COUNT}
             />
@@ -110,7 +111,7 @@ const GradientRing = styled(LinearGradient)`
 
 const AvatarContainer = styled.View<Record<'size' | 'ringWidth', number>>`
   ${centerStyle};
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.color.background};
   ${({ size, ringWidth }) => `
     height: ${size - ringWidth * 2}px;
     width: ${size - ringWidth * 2}px;
@@ -124,7 +125,7 @@ const Avatar = styled.Image<Record<'size' | 'ringWidth' | 'offset', number>>`
     width: ${size - ringWidth * 2 - offset * 2}px;
     border-radius: ${size - ringWidth * 2 - offset * 2}px;
     border-width: 2px;
-    border-color: ${`${theme.color.black}33`};
+    border-color: ${`${addAlphaToHEX(theme.color.black, 0.2)}`};
   `}
 `;
 

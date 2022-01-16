@@ -4,7 +4,7 @@ import Toast from 'react-native-root-toast';
 import { generateMockComment } from '../../data';
 import { Comment } from './Comment';
 import { Providers } from '../../Providers';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import { postLike } from '../../services/likes';
 import { flushPromises } from '../../test/flush-promises';
 import { makeFail, makeSuccess } from '../../utils/remote-data';
@@ -79,8 +79,8 @@ describe('components - Comment', () => {
 
         const heartIcon = getByTestId('Comment-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       describe('when user press heart icon', () => {
@@ -127,15 +127,15 @@ describe('components - Comment', () => {
 
         const heartIcon = getByTestId('Comment-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
           fireEvent.press(heartIcon);
         });
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       it('disables press until request is completed', async () => {
@@ -144,7 +144,7 @@ describe('components - Comment', () => {
 
         const heartIcon = getByTestId('Comment-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
@@ -152,23 +152,23 @@ describe('components - Comment', () => {
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(2);
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
       });
 

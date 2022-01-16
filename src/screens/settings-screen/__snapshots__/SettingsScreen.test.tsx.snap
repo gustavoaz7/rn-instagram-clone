@@ -320,7 +320,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -328,7 +328,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -371,7 +371,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -379,7 +379,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -422,7 +422,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -430,7 +430,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -473,7 +473,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -481,7 +481,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -524,7 +524,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -532,7 +532,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -575,7 +575,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -583,7 +583,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -626,7 +626,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -634,7 +634,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,
@@ -677,7 +677,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                             }
                           >
                             <SvgMock
-                              color="#262626"
+                              color="#020202"
                               height={28}
                               width={28}
                             />
@@ -685,7 +685,7 @@ exports[`screens - SettingsScreen matches snapshot 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "color": "#262626",
+                                    "color": "#020202",
                                   },
                                   Object {
                                     "marginLeft": 10,

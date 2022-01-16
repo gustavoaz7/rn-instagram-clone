@@ -107,7 +107,7 @@ exports[`components - PostItem matches snapshot 1`] = `
               style={
                 Array [
                   Object {
-                    "borderColor": "#26262633",
+                    "borderColor": "#02020233",
                     "borderRadius": 32,
                     "borderWidth": 2,
                     "height": 32,
@@ -132,7 +132,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontWeight": "bold",
@@ -146,7 +146,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 12,
@@ -160,7 +160,7 @@ exports[`components - PostItem matches snapshot 1`] = `
       </View>
     </View>
     <SvgMock
-      color="#262626"
+      color="#020202"
       style={
         Array [
           Object {},
@@ -276,14 +276,14 @@ exports[`components - PostItem matches snapshot 1`] = `
             }
           >
             <SvgMock
-              color="#262626"
+              color="#020202"
               fill="none"
               testID="PostItem-Heart"
             />
           </View>
         </View>
         <SvgMock
-          color="#262626"
+          color="#020202"
           style={
             Array [
               Object {
@@ -293,7 +293,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           }
         />
         <SvgMock
-          color="#262626"
+          color="#020202"
           style={
             Array [
               Object {
@@ -304,7 +304,7 @@ exports[`components - PostItem matches snapshot 1`] = `
         />
       </View>
       <SvgMock
-        color="#262626"
+        color="#020202"
         style={
           Array [
             Object {},
@@ -316,7 +316,7 @@ exports[`components - PostItem matches snapshot 1`] = `
       style={
         Array [
           Object {
-            "color": "#262626",
+            "color": "#020202",
           },
           Object {
             "fontWeight": "bold",
@@ -334,7 +334,7 @@ exports[`components - PostItem matches snapshot 1`] = `
       style={
         Array [
           Object {
-            "color": "#262626",
+            "color": "#020202",
           },
         ]
       }
@@ -344,7 +344,7 @@ exports[`components - PostItem matches snapshot 1`] = `
         style={
           Array [
             Object {
-              "color": "#262626",
+              "color": "#020202",
             },
             Object {
               "fontWeight": "bold",
@@ -362,7 +362,7 @@ exports[`components - PostItem matches snapshot 1`] = `
       style={
         Array [
           Object {
-            "color": "#262626",
+            "color": "#020202",
           },
           Object {
             "color": "#8e8e8e",
@@ -390,7 +390,7 @@ exports[`components - PostItem matches snapshot 1`] = `
         style={
           Array [
             Object {
-              "color": "#262626",
+              "color": "#020202",
             },
             Object {
               "flexBasis": 0,
@@ -405,7 +405,7 @@ exports[`components - PostItem matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontWeight": "bold",
@@ -458,7 +458,7 @@ exports[`components - PostItem matches snapshot 1`] = `
       style={
         Array [
           Object {
-            "color": "#262626",
+            "color": "#020202",
           },
           Object {
             "color": "#8e8e8e",

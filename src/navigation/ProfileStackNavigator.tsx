@@ -18,10 +18,12 @@ import { ProfileScreen } from '../screens/profile-screen';
 import { Text } from '../components/text';
 import { useUserSelector } from '../redux/user';
 import { SettingsScreen } from '../screens/settings-screen';
+import { ThemeScreen } from '../screens/theme-screen';
 
 export type TProfileStackParams = {
   [PROFILE_STACK_SCREENS.PROFILE]: { username: string };
   [PROFILE_STACK_SCREENS.SETTINGS]: undefined;
+  [PROFILE_STACK_SCREENS.THEME]: undefined;
 };
 
 export type TProfileStackNavigationProps = CompositeNavigationProp<
@@ -46,14 +48,14 @@ function HeaderRight() {
   return (
     <HeaderRightContainer>
       <IconContainer>
-        <PlusRoundSvg color={theme.color.black} width={28} height={28} />
+        <PlusRoundSvg color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
       <IconContainer
         onPress={() =>
           navigation.navigate(ROOT_STACK_SCREENS.PROFILE_BOTTOM_SHEET)
         }
       >
-        <MenuSvg color={theme.color.black} width={28} height={28} />
+        <MenuSvg color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
     </HeaderRightContainer>
   );
@@ -90,6 +92,13 @@ export function ProfileStackNavigator(): JSX.Element {
         component={SettingsScreen}
         options={{
           headerTitle: 'Settings',
+        }}
+      />
+      <Stack.Screen
+        name={PROFILE_STACK_SCREENS.THEME}
+        component={ThemeScreen}
+        options={{
+          headerTitle: 'Set Theme',
         }}
       />
     </Stack.Navigator>

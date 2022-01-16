@@ -8,7 +8,7 @@ import { ProfileScreen, POSTS_LIMIT } from './ProfileScreen';
 import { Providers } from '../../Providers';
 import { generateMockPost, generateMockProfile } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import { fetchUserPosts } from '../../services/posts';
 import { fetchProfile } from '../../services/user';
 import { makeFail, makeSuccess } from '../../utils/remote-data';
@@ -298,8 +298,10 @@ describe('screens - ProfileScreen', () => {
           });
           const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
-          expect(refreshControl.props.tintColor).toBe(theme.color.gray);
-          expect(refreshControl.props.colors).toEqual([theme.color.gray]);
+          expect(refreshControl.props.tintColor).toBe(defaultTheme.color.gray);
+          expect(refreshControl.props.colors).toEqual([
+            defaultTheme.color.gray,
+          ]);
         });
       });
     });

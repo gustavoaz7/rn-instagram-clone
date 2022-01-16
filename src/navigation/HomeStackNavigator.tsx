@@ -44,7 +44,7 @@ function HeaderLeft() {
 
   return (
     <LogoContainer>
-      <LogoText color={theme.color.black} />
+      <LogoText color={theme.color.foreground} />
     </LogoContainer>
   );
 }
@@ -56,12 +56,12 @@ function HeaderRight() {
   return (
     <HeaderRightContainer>
       <IconContainer>
-        <PlusRound color={theme.color.black} width={28} height={28} />
+        <PlusRound color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
       <IconContainer
         onPress={() => navigation.navigate(HOME_STACK_SCREENS.ACTIVITY)}
       >
-        <Heart color={theme.color.black} width={28} height={28} />
+        <Heart color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
       <IconContainer
         onPress={() =>
@@ -70,7 +70,7 @@ function HeaderRight() {
           })
         }
       >
-        <Direct color={theme.color.black} width={28} height={28} />
+        <Direct color={theme.color.foreground} width={28} height={28} />
       </IconContainer>
     </HeaderRightContainer>
   );

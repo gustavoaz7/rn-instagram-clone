@@ -8,7 +8,7 @@ import * as reduxStories from '../../redux/stories';
 import * as reduxHooks from '../../redux/hooks';
 import { generateMockPost, generateMockStory } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import { fetchPosts } from '../../services/posts';
 import { makeFail, makeSuccess } from '../../utils/remote-data';
 import { flushPromises } from '../../test/flush-promises';
@@ -258,8 +258,8 @@ describe('screens - FeedScreen', () => {
         });
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
-        expect(refreshControl.props.tintColor).toBe(theme.color.gray);
-        expect(refreshControl.props.colors).toEqual([theme.color.gray]);
+        expect(refreshControl.props.tintColor).toBe(defaultTheme.color.gray);
+        expect(refreshControl.props.colors).toEqual([defaultTheme.color.gray]);
       });
     });
 

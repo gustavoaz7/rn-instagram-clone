@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react-native';
+import { ThemeProvider } from 'styled-components/native';
 import { Text, TextProps } from './Text';
 import { Providers } from '../../Providers';
-import { theme } from '../../styles/theme';
+import { theme, THEME_VARIANTS } from '../../styles/theme';
 
 describe('components - Text', () => {
   const options: RenderOptions = { wrapper: Providers };
@@ -18,11 +19,21 @@ describe('components - Text', () => {
     expect(toJSON()).toMatchSnapshot();
   });
 
-  it('has color from theme', () => {
-    const { getByText } = render(<Text>{text}</Text>, options);
+  it.each([THEME_VARIANTS.LIGHT, THEME_VARIANTS.DARK])(
+    'uses foreground color for %p theme',
+    variant => {
+      const { getByText } = render(
+        <ThemeProvider theme={theme[variant]}>
+          <Text>{text}</Text>
+        </ThemeProvider>,
+        options,
+      );
 
-    expect(getByText(text)).toHaveStyle({ color: theme.color.black });
-  });
+      expect(getByText(text)).toHaveStyle({
+        color: theme[variant].color.foreground,
+      });
+    },
+  );
 
   it('passes props to RN text component', () => {
     const props: TextProps = {

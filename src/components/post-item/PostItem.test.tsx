@@ -21,7 +21,7 @@ import {
   generateMockTappableObject,
 } from '../../data';
 import { ROOT_STACK_SCREENS } from '../../navigation/screens';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import {
   timeTravel,
   setupTimeTravel,
@@ -123,8 +123,8 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       describe('when user press heart icon', () => {
@@ -186,15 +186,15 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.foreground);
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
           fireEvent.press(heartIcon);
         });
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       it('disables press until request is completed', async () => {
@@ -203,7 +203,7 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.foreground);
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
@@ -211,23 +211,23 @@ describe('components - PostItem', () => {
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(2);
-        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.foreground);
         expect(heartIcon.props.fill).toBe('none');
       });
     });
@@ -363,7 +363,7 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-Heart');
 
-        expect(heartIcon.props.color).toBe(theme.color.black);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.foreground);
         expect(heartIcon.props.fill).toBe('none');
 
         await act(async () => {
@@ -372,8 +372,8 @@ describe('components - PostItem', () => {
           });
         });
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       it('renders heart overlay and then hides it', async () => {
@@ -531,8 +531,8 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-CommentHeart');
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       describe('when user press heart icon', () => {
@@ -577,15 +577,15 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-CommentHeart');
 
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
       });
 
       it('disables press until request is completed', async () => {
@@ -594,7 +594,7 @@ describe('components - PostItem', () => {
 
         const heartIcon = getByTestId('PostItem-CommentHeart');
 
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
 
         act(() => {
@@ -602,23 +602,23 @@ describe('components - PostItem', () => {
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(1);
-        expect(heartIcon.props.color).toBe(theme.color.red);
-        expect(heartIcon.props.fill).toBe(theme.color.red);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.red);
+        expect(heartIcon.props.fill).toBe(defaultTheme.color.red);
 
         await act(async () => {
           fireEvent.press(heartIcon);
         });
 
         expect(postLikeMock).toHaveBeenCalledTimes(2);
-        expect(heartIcon.props.color).toBe(theme.color.gray);
+        expect(heartIcon.props.color).toBe(defaultTheme.color.gray);
         expect(heartIcon.props.fill).toBe('none');
       });
 
@@ -682,7 +682,7 @@ describe('components - PostItem', () => {
     });
   });
 
-  describe.only('mentions - when user single-tap post image', () => {
+  describe('mentions - when user single-tap post image', () => {
     describe('when post has no mentions', () => {
       it('does nothing', async () => {
         const mentionlessPost: TPost = {

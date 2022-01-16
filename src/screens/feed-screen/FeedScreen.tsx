@@ -19,6 +19,7 @@ import {
   makeUninitialized,
 } from '../../utils/remote-data';
 import { TRemotePosts, fetchPosts } from '../../services/posts';
+import { addAlphaToHEX } from '../../utils/color';
 
 export const POSTS_LIMIT = 20;
 
@@ -177,7 +178,7 @@ const StyledStoryPreviewList = styled.ScrollView`
   padding-bottom: ${({ theme }) => theme.spacing.s};
   margin-bottom: ${({ theme }) => theme.spacing.xs};
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-bottom-color: ${({ theme }) => theme.color.gray}80;
+  border-bottom-color: ${({ theme }) => addAlphaToHEX(theme.color.gray, 0.5)};
 `;
 
 const StyledStoryPreviewItem = styled(StoryPreviewItem)`

@@ -21,10 +21,14 @@ import QRCodeSvg from '../../../assets/svg/qrcode-scan.svg';
 import BookmarkSvg from '../../../assets/svg/bookmark.svg';
 import CreditCardSvg from '../../../assets/svg/credit-card.svg';
 import { PROFILE_STACK_SCREENS } from '../../navigation/screens';
+import { useThemeVariantSelector } from '../../redux/theme-variant';
+import { THEME_VARIANTS } from '../../styles/theme';
+import { addAlphaToHEX } from '../../utils/color';
 
 export const ProfileBottomSheetScreen = (): JSX.Element => {
   const theme = useTheme();
   const navigation = useNavigation();
+  const themeVariant = useThemeVariantSelector();
   const bottomSheetOffsetY = React.useMemo(() => new Animated.Value(0), []);
   const contentHeightRef = useRef(0);
   const gestureHandlerRef = useRef(null);
@@ -87,9 +91,9 @@ export const ProfileBottomSheetScreen = (): JSX.Element => {
     () => ({
       width: 28,
       height: 28,
-      color: theme.color.black,
+      color: theme.color.foreground,
     }),
-    [theme.color.black],
+    [theme.color.foreground],
   );
 
   const goToSettings = useCallback(() => {
@@ -111,6 +115,7 @@ export const ProfileBottomSheetScreen = (): JSX.Element => {
             <BottomSheet
               testID="BottomSheet"
               onLayout={handleLayout}
+              themeVariant={themeVariant}
               style={{ transform: [{ translateY: bottomSheetOffsetY }] }}
             >
               <MenuHandle />
@@ -163,8 +168,9 @@ const FullScreenView = styled.View`
   width: 100%;
 `;
 
-const BottomSheet = styled(Animated.View)`
-  background-color: ${({ theme }) => theme.color.white};
+const BottomSheet = styled(Animated.View)<{ themeVariant: THEME_VARIANTS }>`
+  background-color: ${({ theme, themeVariant }) =>
+    themeVariant === THEME_VARIANTS.LIGHT ? theme.color.white : '#232323'};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   position: absolute;
@@ -182,7 +188,7 @@ const MenuHandle = styled.View`
 `;
 
 const MenuItemTouchable = styled(TouchableHighlight).attrs(({ theme }) => ({
-  underlayColor: `${theme.color.black}1A`,
+  underlayColor: addAlphaToHEX(theme.color.foreground, 0.1),
 }))``;
 
 const MenuItem = styled.View`
