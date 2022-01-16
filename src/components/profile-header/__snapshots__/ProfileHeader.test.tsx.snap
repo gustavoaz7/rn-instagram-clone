@@ -107,7 +107,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
               style={
                 Array [
                   Object {
-                    "borderColor": "#26262633",
+                    "borderColor": "#02020233",
                     "borderRadius": 82,
                     "borderWidth": 2,
                     "height": 82,
@@ -148,7 +148,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 16,
@@ -163,7 +163,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
             ]
           }
@@ -185,7 +185,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 16,
@@ -200,7 +200,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
             ]
           }
@@ -222,7 +222,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 16,
@@ -237,7 +237,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
             ]
           }
@@ -251,7 +251,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
     style={
       Array [
         Object {
-          "color": "#262626",
+          "color": "#020202",
         },
         Object {
           "fontWeight": "bold",
@@ -267,7 +267,7 @@ exports[`components - ProfileHeader matches snapshot 1`] = `
     style={
       Array [
         Object {
-          "color": "#262626",
+          "color": "#020202",
         },
       ]
     }

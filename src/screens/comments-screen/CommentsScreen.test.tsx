@@ -7,7 +7,7 @@ import { CommentsScreen, COMMENTS_LIMIT } from './CommentsScreen';
 import { Providers } from '../../Providers';
 import { generateMockPost, generateMockComment } from '../../data';
 import { FakeNavigator } from '../../test/fake-navigator';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import { fetchComments } from '../../services/comments';
 import { makeFail, makeSuccess } from '../../utils/remote-data';
 import { flushPromises } from '../../test/flush-promises';
@@ -284,8 +284,8 @@ describe('screens - CommentsScreen', () => {
 
         const { refreshControl } = UNSAFE_getByType(FlatList).props;
 
-        expect(refreshControl.props.tintColor).toBe(theme.color.gray);
-        expect(refreshControl.props.colors).toEqual([theme.color.gray]);
+        expect(refreshControl.props.tintColor).toBe(defaultTheme.color.gray);
+        expect(refreshControl.props.colors).toEqual([defaultTheme.color.gray]);
       });
     });
   });

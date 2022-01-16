@@ -10,6 +10,7 @@ import {
   useStoriesSelector,
 } from './stories';
 import { makeFail, makeSuccess } from '../utils/remote-data';
+import { themeVariantReducer } from './theme-variant';
 
 jest.mock('../services/stories');
 const fetchStoriesMock = fetchStories as jest.Mock;
@@ -74,7 +75,10 @@ describe('redux - stories', () => {
 
   it('useStoriesSelector returns correct state', () => {
     const store = configureStore({
-      reducer: combineReducers({ stories: storiesReducer }),
+      reducer: combineReducers({
+        stories: storiesReducer,
+        themeVariant: themeVariantReducer,
+      }),
     });
     const { result } = renderHook(() => useStoriesSelector(), {
       wrapper: props => <Providers {...props} store={store} />,

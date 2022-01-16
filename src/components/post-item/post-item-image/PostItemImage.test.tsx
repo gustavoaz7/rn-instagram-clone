@@ -8,7 +8,7 @@ import {
   generateMockPostMedia,
   generateMockTappableObject,
 } from '../../../data';
-import { theme } from '../../../styles/theme';
+import { defaultTheme } from '../../../test/default-theme';
 import {
   destroyTimeTravel,
   setupTimeTravel,
@@ -112,7 +112,7 @@ describe('components - PostItemImage', () => {
         UNSAFE_getByType(TapGestureHandler).props.onHandlerStateChange({
           nativeEvent: { state: State.ACTIVE },
         });
-        timeTravel(theme.animation.timingFast);
+        timeTravel(defaultTheme.animation.timingFast);
       });
 
       expect(queryByTestId('MentionTag')).toBeNull();

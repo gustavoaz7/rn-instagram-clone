@@ -10,6 +10,7 @@ import {
   useUserSelector,
 } from './user';
 import { makeFail, makeSuccess } from '../utils/remote-data';
+import { themeVariantReducer } from './theme-variant';
 
 jest.mock('../services/user');
 const fakeLoginMock = fakeLogin as jest.Mock;
@@ -67,7 +68,10 @@ describe('redux - user', () => {
 
   it('useUserSelector returns correct state', () => {
     const store = configureStore({
-      reducer: combineReducers({ user: userReducer }),
+      reducer: combineReducers({
+        user: userReducer,
+        themeVariant: themeVariantReducer,
+      }),
     });
     const { result } = renderHook(() => useUserSelector(), {
       wrapper: props => <Providers {...props} store={store} />,

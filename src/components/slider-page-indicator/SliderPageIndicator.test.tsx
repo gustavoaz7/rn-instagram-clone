@@ -7,7 +7,7 @@ import {
   destroyTimeTravel,
   timeTravel,
 } from '../../test/time-travel';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 
 describe('components - SliderPageIndicator', () => {
   const options = { wrapper: Providers };
@@ -75,7 +75,7 @@ describe('components - SliderPageIndicator', () => {
         );
 
         rerender(<SliderPageIndicator total={4} current={3} />);
-        timeTravel(DELAY + theme.animation.timingSlow);
+        timeTravel(DELAY + defaultTheme.animation.timingSlow);
 
         expect(getByText('3/4')).toHaveStyle({ opacity: 0 });
       });
@@ -89,7 +89,7 @@ describe('components - SliderPageIndicator', () => {
 
           rerender(<SliderPageIndicator total={4} current={3} />);
           rerender(<SliderPageIndicator total={4} current={2} />);
-          timeTravel(DELAY + theme.animation.timingSlow);
+          timeTravel(DELAY + defaultTheme.animation.timingSlow);
 
           expect(getByText('2/4')).toHaveStyle({ opacity: 0 });
         });

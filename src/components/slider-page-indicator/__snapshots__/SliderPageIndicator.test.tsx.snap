@@ -4,7 +4,7 @@ exports[`components - SliderPageIndicator matches snapshot 1`] = `
 <Text
   style={
     Object {
-      "backgroundColor": "#262626E6",
+      "backgroundColor": "#020202e6",
       "borderRadius": 99,
       "color": "#FFFFFF",
       "opacity": 1,

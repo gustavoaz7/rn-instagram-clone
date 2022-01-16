@@ -208,7 +208,7 @@ Array [
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "color": "#FFFFFF",
@@ -223,10 +223,10 @@ Array [
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
-                "color": "#FFFFFFCC",
+                "color": "#FFFFFFcc",
                 "marginLeft": 10,
               },
             ]
@@ -299,7 +299,7 @@ Array [
         style={
           Array [
             Object {
-              "color": "#262626",
+              "color": "#020202",
             },
             Object {
               "color": "#FFFFFF",

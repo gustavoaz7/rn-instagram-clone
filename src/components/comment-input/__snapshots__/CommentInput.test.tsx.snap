@@ -59,7 +59,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -109,7 +109,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -159,7 +159,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -209,7 +209,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -259,7 +259,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -309,7 +309,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -359,7 +359,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -409,7 +409,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
           style={
             Array [
               Object {
-                "color": "#262626",
+                "color": "#020202",
               },
               Object {
                 "fontSize": 46.875,
@@ -507,7 +507,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
             style={
               Array [
                 Object {
-                  "borderColor": "#26262633",
+                  "borderColor": "#02020233",
                   "borderRadius": 32,
                   "borderWidth": 2,
                   "height": 32,
@@ -524,10 +524,12 @@ exports[`components - CommentInput matches snapshot 1`] = `
       multiline={true}
       onChangeText={[Function]}
       placeholder="Add a comment..."
+      placeholderTextColor="#020202"
       rejectResponderTermination={true}
       style={
         Array [
           Object {
+            "color": "#020202",
             "flexBasis": 0,
             "flexGrow": 1,
             "flexShrink": 1,
@@ -566,7 +568,7 @@ exports[`components - CommentInput matches snapshot 1`] = `
         style={
           Array [
             Object {
-              "color": "#262626",
+              "color": "#020202",
             },
             Object {
               "color": "#0095f6",

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AvatarWithRing } from './AvatarWithRing';
 import { Providers } from '../../Providers';
-import { theme } from '../../styles/theme';
+import { defaultTheme } from '../../test/default-theme';
 import {
   setupTimeTravel,
   destroyTimeTravel,
@@ -41,7 +41,7 @@ describe('components - AvatarWithRing', () => {
     setupTimeTravel();
     const { toJSON } = render(<AvatarWithRing {...props} loading />, options);
 
-    timeTravel(theme.animation.timingBase / 2);
+    timeTravel(defaultTheme.animation.timingBase / 2);
 
     expect(toJSON()).toMatchSnapshot();
     destroyTimeTravel();
@@ -67,8 +67,8 @@ describe('components - AvatarWithRing', () => {
     );
 
     expect(UNSAFE_getByType(LinearGradient).props.colors).toEqual([
-      theme.color.purpleRed,
-      theme.color.yellow,
+      defaultTheme.color.purpleRed,
+      defaultTheme.color.yellow,
     ]);
   });
 });
