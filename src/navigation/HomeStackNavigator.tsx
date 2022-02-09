@@ -21,7 +21,6 @@ import {
 import type { TBottomTabNavigationProps } from './BottomTabNavigator';
 import { NotImplemented } from '../screens/NotImplemented';
 import { FeedScreen } from '../screens/feed-screen';
-import { ActivityScreen } from '../screens/ActivityScreen';
 import { ArrowBack } from './ArrowBack';
 
 export type THomeStackParams = {
@@ -101,7 +100,7 @@ export function HomeStackNavigator(): JSX.Element {
       />
       <Stack.Screen
         name={HOME_STACK_SCREENS.ACTIVITY}
-        component={ActivityScreen}
+        component={NotImplemented}
       />
       <Stack.Screen
         name={HOME_STACK_SCREENS.PROFILE}

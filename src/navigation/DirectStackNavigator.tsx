@@ -9,13 +9,13 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import styled, { useTheme } from 'styled-components/native';
-import { DirectScreen } from '../screens/DirectScreen';
 import { NotImplemented } from '../screens/NotImplemented';
 import Video from '../../assets/svg/video.svg';
 import Edit from '../../assets/svg/edit.svg';
 import { DIRECT_STACK_SCREENS } from './screens';
 import type { THomeSwipeNavigationProps } from './HomeSwipeNavigator';
 import { ArrowBack } from './ArrowBack';
+import { useUserSelector } from '../redux/user';
 
 export type TDirectStackParams = Record<DIRECT_STACK_SCREENS, undefined>;
 
@@ -47,6 +47,8 @@ function HeaderRight() {
 const Stack = createStackNavigator<TDirectStackParams>();
 
 export function DirectStackNavigator(): JSX.Element {
+  const user = useUserSelector();
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -56,9 +58,9 @@ export function DirectStackNavigator(): JSX.Element {
     >
       <Stack.Screen
         name={DIRECT_STACK_SCREENS.DIRECT}
-        component={DirectScreen}
+        component={NotImplemented}
         options={{
-          headerTitle: 'Username',
+          headerTitle: user.user?.username,
           headerRight: HeaderRight,
         }}
       />

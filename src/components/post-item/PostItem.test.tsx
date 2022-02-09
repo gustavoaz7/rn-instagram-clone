@@ -6,7 +6,7 @@ import {
   fireEvent,
   act,
 } from '@testing-library/react-native';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
