@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import type {
   TFetchPostsParams,
   TPostsResponse,

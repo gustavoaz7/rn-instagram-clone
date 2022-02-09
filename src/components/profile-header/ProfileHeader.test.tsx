@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import { Image, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { ProfileHeader, TProfileHeaderProps } from './ProfileHeader';
 import { Providers } from '../../Providers';
 import { generateMockProfile } from '../../data';

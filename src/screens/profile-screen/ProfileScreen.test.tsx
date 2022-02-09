@@ -3,7 +3,7 @@ import { act, render } from '@testing-library/react-native';
 import { useRoute } from '@react-navigation/native';
 import Toast from 'react-native-root-toast';
 import { FlatList } from 'react-native';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import { ProfileScreen, POSTS_LIMIT } from './ProfileScreen';
 import { Providers } from '../../Providers';
 import { generateMockPost, generateMockProfile } from '../../data';
