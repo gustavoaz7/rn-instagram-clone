@@ -4,7 +4,7 @@ This is an Intagram Clone build with React-Native (100% Hooks) written in TypeSc
 
 ## Demo
 
-![](https://github.com/gustavoaz7/rn-instagram-clone/blob/main/rn-instagram-clone-demo.mp4)
+https://user-images.githubusercontent.com/28453820/154377974-c14a8c18-1270-439f-b7d4-30d72cf38e94.mp4
 
 ## Requirements
 
